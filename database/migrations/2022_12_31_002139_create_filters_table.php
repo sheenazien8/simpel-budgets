@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('filters', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->string("key")->unique();
+            $table->string("key");
             $table->string("model");
             $table->json("default");
             $table->timestamps();
