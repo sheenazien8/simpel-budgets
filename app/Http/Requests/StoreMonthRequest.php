@@ -15,7 +15,16 @@ class StoreMonthRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => "required",
+            "name" => [
+                "required",
+                function($attr, $value, $fail) {
+                    if (in_array($value, Month::query()->where("year", $this->year)->get()->pluck("name")->toArray())) {
+                        $fail("Bulan ditahun ini sudah ada");
+                        return;
+                    }
+                    return;
+                }
+            ],
             "year" => "required|integer|min:1900|max:2100"
         ];
     }
