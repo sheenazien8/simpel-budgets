@@ -18,7 +18,14 @@ class StoreMonthRequest extends FormRequest
             "name" => [
                 "required",
                 function($attr, $value, $fail) {
-                    if (in_array($value, Month::query()->where("year", $this->year)->get()->pluck("name")->toArray())) {
+                    $exists = in_array($value, Month::query()
+                        ->byCurrentUser()
+                        ->where("year", $this->year)
+                        ->get()
+                        ->pluck("name")
+                        ->toArray());
+
+                    if ($exists) {
                         $fail("Bulan ditahun ini sudah ada");
                         return;
                     }
