@@ -31,7 +31,6 @@ import { EmptyState } from "../Components/EmptyState";
 import FormData from "./../Components/Cashflow/FormData";
 import FormFilter from "./../Components/Cashflow/FormFilter";
 import { Inertia } from "@inertiajs/inertia";
-import { FormikHelpers } from "formik";
 
 interface IRecord {}
 
@@ -50,7 +49,7 @@ const List = () => {
   const [editData, setEditData] = useState<MCashflow>();
   const [errors, setErrors] = useState<RCashflow>();
   const onSubmit = async (values: RCashflow) => {
-    values.budget_id = ![2, 3].includes(Number(values.type)) ? values.budget_id : ""
+    values.budget_id = ![2, 3].includes(Number(values.type)) ? values.budget_id : undefined
     let progess: any;
     if (!editData?.id) {
       progess = create(values, setErrors);

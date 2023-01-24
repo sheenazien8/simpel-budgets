@@ -58,7 +58,7 @@ const List = () => {
   const load = async () => {
     const params = resolveQueryParameter(location.search);
     const filters: FBudget = {
-      month_id: Number(params.get("month_id") ?? ""),
+      month_id: params.get("month_id") ?? "",
       plan: params.get("plan") ?? "",
       current_activated: Number(params.get("current_activated") == "1"),
     };
@@ -200,16 +200,6 @@ const List = () => {
               }}
             >
               <ClipboardDocumentIcon className="h-5" />
-            </button>
-            <button
-              type="button"
-              className="inline-flex items-center rounded-lg border border-transparent bg-gray-400 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-              value="Filter"
-              onClick={() => {
-                  toggleFilterOpen(!isSettingFilterOpen);
-              }}
-            >
-              <CogIcon className="h-5" />
             </button>
           </div>
         </div>

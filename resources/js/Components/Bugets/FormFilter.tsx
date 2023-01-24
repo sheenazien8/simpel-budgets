@@ -12,7 +12,7 @@ interface IFormFilter {
 }
 
 const FormFilter = (props: IFormFilter) => {
-  const months = [{ value: "", label: "Pilih Semua" }].concat(
+  const months = [{value: "", label: "Clear Bulan"}, { value: "0", label: "Pilih Semua" }].concat(
     props.months.map((month) => ({
       value: String(month.id),
       label: `${month.name} - ${month.year}`,

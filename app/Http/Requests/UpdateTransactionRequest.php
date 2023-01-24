@@ -66,6 +66,16 @@ class UpdateTransactionRequest extends FormRequest
                     }
                     return;
                 }
+            ],
+            "date" => [
+                function($attr, $value, $fail) {
+                    $todayDate = date('Y-m-d');
+                    if ($value != "" && $value >  $todayDate) {
+                        $fail("Tanggal tidak boleh melebihi hari ini");
+                        return;
+                    }
+                    return;
+                }
             ]
         ];
     }
@@ -74,7 +84,7 @@ class UpdateTransactionRequest extends FormRequest
     {
         DB::beginTransaction();
         $this->transaction = $transaction;
-        if (!$this->request->has("date")) {
+        if (!$this->request->get("date")) {
             $this->request->add([
                 "date" => now()->format("Y-m-d")
             ]);

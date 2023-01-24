@@ -6,6 +6,7 @@ use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
 use App\Models\Account;
 use App\Models\Budget;
+use App\Models\Month;
 use App\Models\Transaction;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,6 +17,13 @@ class TransactionController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
+        $currentMonth = __('month.' . now()->format('F'));
+        $currentYear = now()->format('Y');
+        $month = Month::whereIn('name', [$currentMonth])
+            ->byCurrentUser()
+            ->where('year', $currentYear)
+            ->get();
+
         $transactions = Transaction::query()
                 ->selectRaw(DB::raw("IF(type = 1, nominal, 0) as expense"))
                 ->addSelect([
@@ -24,8 +32,9 @@ class TransactionController extends Controller
                     "account_name" => Account::select("name")->whereColumn("account_id", "accounts.id"),
                     "account_target_name" => Account::select("name")->whereColumn("account_target", "accounts.id")
                 ])
+                ->whereIn("budget_id", Budget::query()->where("month_id", $month->pluck("id"))->get()->pluck("id")->toArray())
                 ->filter($request)
-                ->where("user_id", auth()->id())
+                ->byCurrentUser()
                 ->orderBy("date", "desc")
                 ->get();
 

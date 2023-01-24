@@ -30,8 +30,13 @@ class StoreTransactionRequest extends FormRequest
                 Rule::requiredIf(function () {
                     return $this->request->get("type") == 3;
                 }),
-                "numeric",
-                Rule::exists("accounts", "id")->where("user_id", auth()->id())
+                function($attr, $value, $fail) {
+                    if ($value != "" && !Account::where("id", $value)->where("user_id", auth()->id())->first()) {
+                        $fail("Akun target tidak ada di database");
+                        return;
+                    }
+                    return;
+                }
             ],
             "budget_id" => [
                 Rule::requiredIf(function () {
@@ -49,13 +54,23 @@ class StoreTransactionRequest extends FormRequest
                 }
              ],
             "nominal" => [ "required", "numeric" ],
-            "type" => [ "required", "numeric", Rule::in([1, 2, 3]) ]
+            "type" => [ "required", "numeric", Rule::in([1, 2, 3]) ],
+            "date" => [
+                function($attr, $value, $fail) {
+                    $todayDate = date('Y-m-d');
+                    if ($value != "" && $value >  $todayDate) {
+                        $fail("Tanggal tidak boleh melebihi hari ini");
+                        return;
+                    }
+                    return;
+                }
+            ]
         ];
     }
 
     public function created(): void
     {
-        if (!$this->request->has("date")) {
+        if (!$this->request->get("date")) {
             $this->request->add([
                 "date" => now()->format("Y-m-d")
             ]);

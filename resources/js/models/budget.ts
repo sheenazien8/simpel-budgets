@@ -22,7 +22,7 @@ interface RBudget {
 
 interface FBudget {
   plan?: string;
-  month_id?: number;
+  month_id?: number | string;
   current_activated?: number;
 }
 
