@@ -22,7 +22,7 @@ class TransactionController extends Controller
         $month = Month::whereIn('name', [$currentMonth])
             ->byCurrentUser()
             ->where('year', $currentYear)
-            ->get();
+            ->first();
 
         $transactions = Transaction::query()
                 ->selectRaw(DB::raw("IF(type = 1, nominal, 0) as expense"))
@@ -32,7 +32,7 @@ class TransactionController extends Controller
                     "account_name" => Account::select("name")->whereColumn("account_id", "accounts.id"),
                     "account_target_name" => Account::select("name")->whereColumn("account_target", "accounts.id")
                 ])
-                ->whereIn("budget_id", Budget::query()->where("month_id", $month->pluck("id"))->get()->pluck("id")->toArray())
+                ->whereIn("budget_id", Budget::query()->where("month_id", $month->id)->get()->pluck("id")->toArray())
                 ->filter($request)
                 ->byCurrentUser()
                 ->orderBy("date", "desc")
