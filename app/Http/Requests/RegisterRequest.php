@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Budget;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -40,11 +42,36 @@ class RegisterRequest extends FormRequest
         ]);
 
         $user = User::create($this->all());
+        $keys = [
+            [
+                'keys' => 'budgets',
+                'model' => Budget::class,
+                'default' => [
+                    "show_current_month" => true,
+                    "show_current_and_next_month" => false,
+                    "show_active_month" => true,
+                ]
+            ],
+            [
+                'keys' => 'transactions',
+                'model' => Transaction::class,
+                'default' => [
+                    "show_current_month" => true,
+                    "show_current_and_next_month" => false,
+                    "show_active_month" => true,
+                ]
+            ]
+        ];
 
-        $user->filters()->create([
-            "key" => "budgets",
-            "model" => $this->model,
-            "default" => $this->default,
-        ]);
+        foreach ($keys as $key) {
+            $filter = $user->filters()->where("key", $key["keys"])->first();
+            if (!$filter) {
+                $user->filters()->create([
+                    "key" => $key["keys"],
+                    "model" => $key["model"],
+                    "default" => $key["default"],
+                ]);
+            }
+        }
     }
 }
