@@ -15,7 +15,7 @@ const useAuthAction = () => {
       );
       if (data.status == 200) {
         localStorage.setItem("token", data.data.data?.access_token ?? "")
-        Inertia.visit("/months", {});
+        Inertia.visit("/dashboard", {});
         return;
       }
       throw data;

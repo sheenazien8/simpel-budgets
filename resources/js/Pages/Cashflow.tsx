@@ -210,7 +210,7 @@ const List = () => {
                     ""
                   )}
                 </span>,
-                <span className="italic">{cashflow.notes}</span>,
+                <span className="italic break-words">{cashflow.notes}</span>,
               ]}
               onClick={async () => {
                 const cashflowData = await detail(cashflow.id);

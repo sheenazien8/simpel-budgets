@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from "react";
+import React from "react";
 import {
   Bars3Icon,
   BellIcon,
@@ -8,11 +8,10 @@ import {
 import { Disclosure } from "@headlessui/react";
 import { Link, usePage } from "@inertiajs/inertia-react";
 import { useAuthAction } from "../actions/auth";
-import { useInfoAction } from "../actions/info";
-import { MInfo } from "../models";
 import ToasterCustom from "./ToasterCustom";
 import { classNames } from "../utils/helper";
 import { Inertia } from "@inertiajs/inertia";
+import { MInfo } from "../models";
 
 interface ILayout {
   children: JSX.Element;
@@ -20,13 +19,9 @@ interface ILayout {
 }
 
 const Layout = (props: ILayout) => {
+  const { warning } = usePage().props
+  let info = warning as MInfo;
   const { logout } = useAuthAction();
-  const { get } = useInfoAction();
-  const [info, setInfo] = useState<MInfo>();
-  const load = async () => {
-    const data = await get();
-    setInfo(data.data.data);
-  };
   if (!localStorage.getItem("token")) {
     Inertia.visit("login");
   }
@@ -44,9 +39,6 @@ const Layout = (props: ILayout) => {
       },
     },
   ];
-  useLayoutEffect(() => {
-    load();
-  }, []);
   const { url } = usePage();
   return (
     <>
@@ -230,7 +222,7 @@ const Layout = (props: ILayout) => {
         </Disclosure>
 
         <div className="py-10">
-          {info?.month || info?.budget || info?.account || info?.cashflow ? (
+          {(info as MInfo)?.month || info?.budget || info?.account || info?.cashflow ? (
             <div className="px-2">
               <div className="rounded-md bg-yellow-50 p-4">
                 <div className="flex">

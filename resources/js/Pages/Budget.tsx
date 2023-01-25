@@ -306,7 +306,7 @@ const List = () => {
                       className={classNames(
                         Number(budget.transactions_sum_nominal) >
                           Number(budget.nominal) && "text-yellow-600",
-                      )}
+                      "break-words")}
                     >
                       {formatMoney(budget.transactions_sum_nominal)} /{" "}
                       {formatMoney(budget.nominal)}

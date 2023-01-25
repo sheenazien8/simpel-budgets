@@ -34,7 +34,7 @@ const List = () => {
     }
     toastProgress(
       progress,
-      `${editData?.id ? "Pembuatan" : "Perubahan"} bulan`,
+      `${editData?.id ? "Perubahan" : "Pembuatan"} bulan`,
       () => {
         toggleActive(false);
         setUpdated(!updated);

@@ -36,6 +36,7 @@ const List = () => {
   useEffect(() => {
     load();
   }, [updated]);
+
   return (
     <>
       <div>
