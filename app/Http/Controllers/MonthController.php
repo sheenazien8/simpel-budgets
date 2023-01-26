@@ -26,7 +26,7 @@ class MonthController extends Controller
                     "over_budget"
                 )
                 ->addSelect(["months.*"])
-                ->where("user_id", auth()->id())
+                ->byCurrentUser()
                 ->get(),
         ]);
     }

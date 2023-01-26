@@ -14,7 +14,7 @@ class GoalController extends Controller
     public function index(Request $request): JsonResponse
     {
         $goals = Goal::query()
-            ->where("user_id", auth()->id())
+            ->byCurrentUser()
             ->get();
 
         return response()->json([

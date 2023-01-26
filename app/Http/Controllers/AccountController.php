@@ -25,6 +25,7 @@ class AccountController extends Controller
     public function store(StoreAccountRequest $request): JsonResponse
     {
         $request->created();
+
         return response()->json([
             'data' => [],
             'message' => 'account has been created'
@@ -33,6 +34,8 @@ class AccountController extends Controller
 
     public function show(Account $account)
     {
+        throw_if($account->user_id !== auth()->id(), Exception::class, 'Akun tidak ditemukan');
+
         return response()->json([
             'data' => $account,
         ]);
@@ -40,7 +43,9 @@ class AccountController extends Controller
 
     public function update(UpdateAccountRequest $request, Account $account)
     {
+        throw_if($account->user_id !== auth()->id(), Exception::class, 'Kamu tidak memiliki akses untuk mengubah akun ini');
         $request->updated($account);
+
         return response()->json([
             'data' => [],
             'message' => 'account has been updated'
@@ -49,8 +54,10 @@ class AccountController extends Controller
 
     public function destroy(Account $account)
     {
-        $account->transactions->count() > 0 ? throw new Exception("Akun ini mempunyai anggaran") : "";
+        throw_if($account->transactions()->exists(), Exception::class, 'Akun ini tidak bisa dihapus karena masih memiliki transaksi');
+        throw_if($account->user_id !== auth()->id(), Exception::class, 'Akun ini tidak bisa dihapus karena bukan milik anda');
         $account->delete();
+
         return response()->json([
             'data' => [],
             'message' => 'account has been deleted'
