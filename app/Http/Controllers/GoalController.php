@@ -13,7 +13,13 @@ class GoalController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
+        $dateNow = now()->format("Y-m-d");
         $goals = Goal::query()
+            ->select("*")
+            ->selectSub(
+                "select if('${dateNow}' > target_date, true, false)",
+                "over_target_date"
+            )
             ->byCurrentUser()
             ->get();
 

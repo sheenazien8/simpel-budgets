@@ -70,9 +70,11 @@ class UpdateTransactionRequest extends FormRequest
             "date" => [
                 function($attr, $value, $fail) {
                     $todayDate = date('Y-m-d');
-                    if ($value != "" && $value >  $todayDate) {
-                        $fail("Tanggal tidak boleh melebihi hari ini");
-                        return;
+                    if ($this->type == 1) {
+                        if ($value != "" && $value >  $todayDate) {
+                            $fail("Tanggal tidak boleh melebihi hari ini");
+                            return;
+                        }
                     }
                     return;
                 }

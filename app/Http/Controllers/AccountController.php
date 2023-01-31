@@ -34,8 +34,6 @@ class AccountController extends Controller
 
     public function show(Account $account)
     {
-        throw_if($account->user_id !== auth()->id(), Exception::class, 'Akun tidak ditemukan');
-
         return response()->json([
             'data' => $account,
         ]);
@@ -43,7 +41,6 @@ class AccountController extends Controller
 
     public function update(UpdateAccountRequest $request, Account $account)
     {
-        throw_if($account->user_id !== auth()->id(), Exception::class, 'Kamu tidak memiliki akses untuk mengubah akun ini');
         $request->updated($account);
 
         return response()->json([

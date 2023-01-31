@@ -8,6 +8,7 @@ use App\Models\Account;
 use App\Models\Budget;
 use App\Models\Month;
 use App\Models\Transaction;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +24,7 @@ class TransactionController extends Controller
             ->byCurrentUser()
             ->where('year', $currentYear)
             ->first();
-
+        $budgetIds = Budget::query()->where("month_id", $month->id)->get()->pluck("id")->toArray();
         $transactions = Transaction::query()
                 ->selectRaw(DB::raw("IF(type = 1, nominal, 0) as expense"))
                 ->addSelect([
@@ -32,7 +33,10 @@ class TransactionController extends Controller
                     "account_name" => Account::select("name")->whereColumn("account_id", "accounts.id"),
                     "account_target_name" => Account::select("name")->whereColumn("account_target", "accounts.id")
                 ])
-                ->whereIn("budget_id", Budget::query()->where("month_id", $month->id)->get()->pluck("id")->toArray())
+                ->orWhereIn("budget_id", $budgetIds)
+                ->orWhere("budget_id", null)
+                // ->whereMonth("date", now()->format("m"))
+                // ->whereYear("date", $month->year)
                 ->filter($request)
                 ->byCurrentUser()
                 ->orderBy("date", "desc")
@@ -58,8 +62,6 @@ class TransactionController extends Controller
 
     public function show(Transaction $transaction)
     {
-        throw_if($transaction->user_id !== auth()->id(), Exception::class, 'Transaksi tidak ditemukan', 404);
-
         return response()->json([
             'data' => $transaction,
         ]);
@@ -67,7 +69,6 @@ class TransactionController extends Controller
 
     public function update(UpdateTransactionRequest $request, Transaction $transaction)
     {
-        throw_if($transaction->user_id !== auth()->id(), Exception::class, 'Kamu tidak memiliki akses untuk mengubah transaksi ini');
         $request->updated($transaction);
 
         return response()->json([
