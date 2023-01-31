@@ -39,7 +39,7 @@ class TransactionController extends Controller
                 // ->whereYear("date", $month->year)
                 ->filter($request)
                 ->byCurrentUser()
-                ->orderBy("date", "desc")
+                ->orderBy("created_at", "desc")
                 ->get();
 
         return response()->json([
