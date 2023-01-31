@@ -31,17 +31,17 @@ class Budget extends Model
             }
 
             $query->when($filter->default->show_active_month, function (Builder $query) {
-                $query->whereIn("month_id", Month::active()
+                $monthId = Month::active()
                     ->byCurrentUser()
                     ->get()
-                    ->pluck("id")
-                );
+                    ->pluck("id");
+                $query->whereIn("month_id", $monthId->toArray());
             });
 
-            $query->when($filter->default->show_current_month, function (Builder $query) {
+            $query->when($filter?->default?->show_current_month, function (Builder $query) {
                 $currentMonth = __('month.' . now()->format('F'));
                 $currentYear = now()->format('Y');
-                $month = Month::whereIn('name', [$currentMonth])
+                $month = Month::where('name', $currentMonth)
                     ->byCurrentUser()
                     ->where('year', $currentYear)
                     ->get();
@@ -49,7 +49,7 @@ class Budget extends Model
                 $query->whereIn('month_id', $month->pluck('id'));
             });
 
-            $query->when($filter->default->show_current_and_next_month, function (Builder $query) {
+            $query->when($filter?->default?->show_current_and_next_month, function (Builder $query) {
                 $currentMonth = __('month.' . now()->format('F'));
                 $currentYear = now()->format('Y');
                 $nextMonth = __('month.' . now()->addMonth()->format('F'));
