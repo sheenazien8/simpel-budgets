@@ -124,7 +124,7 @@ const List = () => {
       <div>
         <div className="flex justify-between items-center">
           <h2 className="text-sm font-medium text-gray-500">
-            Total pengeluaran{" "}
+            Total pengeluaran bulan ini{" "}
             <span className="font-bold">
               {" "}
               {formatMoney(cashflows?.transaction_sum_nominal)}{" "}

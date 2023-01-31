@@ -1,3 +1,5 @@
+export * from "./goal"
+export * from "./goalDetail"
 export * from "./month"
 export * from "./account"
 export * from "./budget"

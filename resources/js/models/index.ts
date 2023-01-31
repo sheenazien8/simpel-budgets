@@ -17,3 +17,4 @@ export * from "./account";
 export * from "./budget";
 export * from "./cashflow";
 export * from "./auth";
+export * from "./goal";

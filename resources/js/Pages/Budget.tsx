@@ -26,6 +26,7 @@ import {
   PlusIcon,
   ClipboardDocumentListIcon,
   TrashIcon,
+  Cog6ToothIcon,
 } from "@heroicons/react/24/solid";
 import { EmptyState } from "../Components/EmptyState";
 import FormData from "../Components/Bugets/FormData";
@@ -45,7 +46,7 @@ const List = () => {
   const [isSettingFilterOpen, toggleFilterOpen] = useHashRouteToggle("#opened-setting-filter");
   const [isFilterOpen, toggleFilterActive] =
     useHashRouteToggle("#opened-filter");
-  const [isCheckboxOpen, toggleCheckboxOpen] =
+  const [isMarkCheckboxOpen, toggleMarkOpen] =
     useHashRouteToggle("#opened-checkbox");
   const [isDeleteOpen, toggleDeleteOpen] =
     useHashRouteToggle("#deleted-checkbox");
@@ -102,7 +103,7 @@ const List = () => {
         setUpdated(!updated);
         setEditData(undefined);
         toggleCopyOpen(false);
-        toggleCheckboxOpen(false);
+        toggleMarkOpen(false);
       },
     );
   };
@@ -142,17 +143,17 @@ const List = () => {
   }, [checkedsId]);
 
   useEffect(() => {
-    if (!isCheckboxOpen) {
+    if (!isMarkCheckboxOpen) {
       setCheckedsId([]);
     }
-  }, [isCheckboxOpen]);
+  }, [isMarkCheckboxOpen]);
 
   return (
     <>
       <div>
         <div className="flex justify-between items-center">
           <h2 className="text-sm font-medium text-gray-500">
-            Total Budget{" "}
+            Total budget{" "}
             <span className="font-bold">
               {" "}
               {formatMoney(budgets?.total_nominal_budgets)}{" "}
@@ -196,14 +197,14 @@ const List = () => {
               className="inline-flex items-center rounded-lg border border-transparent bg-gray-400 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
               value="Filter"
               onClick={() => {
-                toggleCheckboxOpen(!isCheckboxOpen);
+                toggleMarkOpen(!isMarkCheckboxOpen);
               }}
             >
-              <ClipboardDocumentIcon className="h-5" />
+              <Cog6ToothIcon className="h-5" />
             </button>
           </div>
         </div>
-        {isCheckboxOpen && checkedsId.length > 0 && (
+        {isMarkCheckboxOpen && checkedsId.length > 0 && (
           <div className="mt-3">
             <div
               className="overflow-y-scroll h-12 flex items-center gap-x-2"
@@ -271,7 +272,7 @@ const List = () => {
           )}
           {budgets?.data?.map((budget, index) => (
             <div className="flex w-full">
-              {isCheckboxOpen && (
+              {isMarkCheckboxOpen && (
                 <div className="w-1/12 flex items-center">
                   <input
                     ref={(element) => {
@@ -294,7 +295,7 @@ const List = () => {
                 </div>
               )}
               <div
-                className={classNames(isCheckboxOpen ? "w-11/12" : "w-full")}
+                className={classNames(isMarkCheckboxOpen ? "w-11/12" : "w-full")}
               >
                 <CardList
                   key={index}

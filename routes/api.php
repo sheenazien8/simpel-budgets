@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BudgetController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GoalController;
 use App\Http\Controllers\GoalDetailController;
 use App\Http\Controllers\MonthController;
@@ -48,6 +49,7 @@ Route::group([
     Route::resource("transactions", TransactionController::class);
     Route::resource("filters", SettingFilterController::class);
     Route::resource("goals", GoalController::class);
+    Route::get("dashboard", DashboardController::class);
     Route::group([
         'prefix' => 'goals/{goal}',
     ], function() {

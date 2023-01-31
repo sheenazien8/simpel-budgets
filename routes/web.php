@@ -1,8 +1,10 @@
 <?php
 
+use App\Models\Goal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 Route::get("/migrate", function() {
     Artisan::call("migrate");
@@ -30,4 +32,8 @@ Route::group([], function() {
     Route::inertia('/budgets', "Budget");
     Route::inertia('/accounts', "Account");
     Route::inertia('/cashflow', "Cashflow");
+    Route::inertia('/goals', "Goal");
+    Route::get('/goals/{goal}/details', function(Goal $goal) {
+        return Inertia::render("GoalDetail", ["goal" => $goal->toArray()]);
+    });
 });

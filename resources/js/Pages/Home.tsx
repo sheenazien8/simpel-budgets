@@ -9,7 +9,6 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
 import { faker } from "@faker-js/faker";
 import { formatMoney } from "../utils/helper";
 import { useAccountAction } from "../actions";

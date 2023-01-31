@@ -16,10 +16,11 @@ import { MInfo } from "../models";
 interface ILayout {
   children: JSX.Element;
   title?: string | JSX.Element;
+  description?: string | JSX.Element;
 }
 
 const Layout = (props: ILayout) => {
-  const { warning } = usePage().props
+  const { warning } = usePage().props;
   let info = warning as MInfo;
   const { logout } = useAuthAction();
   if (!localStorage.getItem("token")) {
@@ -31,6 +32,7 @@ const Layout = (props: ILayout) => {
     { name: "Anggaran", href: "/budgets" },
     { name: "Akun", href: "/accounts" },
     { name: "Cash flow", href: "/cashflow" },
+    { name: "Tujuan", href: "/goals" },
     {
       name: "Logout",
       href: "",
@@ -222,7 +224,10 @@ const Layout = (props: ILayout) => {
         </Disclosure>
 
         <div className="py-10">
-          {(info as MInfo)?.month || info?.budget || info?.account || info?.cashflow ? (
+          {(info as MInfo)?.month ||
+          info?.budget ||
+          info?.account ||
+          info?.cashflow ? (
             <div className="px-2">
               <div className="rounded-md bg-yellow-50 p-4">
                 <div className="flex">
@@ -253,9 +258,10 @@ const Layout = (props: ILayout) => {
           )}
           <header>
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900">
+              <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900 mb-3">
                 {props.title}
               </h1>
+              {props.description && <p className="text-gray-600 text-[14px]">{props.description}</p>}
             </div>
           </header>
           <main>
