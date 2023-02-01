@@ -8,12 +8,20 @@ interface CardList {
   key: string | number;
   icon?: JSX.Element;
   href?: string;
-  onClick?: React.MouseEventHandler<HTMLLIElement> | undefined
+  onClick?: React.MouseEventHandler<HTMLLIElement> | undefined;
+  className?: string;
 }
 const CardList = (props: CardList): JSX.Element => {
   return (
     <>
-      <li key={props.key} className="col-span-1 flex rounded-md shadow-sm cursor-pointer h-fit break-words" onClick={props.onClick}>
+      <li
+        key={props.key}
+        className={classNames(
+          "col-span-1 flex rounded-md shadow-sm cursor-pointer h-fit break-words",
+          props.className,
+        )}
+        onClick={props.onClick}
+      >
         <div
           className={classNames(
             props.bgColor ?? "bg-pink-600",

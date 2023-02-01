@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTransactionRequest;
@@ -14,12 +14,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use Inertia\Inertia;
-use Inertia\Response;
 
 class TransactionController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request): JsonResponse
     {
         $currentMonth = __('month.' . now()->format('F'));
         $currentYear = now()->format('Y');
@@ -28,38 +26,37 @@ class TransactionController extends Controller
             ->where('year', $currentYear)
             ->first();
         // $budgetIds = Budget::query()->where("month_id", $month->id)->get()->pluck("id")->toArray();
-        $transactions = Transaction::query()
-                ->selectRaw(DB::raw("IF(type = 1, nominal, 0) as expense"))
-                ->addSelect([
-                    "total_transactions" => Transaction::selectRaw("count(id)"),
-                    "transactions.*",
-                    "budget_name" => Budget::select("plan")->whereColumn("budget_id", "budgets.id"),
-                    "account_name" => Account::select("name")->whereColumn("account_id", "accounts.id"),
-                    "account_target_name" => Account::select("name")->whereColumn("account_target", "accounts.id"),
-                    "transaction_sum_nominal_current_month" => Transaction::selectRaw("SUM(nominal)")
+        $transaction_sum_nominal_current_month = Transaction::selectRaw("SUM(nominal) as total")
                         ->byCurrentUser()
                         ->filter($request)
                         // ->orWhereIn("budget_id", $budgetIds)
                         ->whereMonth("date", now()->format("m"))
                         ->whereYear("date", $month->year)
-                        ->where('type', 1),
+                        ->where('type', 1)->first()?->total;
+        $total_transactions = Transaction::byCurrentUser()->selectRaw("count(id) as total")->first()->total;
+        $transactions = Transaction::query()
+                ->selectRaw(DB::raw("IF(type = 1, nominal, 0) as expense"))
+                ->addSelect([
+                    "transactions.*",
+                    "budget_name" => Budget::select("plan")->whereColumn("budget_id", "budgets.id"),
+                    "account_name" => Account::select("name")->whereColumn("account_id", "accounts.id"),
+                    "account_target_name" => Account::select("name")->whereColumn("account_target", "accounts.id"),
                 ])
                 //->orWhere("budget_id", null)
                 ->filter($request)
                 ->byCurrentUser()
                 ->orderBy("created_at", "desc")
                 ->limit(20)
-                ->simplePaginate();
+                ->offset($request->input("offset") ?? 0)
+                ->get();
 
-        // return response()->json([
-        //     'data' => [
-        //         'data' => $transactions,
-        //         'transaction_sum_nominal' => $transactions->first()->transaction_sum_nominal_current_month,
-        //         'total_transactions' => $transactions->first()->total_transactions,
-        //     ],
-        // ]);
-
-        return Inertia::render("Cashflow", []);
+        return response()->json([
+            'data' => [
+                'data' => $transactions,
+                'transaction_sum_nominal' => $transaction_sum_nominal_current_month,
+                'total_transactions' => $total_transactions,
+            ],
+        ]);
     }
 
     public function store(StoreTransactionRequest $request): JsonResponse

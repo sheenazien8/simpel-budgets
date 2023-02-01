@@ -1,6 +1,7 @@
 interface ResponseGetMCashflow {
     data: MCashflow[],
     transaction_sum_nominal: number;
+    total_transactions: number;
 }
 
 interface MCashflow {
@@ -29,6 +30,8 @@ interface RCashflow {
   date?: string;
   reccuring?: boolean | string;
   type?: number | string;
+  offset?: number | string;
+  page?: number | string;
 }
 
 export { MCashflow, RCashflow, ResponseGetMCashflow };

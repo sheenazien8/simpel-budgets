@@ -8,7 +8,7 @@ interface IEmptyState {
 
 const EmptyState = (props: IEmptyState) => {
   return (
-    <div className="mt-40">
+    <div className="col-span-4 self-center mt-40">
       <div className="text-center grid grid-cols-1">
         <div>
           <svg

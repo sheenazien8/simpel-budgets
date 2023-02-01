@@ -31,6 +31,7 @@ import { EmptyState } from "../Components/EmptyState";
 import FormData from "./../Components/Cashflow/FormData";
 import FormFilter from "./../Components/Cashflow/FormFilter";
 import { Inertia } from "@inertiajs/inertia";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 interface IRecord {}
 
@@ -39,6 +40,7 @@ const List = () => {
   const { get: getAccount } = useAccountAction();
   const { get: getBudget } = useBudgetAction();
   const [cashflows, setCashflows] = useState<ResponseGetMCashflow>();
+  const [cashflowsData, setCashflowsData] = useState<MCashflow[]>();
   const [accounts, setAccounts] = useState<MAccount[]>();
   const [budgets, setBudgets] = useState<ResponseGetMBudget>();
   const [updated, setUpdated] = useState<boolean>(false);
@@ -48,8 +50,12 @@ const List = () => {
   const [filter, setFilter] = useState<RCashflow>();
   const [editData, setEditData] = useState<MCashflow>();
   const [errors, setErrors] = useState<RCashflow>();
+  const [scroll, setScroll] = useState<number>(0);
+  const [hasMore, setHasMore] = useState(true);
   const onSubmit = async (values: RCashflow) => {
-    values.budget_id = ![2, 3].includes(Number(values.type)) ? values.budget_id : undefined
+    values.budget_id = ![2, 3].includes(Number(values.type))
+      ? values.budget_id
+      : undefined;
     let progess: any;
     if (!editData?.id) {
       progess = create(values, setErrors);
@@ -77,13 +83,14 @@ const List = () => {
     }
   };
 
-  const onFilter = async (
-    values: RCashflow,
-  ) => {
-    values.budget_id = ![2, 3].includes(Number(values.type)) ? values.budget_id : ""
+  const onFilter = async (values: RCashflow) => {
+    values.budget_id = ![2, 3].includes(Number(values.type))
+      ? values.budget_id
+      : "";
     setFilter(values);
     const budgetss = await get(values);
     setCashflows(budgetss.data.data);
+    setCashflowsData(budgetss.data.data?.data);
     Inertia.visit(`?${encodeQuery(values)}`);
   };
 
@@ -107,6 +114,7 @@ const List = () => {
     setFilter(filters);
     const cashflows = await get(filters);
     setCashflows(cashflows.data.data);
+    setCashflowsData(cashflows.data.data?.data);
     const accounts = await getAccount();
     setAccounts(accounts.data.data?.data);
     const budgets = await getBudget();
@@ -155,73 +163,109 @@ const List = () => {
             </button>
           </div>
         </div>
-        <ul
-          role="list"
-          className="mt-3 grid grid-cols-1 content-start gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 h-[550px] overflow-x-scroll"
-        >
-          {cashflows?.data?.length == 0 && (
-            <EmptyState
-              title="Arus keuangan anda kosong"
-              description="Catat semua pengeluaran anda, better cash flow better life"
-              button={
-                <button
-                  type="button"
-                  className="inline-flex items-center rounded-lg border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  value="Tambah"
-                  onClick={() => {
-                    toggleActive(true);
-                    setEditData(undefined);
-                  }}
-                >
-                  <PlusIcon className="h-5" /> Catat arus kas keuangan anda
-                </button>
-              }
-            />
-          )}
-          {cashflows?.data?.map((cashflow, index) => (
-            <CardList
-              key={index}
-              title={
-                <div className="flex justify-between">
-                  <p>{cashflow.budget_name}</p>
-                  {cashflow.type == 1 ? (
-                    <p className="text-red-600">
-                      -{formatMoney(cashflow.nominal)}
-                    </p>
-                  ) : (
-                    <p className="text-green-600">
-                      +{formatMoney(cashflow.nominal)}
-                    </p>
-                  )}
-                </div>
-              }
-              icon={<CurrencyDollarIcon className="w-6" />}
-              details={[
-                cashflow.date,
-                <span className="flex">
-                  {cashflow.account_name}{" "}
-                  {cashflow.type == 3 ? (
-                    <>
-                      {" "}
-                      <ArrowRightIcon className="h-4 mx-1" />{" "}
-                      {cashflow.account_target_name}
-                    </>
-                  ) : (
-                    ""
-                  )}
-                </span>,
-                <span className="italic break-words">{cashflow.notes}</span>,
-              ]}
-              onClick={async () => {
-                const cashflowData = await detail(cashflow.id);
-                toggleActive(true);
-                setEditData(cashflowData.data.data);
-                setErrors(undefined);
-              }}
-            />
-          ))}
-        </ul>
+        {cashflowsData?.length == 0 && (
+          <EmptyState
+            title="Arus keuangan anda kosong"
+            description="Catat semua pengeluaran anda, better cash flow better life"
+            button={
+              <button
+                type="button"
+                className="inline-flex items-center rounded-lg border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                value="Tambah"
+                onClick={() => {
+                  toggleActive(true);
+                  setEditData(undefined);
+                }}
+              >
+                <PlusIcon className="h-5" /> Catat arus kas keuangan anda
+              </button>
+            }
+          />
+        )}
       </div>
+      <InfiniteScroll
+        className="mt-3 grid grid-cols-1 content-start gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4"
+        next={async () => {
+          let updateScroll = scroll + 20;
+          const cashflows = await get({
+            offset: updateScroll,
+          });
+          let cashflowMapped: MCashflow[] = [];
+          cashflowMapped.push(
+            ...(cashflowsData ?? []),
+            ...(cashflows.data.data?.data ?? []),
+          );
+          setCashflowsData(cashflowMapped);
+          setScroll(updateScroll);
+          console.log(
+            cashflowsData?.length,
+            cashflows.data.data?.total_transactions,
+          );
+          if (
+            cashflowsData?.length != undefined &&
+            cashflows?.data?.data?.total_transactions != undefined
+          ) {
+            if (
+              cashflowsData?.length >= cashflows?.data?.data?.total_transactions
+            ) {
+              setHasMore(false);
+            }
+          }
+        }}
+        hasMore={hasMore}
+        height="550px"
+        dataLength={cashflowsData?.length ?? 0}
+        loader={<h4 className="text-center col-span-4">Loading...</h4>}
+        endMessage={
+          <p className="text-center col-span-4">
+            <b className="text-gray-600">Data sudah tampil semua</b>
+          </p>
+        }
+      >
+        {cashflowsData?.map((cashflow, index) => (
+          <CardList
+            key={index}
+            title={
+              <div className="flex justify-between">
+                <p>{cashflow.budget_name}</p>
+                {cashflow.type == 1 ? (
+                  <p className="text-red-600">
+                    -{formatMoney(cashflow.nominal)}
+                  </p>
+                ) : (
+                  <p className="text-green-600">
+                    +{formatMoney(cashflow.nominal)}
+                  </p>
+                )}
+              </div>
+            }
+            icon={<CurrencyDollarIcon className="w-6" />}
+            details={[
+              cashflow.date,
+              <span className="flex">
+                {cashflow.account_name}{" "}
+                {cashflow.type == 3 ? (
+                  <>
+                    {" "}
+                    <ArrowRightIcon className="h-4 mx-1" />{" "}
+                    {cashflow.account_target_name}
+                  </>
+                ) : (
+                  ""
+                )}
+              </span>,
+              <span className="italic break-words">{cashflow.notes}</span>,
+            ]}
+            onClick={async () => {
+              const cashflowData = await detail(cashflow.id);
+              toggleActive(true);
+              setEditData(cashflowData.data.data);
+              setErrors(undefined);
+            }}
+          />
+        ))}
+      </InfiniteScroll>
+
       <Modal
         open={isOpenFilter}
         setOpen={(status) => toggleFilterActive(status)}

@@ -8,7 +8,7 @@ use App\Http\Controllers\GoalController;
 use App\Http\Controllers\GoalDetailController;
 use App\Http\Controllers\MonthController;
 use App\Http\Controllers\SettingFilterController;
-use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\Api\TransactionController;
 use App\Models\Account;
 use App\Models\Budget;
 use App\Models\Month;
