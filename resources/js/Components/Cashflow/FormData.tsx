@@ -40,7 +40,7 @@ const FormData = (props: IFormData) => {
   return (
     <Formik initialValues={initialValues} onSubmit={props.onSubmit}>
       {(formik) => (
-        <form onSubmit={formik.handleSubmit} className="space-y-4">
+        <form className="space-y-4" onSubmit={formik.handleSubmit} autoComplete="off">
           <Price
             label="Nominal"
             formik={formik}

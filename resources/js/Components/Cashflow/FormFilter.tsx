@@ -15,7 +15,7 @@ const FormFilter = (props: IFormFilter) => {
   return (
     <Formik initialValues={props.initialFilter ?? {}} onSubmit={props.onSubmit}>
       {(formik) => (
-        <form onSubmit={formik.handleSubmit} className="space-y-4">
+        <form className="space-y-4" onSubmit={formik.handleSubmit} autoComplete="off">
           <div>
             <label
               htmlFor="plan"

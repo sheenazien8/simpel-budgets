@@ -20,7 +20,7 @@ const FormCopy = (props: IFormCopy) => {
   return (
     <Formik initialValues={{}} onSubmit={props.onSubmit}>
       {(formik) => (
-        <form onSubmit={formik.handleSubmit} className="space-y-4">
+        <form className="space-y-4" onSubmit={formik.handleSubmit} autoComplete="off">
           <Select
             label="Nama Bulan"
             formik={formik}

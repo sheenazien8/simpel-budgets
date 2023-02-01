@@ -39,7 +39,7 @@ const FormData = (props: IFormData) => {
       onSubmit={props.onSubmit}
     >
       {(formik) => (
-        <form className="space-y-4" onSubmit={formik.handleSubmit}>
+        <form className="space-y-4" onSubmit={formik.handleSubmit} autoComplete="off">
           <Select
           value={formik.values.name}
             options={months}
