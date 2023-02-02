@@ -368,7 +368,7 @@ const Budget = (props: IRecord) => {
   return (
     <Layout
         title="Anggaran"
-        description={<p className="flex items-center gap-x-2 bg-yellow-500 text-white p-1 border rounded-md"><ExclamationTriangleIcon className="w-6" />Anggaran yang nampil itu bulan sekarang jika tidak difilter!</p>}
+        description={<p className="flex items-center gap-x-2 bg-yellow-500 text-white p-1 border rounded-md"><ExclamationTriangleIcon className="w-6" />Anggaran yang nampil itu di bulan sekarang jika tidak difilter!</p>}
     >
       <List {...props} />
     </Layout>
