@@ -184,7 +184,7 @@ const List = () => {
         )}
       </div>
       <InfiniteScroll
-        className="mt-3 grid grid-cols-1 content-start gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4"
+        className="mt-3 grid content-start grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4"
         next={async () => {
           let updateScroll = scroll + 20;
           const cashflows = await get({
@@ -215,9 +215,9 @@ const List = () => {
         hasMore={hasMore}
         height="550px"
         dataLength={cashflowsData?.length ?? 0}
-        loader={<h4 className="text-center col-span-4">Loading...</h4>}
+        loader={<h4 className="text-center lg:col-span-4 sm:col-span-2">Loading...</h4>}
         endMessage={
-          <p className="text-center col-span-4">
+          <p className="text-center lg:col-span-4 sm:col-span-2">
             <b className="text-gray-600">Data sudah tampil semua</b>
           </p>
         }
