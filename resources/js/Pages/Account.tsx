@@ -166,6 +166,7 @@ const List = () => {
                 formik={formik}
                 name="hide"
                 value={formik.values.hide}
+                checked={Number(editData?.hide) == 1}
                 label="Sembunyikan saldo"
               />
               <div>

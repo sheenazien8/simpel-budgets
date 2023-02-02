@@ -9,10 +9,11 @@ interface IToggle<t = any> {
   name: string;
   errors?: string | undefined | number;
   value: any;
+  checked: boolean;
 }
 
 const Toggle = (props: IToggle) => {
-  const [enabled, setEnabled] = useState(props.value);
+  const [enabled, setEnabled] = useState(props.checked);
   const ref = createRef<HTMLInputElement>();
   const setCheckendEnabled = useCallback(() => {
     ref.current?.focus();
@@ -21,11 +22,11 @@ const Toggle = (props: IToggle) => {
   }, [ref]);
 
   useEffect(() => {
-    if (props.value == 1) {
+    if (Number(props.checked) == 1) {
       ref.current?.focus();
       ref.current?.click();
     }
-  }, [props.value]);
+  }, [props.checked]);
 
   return (
     <>
