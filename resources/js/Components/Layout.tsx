@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useLayoutEffect, useState } from "react";
 import {
   Bars3Icon,
   BellIcon,
@@ -12,6 +12,7 @@ import ToasterCustom from "./ToasterCustom";
 import { classNames } from "../utils/helper";
 import { Inertia } from "@inertiajs/inertia";
 import { MInfo } from "../models";
+import { useInfoAction } from "../actions/info";
 
 interface ILayout {
   children: JSX.Element;
@@ -20,8 +21,12 @@ interface ILayout {
 }
 
 const Layout = (props: ILayout) => {
-  const { warning } = usePage().props;
-  let info = warning as MInfo;
+  const { get } = useInfoAction();
+  const [info, setInfo] = useState<MInfo>();
+  const load = async () => {
+    const data = await get();
+    setInfo(data.data.data);
+  };
   const { logout } = useAuthAction();
   if (!localStorage.getItem("token")) {
     Inertia.visit("login");
@@ -41,6 +46,9 @@ const Layout = (props: ILayout) => {
       },
     },
   ];
+  useLayoutEffect(() => {
+    load();
+  }, []);
   const { url } = usePage();
   return (
     <>
@@ -261,7 +269,9 @@ const Layout = (props: ILayout) => {
               <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900 mb-3">
                 {props.title}
               </h1>
-              {props.description && <p className="text-gray-600 text-[14px]">{props.description}</p>}
+              {props.description && (
+                <p className="text-gray-600 text-[14px]">{props.description}</p>
+              )}
             </div>
           </header>
           <main>

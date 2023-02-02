@@ -21,12 +21,10 @@ import {
 import {
   CurrencyDollarIcon,
   AdjustmentsHorizontalIcon,
-  ClipboardDocumentIcon,
-  CogIcon,
   PlusIcon,
   ClipboardDocumentListIcon,
-  TrashIcon,
   Cog6ToothIcon,
+  ExclamationTriangleIcon,
 } from "@heroicons/react/24/solid";
 import { EmptyState } from "../Components/EmptyState";
 import FormData from "../Components/Bugets/FormData";
@@ -368,7 +366,10 @@ const List = () => {
 
 const Budget = (props: IRecord) => {
   return (
-    <Layout title="Anggaran">
+    <Layout
+        title="Anggaran"
+        description={<p className="flex items-center gap-x-2 bg-yellow-500 text-white p-1 border rounded-md"><ExclamationTriangleIcon className="w-6" />Anggaran yang nampil itu bulan sekarang jika tidak difilter!</p>}
+    >
       <List {...props} />
     </Layout>
   );

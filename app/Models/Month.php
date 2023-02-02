@@ -21,6 +21,16 @@ class Month extends Model
 
     protected $guarded = [];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->user_id = auth()->id();
+            $model->status = true;
+        });
+    }
+
     public function budgets(): HasMany
     {
         return $this->hasMany(Budget::class)->withSum("transactions", "nominal");
