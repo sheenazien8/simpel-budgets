@@ -121,6 +121,10 @@ const List = () => {
     setBudgets(budgets.data.data);
     toggleFilterActive(false);
     toggleActive(false);
+    console.log();
+    if (cashflows.data.data?.data.length == (cashflowsData?.length ?? 0)) {
+      setHasMore(false);
+    }
   };
 
   useEffect(() => {
@@ -163,25 +167,6 @@ const List = () => {
             </button>
           </div>
         </div>
-        {cashflowsData?.length == 0 && (
-          <EmptyState
-            title="Arus keuangan anda kosong"
-            description="Catat semua pengeluaran anda, better cash flow better life"
-            button={
-              <button
-                type="button"
-                className="inline-flex items-center rounded-lg border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                value="Tambah"
-                onClick={() => {
-                  toggleActive(true);
-                  setEditData(undefined);
-                }}
-              >
-                <PlusIcon className="h-5" /> Catat arus kas keuangan anda
-              </button>
-            }
-          />
-        )}
       </div>
       <InfiniteScroll
         className="mt-3 grid content-start grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4"
@@ -197,10 +182,6 @@ const List = () => {
           );
           setCashflowsData(cashflowMapped);
           setScroll(updateScroll);
-          console.log(
-            cashflowsData?.length,
-            cashflows.data.data?.total_transactions,
-          );
           if (
             cashflowsData?.length != undefined &&
             cashflows?.data?.data?.total_transactions != undefined
@@ -215,11 +196,35 @@ const List = () => {
         hasMore={hasMore}
         height="550px"
         dataLength={cashflowsData?.length ?? 0}
-        loader={<h4 className="text-center lg:col-span-4 sm:col-span-2">Loading...</h4>}
+        loader={
+          <h4 className="text-center lg:col-span-4 sm:col-span-2">
+            Loading...
+          </h4>
+        }
         endMessage={
-          <p className="text-center lg:col-span-4 sm:col-span-2">
-            <b className="text-gray-600">Data sudah tampil semua</b>
-          </p>
+          (cashflowsData?.length ?? 0) > 0 ? (
+            <p className="text-center lg:col-span-4 sm:col-span-2">
+              <b className="text-gray-600">Data sudah tampil semua</b>
+            </p>
+          ) : (
+            <EmptyState
+              title="Arus keuangan anda kosong"
+              description="Catat semua pengeluaran anda, better cash flow better life"
+              button={
+                <button
+                  type="button"
+                  className="inline-flex items-center rounded-lg border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  value="Tambah"
+                  onClick={() => {
+                    toggleActive(true);
+                    setEditData(undefined);
+                  }}
+                >
+                  <PlusIcon className="h-5" /> Catat arus kas keuangan anda
+                </button>
+              }
+            />
+          )
         }
       >
         {cashflowsData?.map((cashflow, index) => (
