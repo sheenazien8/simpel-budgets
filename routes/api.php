@@ -33,13 +33,13 @@ Route::group([
         return response()->json([
             'data' => [
                 'month' => Month::where("user_id", auth()->id())
-                    ->count() == 0 ? "Anda belum membuat daftar bulan untuk anggaran anda" : "",
+                    ->count() == 0 ? "Anda belum membuat <a href='/months' class='underline'>daftar bulan</a> untuk anggaran anda" : "",
                 'account' => Account::where("user_id", auth()->id())
-                    ->count() == 0 ? "Anda belum membuat daftar akun untuk cashflow anda" : "",
+                    ->count() == 0 ? "Anda belum membuat <a href='/accounts' class='underline'>daftar akun</a> untuk cashflow anda" : "",
                 'budget' => Budget::where("user_id", auth()->id())
-                    ->count() == 0 ? "Anda belum membuat satupun budget untuk rencana anggaran anda" : "",
+                    ->count() == 0 ? "Anda belum membuat satupun <a href='/budgets' class='underline'>budget untuk rencana anggaran</a> anda" : "",
                 'cashflow' => Transaction::where("user_id", auth()->id())
-                    ->count() == 0 ? "Yuk catat pengeluaran dan pemasukan anda" : "",
+                    ->count() == 0 ? "Yuk catat <a href='/cashflow' class='underline'>pengeluaran dan pemasukan</a> anda" : "",
             ]
         ]);
     });

@@ -253,12 +253,16 @@ const Layout = (props: ILayout) => {
                         Sekedar Info
                       </h3>
                       <div className="mt-2 text-sm text-yellow-700">
-                        <p>
-                          {info?.month ||
-                            info?.budget ||
-                            info?.account ||
-                            info?.cashflow}
-                        </p>
+                        <p
+                          dangerouslySetInnerHTML={{
+                            __html: String(
+                              info?.month ||
+                                info?.budget ||
+                                info?.account ||
+                                info?.cashflow,
+                            ),
+                          }}
+                        ></p>
                       </div>
                     </div>
                   </div>
