@@ -31,7 +31,7 @@ class TransactionController extends Controller
                         ->filter($request)
                         // ->orWhereIn("budget_id", $budgetIds)
                         ->whereMonth("date", now()->format("m"))
-                        ->whereYear("date", $month->year)
+                        ->whereYear("date", $month?->year)
                         ->where('type', 1)->first()?->total;
         $total_transactions = Transaction::byCurrentUser()->selectRaw("count(id) as total")->first()->total;
         $transactions = Transaction::query()
