@@ -13,6 +13,7 @@ import { classNames } from "../utils/helper";
 import { Inertia } from "@inertiajs/inertia";
 import { MInfo } from "../models";
 import { useInfoAction } from "../actions/info";
+import { BanknotesIcon, BuildingLibraryIcon, CalendarIcon, CurrencyDollarIcon, DocumentIcon, HomeIcon } from "@heroicons/react/24/solid";
 
 interface ILayout {
   children: JSX.Element;
@@ -54,7 +55,7 @@ const Layout = (props: ILayout) => {
     <>
       <div className="min-h-screen">
         <div className="">
-          <Disclosure as="nav" className="bg-white shadow-sm fixed w-screen">
+          <Disclosure as="nav" className="bg-white shadow-md fixed w-screen">
             {({ open }: any) => (
               <>
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -286,6 +287,26 @@ const Layout = (props: ILayout) => {
             </div>
           </main>
         </div>
+        <section
+          id="bottom-bar"
+          className="bg-white fixed w-full bottom-0 h-14 border border-gray-300 shadow-2xl flex"
+        >
+          <Link className="flex-1 flex items-center justify-center bg-gray-100 border-r border-gray-300 cursor-pointer" href="/dashboard" as="div">
+            <HomeIcon className="h-6 w-6 text-gray-500" aria-hidden="true" />
+          </Link>
+          <Link className="flex-1 flex items-center justify-center cursor-pointer" href="/months" as="div">
+            <CalendarIcon className="h-6 w-6 text-gray-500" aria-hidden="true" />
+          </Link>
+          <Link className="flex-1 flex items-center justify-center cursor-pointer" href="/cashflow" as="div">
+            <BanknotesIcon className="h-6 w-6 text-gray-500" aria-hidden="true" />
+          </Link>
+          <Link className="flex-1 flex items-center justify-center cursor-pointer" href="/budgets" as="div">
+            <CurrencyDollarIcon className="h-6 w-6 text-gray-500" aria-hidden="true" />
+          </Link>
+          <Link className="flex-1 flex items-center justify-center cursor-pointer" href="/accounts" as="div">
+            <BuildingLibraryIcon className="h-6 w-6 text-gray-500" aria-hidden="true" />
+          </Link>
+        </section>
       </div>
       <ToasterCustom />
     </>
