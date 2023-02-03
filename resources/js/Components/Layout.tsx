@@ -234,39 +234,39 @@ const Layout = (props: ILayout) => {
         </div>
 
         <div className="py-10">
-          {(info as MInfo)?.month ||
-          info?.budget ||
-          info?.account ||
-          info?.cashflow ? (
-            <div className="px-2">
-              <div className="rounded-md bg-yellow-50 p-4">
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <ExclamationTriangleIcon
-                      className="h-5 w-5 text-yellow-400"
-                      aria-hidden="true"
-                    />
-                  </div>
-                  <div className="ml-3">
-                    <h3 className="text-sm font-medium text-yellow-800">
-                      Sekedar Info
-                    </h3>
-                    <div className="mt-2 text-sm text-yellow-700">
-                      <p>
-                        {info?.month ||
-                          info?.budget ||
-                          info?.account ||
-                          info?.cashflow}
-                      </p>
+          <header className="mt-10">
+            {(info as MInfo)?.month ||
+            info?.budget ||
+            info?.account ||
+            info?.cashflow ? (
+              <div className="px-2">
+                <div className="rounded-md bg-yellow-50 p-4">
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <ExclamationTriangleIcon
+                        className="h-5 w-5 text-yellow-400"
+                        aria-hidden="true"
+                      />
+                    </div>
+                    <div className="ml-3">
+                      <h3 className="text-sm font-medium text-yellow-800">
+                        Sekedar Info
+                      </h3>
+                      <div className="mt-2 text-sm text-yellow-700">
+                        <p>
+                          {info?.month ||
+                            info?.budget ||
+                            info?.account ||
+                            info?.cashflow}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ) : (
-            ""
-          )}
-          <header className="mt-10">
+            ) : (
+              ""
+            )}
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
               <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900 mb-3">
                 {props.title}
