@@ -13,7 +13,14 @@ import { classNames } from "../utils/helper";
 import { Inertia } from "@inertiajs/inertia";
 import { MInfo } from "../models";
 import { useInfoAction } from "../actions/info";
-import { BanknotesIcon, BuildingLibraryIcon, CalendarIcon, CurrencyDollarIcon, DocumentIcon, HomeIcon } from "@heroicons/react/24/solid";
+import {
+  BanknotesIcon,
+  BuildingLibraryIcon,
+  CalendarIcon,
+  CurrencyDollarIcon,
+  DocumentIcon,
+  HomeIcon,
+} from "@heroicons/react/24/solid";
 
 interface ILayout {
   children: JSX.Element;
@@ -33,19 +40,42 @@ const Layout = (props: ILayout) => {
     Inertia.visit("login");
   }
   const navigation = [
-    { name: "Dashboard", href: "/dashboard" },
-    { name: "Bulan", href: "/months" },
-    { name: "Anggaran", href: "/budgets" },
-    { name: "Akun", href: "/accounts" },
-    { name: "Cash flow", href: "/cashflow" },
-    { name: "Tujuan", href: "/goals" },
     {
-      name: "Logout",
-      href: "",
-      onClick: async () => {
-        await logout();
-      },
+      name: "Dashboard",
+      href: "/dashboard",
+      icon: <HomeIcon className="h-6 w-6 text-gray-500" />,
+      toolbar: true,
     },
+    {
+      name: "Bulan",
+      href: "/months",
+      icon: <CalendarIcon className="h-6 w-6 text-gray-500" />,
+      toolbar: true,
+    },
+    {
+      name: "Cash flow",
+      href: "/cashflow",
+      icon: <BanknotesIcon className="h-6 w-6 text-gray-500" />,
+      toolbar: true,
+    },
+    {
+      name: "Anggaran",
+      href: "/budgets",
+      icon: <CurrencyDollarIcon className="h-6 w-6 text-gray-500" />,
+      toolbar: true,
+    },
+    {
+      name: "Akun",
+      href: "/accounts",
+      icon: <BuildingLibraryIcon className="h-6 w-6 text-gray-500" />,
+      toolbar: true,
+    },
+    {
+      name: "Tujuan",
+      href: "/goals",
+      icon: <DocumentIcon className="h-6 w-6 text-gray-500" />,
+      toolbar: false,
+    }
   ];
   useLayoutEffect(() => {
     load();
@@ -56,9 +86,9 @@ const Layout = (props: ILayout) => {
       <div className="min-h-screen">
         <div className="">
           <Disclosure as="nav" className="bg-white shadow-md fixed w-screen">
-            {({ open }: any) => (
+            {() => (
               <>
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="mx-auto px-4 sm:px-6 lg:px-8">
                   <div className="flex h-16 justify-between">
                     <div className="flex">
                       <div className="flex flex-shrink-0 items-center">
@@ -73,120 +103,41 @@ const Layout = (props: ILayout) => {
                           alt="Your Company"
                         />
                       </div>
-                      <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
-                        {navigation.map((item) => (
-                          <Link
-                            href={item.href != "" ? item.href : "#"}
-                            onClick={item.onClick}
-                            key={item.name}
-                            className={classNames(
-                              url.split("?")[0] === item.href.split("?")[0]
-                                ? "border-indigo-500 text-gray-900"
-                                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
-                              "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium",
-                            )}
-                            aria-current={
-                              url.split("?")[0] === item.href.split("?")[0]
-                                ? "page"
-                                : undefined
-                            }
-                          >
-                            {item.name}
-                          </Link>
-                        ))}
-                      </div>
                     </div>
-                    <div className="hidden sm:ml-6 sm:flex sm:items-center">
-                      <button
-                        type="button"
-                        className="rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                      >
-                        <span className="sr-only">View notifications</span>
-                        <BellIcon className="h-6 w-6" aria-hidden="true" />
-                      </button>
-                    </div>
-                    <div className="-mr-2 flex items-center sm:hidden">
+                    <div className="-mr-2 flex items-center">
                       {/* Mobile menu button */}
                       <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                         <span className="sr-only">Open main menu</span>
-                        {open ? (
-                          <XMarkIcon
-                            className="block h-6 w-6"
-                            aria-hidden="true"
-                          />
-                        ) : (
                           <Bars3Icon
                             className="block h-6 w-6"
                             aria-hidden="true"
                           />
-                        )}
                       </Disclosure.Button>
                     </div>
                   </div>
                 </div>
 
-                <Disclosure.Panel className="sm:hidden">
+                <Disclosure.Panel>
                   <div className="space-y-1 pt-2 pb-3">
                     {navigation.map((item) => (
                       <Link
                         href={item.href != "" ? item.href : "#"}
-                        onClick={item.onClick}
                         key={item.name}
                         as="a"
                         className={classNames(
-                          url.split("?")[0] === item.href.split("?")[0]
+                          url.includes(item.href)
                             ? "bg-indigo-50 border-indigo-500 text-indigo-700"
                             : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800",
                           "block pl-3 pr-4 py-2 border-l-4 text-base font-medium",
                         )}
                         aria-current={
-                          url.split("?")[0] === item.href.split("?")[0]
-                            ? "page"
-                            : undefined
+                          url.includes(item.href) ? "page" : undefined
                         }
                       >
                         {item.name}
                       </Link>
                     ))}
                   </div>
-                  {/* <div className="border-t border-gray-200 pt-4 pb-3">
-          <div className="flex items-center px-4">
-          <div className="flex-shrink-0">
-          <img
-          className="h-10 w-10 rounded-full"
-          src={user.imageUrl}
-          alt=""
-          />
-          </div>
-          <div className="ml-3">
-          <div className="text-base font-medium text-gray-800">
-          {user.name}
-          </div>
-          <div className="text-sm font-medium text-gray-500">
-          {user.email}
-          </div>
-          </div>
-          <button
-          type="button"
-          className="ml-auto flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          >
-          <span className="sr-only">View notifications</span>
-          <BellIcon className="h-6 w-6" aria-hidden="true" />
-          </button>
-          </div>
-          <div className="mt-3 space-y-1">
-          {userNavigation.map((item) => (
-          <Disclosure.Button
-          key={item.name}
-          as="a"
-          href={item.href}
-          className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
-          >
-          {item.name}
-          </Disclosure.Button>
-          ))}
-          </div>
-          </div> */}
                 </Disclosure.Panel>
               </>
             )}
@@ -250,21 +201,21 @@ const Layout = (props: ILayout) => {
           id="bottom-bar"
           className="bg-white fixed w-full bottom-0 h-14 border border-gray-300 shadow-2xl flex"
         >
-          <Link className="flex-1 flex items-center justify-center bg-gray-100 border-r border-gray-300 cursor-pointer" href="/dashboard" as="div">
-            <HomeIcon className="h-6 w-6 text-gray-500" aria-hidden="true" />
-          </Link>
-          <Link className="flex-1 flex items-center justify-center cursor-pointer" href="/months" as="div">
-            <CalendarIcon className="h-6 w-6 text-gray-500" aria-hidden="true" />
-          </Link>
-          <Link className="flex-1 flex items-center justify-center cursor-pointer" href="/cashflow" as="div">
-            <BanknotesIcon className="h-6 w-6 text-gray-500" aria-hidden="true" />
-          </Link>
-          <Link className="flex-1 flex items-center justify-center cursor-pointer" href="/budgets" as="div">
-            <CurrencyDollarIcon className="h-6 w-6 text-gray-500" aria-hidden="true" />
-          </Link>
-          <Link className="flex-1 flex items-center justify-center cursor-pointer" href="/accounts" as="div">
-            <BuildingLibraryIcon className="h-6 w-6 text-gray-500" aria-hidden="true" />
-          </Link>
+          {navigation.map(
+            (item) =>
+              item.toolbar && (
+                <Link
+                  className={classNames(
+                    "flex-1 flex items-center justify-center cursor-pointer",
+                    url.includes(item.href) ? "bg-gray-200 border-r" : "",
+                  )}
+                  href={item.href != "" ? item.href : "#"}
+                  as="div"
+                >
+                  {item.icon}
+                </Link>
+              ),
+          )}
         </section>
       </div>
       <ToasterCustom />
