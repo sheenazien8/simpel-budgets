@@ -1,6 +1,7 @@
 import React from "react";
 import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
+import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
 
 interface IModal {
   open: boolean;
@@ -12,7 +13,12 @@ interface IModal {
 const Modal = ({ open, setOpen, title, children }: IModal) => {
   return (
     <Transition.Root show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={setOpen}>
+      <Dialog
+        as="div"
+        className="relative z-10"
+        onClose={() => {
+        }}
+      >
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -38,6 +44,16 @@ const Modal = ({ open, setOpen, title, children }: IModal) => {
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-1/2 w-full sm:p-6">
                 <div>
+                  <div className="absolute top-0 right-0 pt-4 pr-4">
+                    <button
+                      type="button"
+                      className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      onClick={() => setOpen(false)}
+                    >
+                      <span className="sr-only">Close</span>
+                      <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                    </button>
+                  </div>
                   <div className="sm:mt-5">
                     <Dialog.Title
                       as="h3"
