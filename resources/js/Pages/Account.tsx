@@ -8,7 +8,6 @@ import { Formik } from "formik";
 import { MAccount, RAccount } from "../models/account";
 import { useAccountAction } from "../actions";
 import {
-  classNames,
   formatMoney,
   toastProgress,
   useHashRouteToggle,
@@ -18,6 +17,7 @@ import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 import Text from "../Components/Input/Text";
 import Price from "../Components/Input/Price";
 import Toggle from "../Components/Input/Toggle";
+import Button from "../Components/Button";
 
 interface IAccount {}
 
@@ -30,6 +30,8 @@ const List = () => {
   const [editData, setEditData] = useState<MAccount>();
   const [errors, setErrors] = useState<RAccount>();
   const [showSaldo, setShowSaldo] = useState<boolean>(false);
+  const [loadingSubmit, setLoading] = useState<boolean>(false);
+  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
 
   const load = async () => {
     const accounts = await get();
@@ -106,7 +108,11 @@ const List = () => {
               key={index}
               title={account.name}
               icon={<DocumentIcon className="w-6" />}
-              details={[Number(account.hide) == 1 ? "*******" : formatMoney(account.total)]}
+              details={[
+                Number(account.hide) == 1
+                  ? "*******"
+                  : formatMoney(account.total),
+              ]}
               onClick={async () => {
                 const accountData = await detail(account.id);
                 toggleActive(true);
@@ -128,6 +134,7 @@ const List = () => {
         <Formik
           initialValues={editData ?? {}}
           onSubmit={async (values: RAccount) => {
+            setLoading(true);
             let progess: any;
             if (!editData?.id) {
               progess = create(values, setErrors);
@@ -138,10 +145,12 @@ const List = () => {
               progess,
               `${!editData?.id ? "Pembuatan" : "Perubahan"} akun`,
               () => {
+                setLoading(false);
                 toggleActive(false);
                 setUpdated(!updated);
                 setEditData(undefined);
               },
+              () => setLoading(false),
             );
           }}
         >
@@ -169,32 +178,34 @@ const List = () => {
                 checked={Number(editData?.hide) == 1}
                 label="Sembunyikan saldo"
               />
-              <div>
-                <button
-                  type="submit"
-                  className="mt-2 inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm"
-                >
+              <div className="grid grid-cols-1 gap-y-2">
+                <Button loading={loadingSubmit} type="submit" block>
                   Simpan
-                </button>
+                </Button>
                 {editData?.id && (
-                  <button
+                  <Button
+                    loading={loadingDelete}
                     type="button"
-                    className="mt-2 inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:text-sm"
+                    block
+                    color="secondary"
                     onClick={async () => {
+                      setLoadingDelete(true);
                       if (editData?.id != undefined) {
                         toastProgress(
                           destroy(editData?.id),
                           `Menghapus akun`,
                           () => {
+                            setLoadingDelete(false);
                             toggleActive(false);
                             setUpdated(!updated);
                           },
+                          () => setLoadingDelete(false),
                         );
                       }
                     }}
                   >
                     Hapus
-                  </button>
+                  </Button>
                 )}
               </div>
             </form>
