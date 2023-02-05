@@ -14,6 +14,7 @@ import { CalendarIcon } from "@heroicons/react/24/outline";
 import { EmptyState } from "../Components/EmptyState";
 import { Link } from "@inertiajs/inertia-react";
 import FormData from "./../Components/Month/FormData";
+import Button from "../Components/Button";
 
 interface IMonth {}
 
@@ -25,7 +26,12 @@ const List = () => {
   const [errors, setErrors] = useState<RMonth>();
   const [isOpen, toggleActive] = useHashRouteToggle("#opened-modal");
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
+  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+  const [loadingActivate, setLoadingActivate] = useState<boolean>(false);
+
   const onSubmit = async (values: RMonth) => {
+    setLoadingSubmit(true);
     let progress: any;
     if (!editData?.id) {
       progress = create(values, setErrors);
@@ -36,24 +42,29 @@ const List = () => {
       progress,
       `${editData?.id ? "Perubahan" : "Pembuatan"} bulan`,
       () => {
+        setLoadingSubmit(false);
         toggleActive(false);
         setUpdated(!updated);
         setEditData(undefined);
       },
+      () => setLoadingSubmit(false),
     );
   };
 
   const onDelete = async () => {
+    setLoadingDelete(true);
     if (editData?.id != undefined) {
       toastProgress(destroy(editData?.id), "Menghapus bulan", () => {
+        setLoadingDelete(false);
         toggleActive(false);
         setUpdated(!updated);
         setEditData(undefined);
-      });
+      }, () => setLoadingDelete(false));
     }
   };
 
   const onUpdateStatus = async () => {
+    setLoadingActivate(true);
     if (editData?.id != undefined) {
       toastProgress(
         update(
@@ -67,10 +78,12 @@ const List = () => {
         ),
         "Perubahan status bulan",
         () => {
+            setLoadingActivate(false);
           toggleActive(false);
           setUpdated(!updated);
           setEditData(undefined);
         },
+        () => setLoadingActivate(false),
       );
     }
   };
@@ -95,17 +108,15 @@ const List = () => {
           title="Data bulan kosong"
           description="Rencanakan anggaran bulan anda di bulan tertentu"
           button={
-            <button
+            <Button
               type="button"
-              className="inline-flex items-center rounded-lg border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-              value="Tambah"
               onClick={() => {
                 toggleActive(true);
                 setEditData(undefined);
               }}
             >
               <PlusIcon className="h-5" /> Tambah Bulan
-            </button>
+            </Button>
           }
         />
       )}
@@ -172,7 +183,11 @@ const List = () => {
           role="list"
           className="mt-3 grid grid-cols-1 content-start gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 h-[550px] overflow-x-scroll"
         >
-          {!loading ? Results : <h2 className="text-center my-auto">Loading...</h2>}
+          {!loading ? (
+            Results
+          ) : (
+            <h2 className="text-center my-auto">Loading...</h2>
+          )}
         </ul>
       </div>
       <Modal
@@ -205,6 +220,9 @@ const List = () => {
           onUpdateStatus={onUpdateStatus}
           errors={errors}
           initialValues={editData}
+          loadingSubmit={loadingSubmit}
+          loadingDelete={loadingDelete}
+          loadingActivate={loadingActivate}
         />
       </Modal>
     </>

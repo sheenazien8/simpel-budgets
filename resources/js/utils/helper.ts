@@ -75,6 +75,7 @@ const toastProgress = (
   promis: Promise<any>,
   proses: string,
   succes?: Function,
+  fail?: Function
 ) => {
   toast.promise(promis, {
     loading: `${proses} ....`,
@@ -85,6 +86,9 @@ const toastProgress = (
       return `${proses} sukses`;
     },
     error: (err: any) => {
+      if (fail != undefined) {
+        fail();
+      }
       return `${proses} gagal: ${(err.response?.data as any)?.message}`;
     },
   });

@@ -3,10 +3,11 @@ import {
   EyeIcon,
   EyeSlashIcon,
 } from "@heroicons/react/20/solid";
-import { Link } from "@inertiajs/inertia-react";
 import { Formik } from "formik";
 import React, { useState } from "react";
 import { useAuthAction } from "../actions/auth";
+import Button from "../Components/Button";
+import Text from "../Components/Input/Text";
 import LayoutGuest from "../Components/LayoutGuest";
 import { RRegister } from "../models";
 import { classNames, toastProgress } from "../utils/helper";
@@ -15,6 +16,7 @@ export default function Register() {
   const { register } = useAuthAction();
   const [errors, setErrors] = useState<RRegister>();
   const [showPassword, setShowpassword] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   return (
     <LayoutGuest>
@@ -47,51 +49,25 @@ export default function Register() {
                   password_confirmation: "",
                 }}
                 onSubmit={async (values: RRegister) => {
-                  toastProgress(register(values, setErrors), "Register");
+                  setLoading(true);
+                  toastProgress(
+                    register(values, setErrors),
+                    "Register",
+                    () => setLoading(false),
+                    () => setLoading(false),
+                  );
                 }}
               >
                 {(formik) => (
                   <form className="space-y-6" onSubmit={formik.handleSubmit}>
-                    <div>
-                      <label
-                        htmlFor="year"
-                        className="block text-sm font-medium text-gray-700"
-                      >
-                        Username
-                      </label>
-                      <div className="relative mt-1 rounded-md shadow-sm">
-                        <input
-                          type="text"
-                          name="name"
-                          id="name"
-                          onChange={formik.handleChange}
-                          value={formik.values.name}
-                          className={classNames(
-                            errors?.name
-                              ? "border-red-300 pr-10 text-red-900 placeholder-red-300 focus:border-red-500 focus:outline-none focus:ring-red-500 sm:text-sm"
-                              : "",
-                            "block w-full rounded-md border-gray-300",
-                          )}
-                          aria-invalid="true"
-                        />
-                        {errors?.name && (
-                          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                            <ExclamationCircleIcon
-                              className="h-5 w-5 text-red-500"
-                              aria-hidden="true"
-                            />
-                          </div>
-                        )}
-                      </div>
-                      {errors?.name && (
-                        <p
-                          className="mt-2 text-sm text-red-600"
-                          id="email-error"
-                        >
-                          {errors.name}
-                        </p>
-                      )}
-                    </div>
+                    <Text
+                      name="name"
+                      label="Username"
+                      type="text"
+                      formik={formik}
+                      value={formik.values.name}
+                      errors={errors?.name}
+                    />
 
                     <div>
                       <label
@@ -234,64 +210,25 @@ export default function Register() {
                     </div>
 
                     <div>
-                      <button
-                        type="submit"
-                        className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                      >
+                      <Button type="submit" block loading={loading}>
                         Daftar
-                      </button>
+                      </Button>
                     </div>
                   </form>
                 )}
               </Formik>
               <div className="mt-6 grid grid-cols-1 gap-3">
                 <div>
-                  <Link
+                  <Button
+                    color="plain"
                     href="login"
-                    as="a"
-                    className="inline-flex w-full justify-center rounded-md border border-indigo-300 bg-white py-2 px-4 text-sm font-medium text-indigo-500 shadow-sm hover:bg-indigo-50"
+                    className="hover:bg-indigo-50 border border-indigo-300 text-indigo-500"
                   >
                     <span className="sr-only">Daftar!</span>
                     <p>Login</p>
-                  </Link>
+                  </Button>
                 </div>
               </div>
-
-              {/* <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="bg-white px-2 text-gray-500">
-                    Or continue with
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-6 grid grid-cols-1 gap-3">
-                <div>
-                  <a
-                    href="#"
-                    className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
-                  >
-                    <span className="sr-only">Sign in with Facebook</span>
-                    <svg
-                      className="h-5 w-5"
-                      aria-hidden="true"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M20 10c0-5.523-4.477-10-10-10S0 4.477 0 10c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V10h2.54V7.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V10h2.773l-.443 2.89h-2.33v6.988C16.343 19.128 20 14.991 20 10z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </a>
-                </div>
-              </div>
-            </div> */}
             </div>
           </div>
         </div>

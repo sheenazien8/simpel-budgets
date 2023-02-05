@@ -4,6 +4,7 @@ import { MMonth, RMonth } from "../../models";
 import { classNames } from "../../utils/helper";
 import Select from "../Input/Select";
 import Text from "../Input/Text";
+import Button from "../Button";
 
 interface IFormData {
   onSubmit: (args: RMonth) => void;
@@ -11,6 +12,9 @@ interface IFormData {
   onDelete: () => void;
   onUpdateStatus: () => void;
   initialValues?: MMonth;
+  loadingSubmit: boolean;
+  loadingDelete: boolean;
+  loadingActivate: boolean;
 }
 
 const FormData = (props: IFormData) => {
@@ -55,36 +59,39 @@ const FormData = (props: IFormData) => {
             formik={formik}
             errors={props.errors?.year ?? ""}
           />
-          <div>
-            <button
+          <div className="grid grid-cols-1 gap-y-2">
+            <Button
               type="submit"
-              className="mt-2 inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm"
+              block
+              loading={props.loadingSubmit}
             >
               Simpan
-            </button>
+            </Button>
             {props.initialValues?.id && (
               <>
-                <button
+                <Button
                   type="button"
-                  className="mt-2 inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:text-sm"
+                  color="danger"
+                  loading={props.loadingDelete}
                   onClick={props.onDelete}
+                  block
                 >
                   Hapus
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
+                  loading={props.loadingActivate}
                   className={classNames(
                     Number(props.initialValues?.status) == 1
                       ? "bg-red-600 hover:bg-red-700"
                       : "bg-green-600 hover:bg-green-600",
-                    "mt-2 inline-flex w-full justify-center rounded-md border border-transparent px-4 py-2 text-base font-medium text-white shadow-sm  focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:text-sm",
                   )}
                   onClick={props.onUpdateStatus}
                 >
                   {!(Number(props.initialValues?.status) == 0)
                     ? "Deactivate"
                     : "Activate"}
-                </button>
+                </Button>
               </>
             )}
           </div>
