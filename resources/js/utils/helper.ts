@@ -16,7 +16,7 @@ export function formatMoney(number?: number, withSymbol = true) {
     return num?.toLocaleString("IDR", { style: "currency", currency: "IDR" });
   }
 
-  return num.toLocaleString();
+  return num.toLocaleString("IDR");
 }
 
 const encodeQuery = (data: any) => {

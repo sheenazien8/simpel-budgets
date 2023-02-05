@@ -32,7 +32,9 @@ const Price = (props: IPrice) => {
               ? "border-red-300 pr-10 text-red-900 placeholder-red-300 focus:border-red-500 focus:outline-none focus:ring-red-500 sm:text-sm"
               : "",
             "block w-full rounded-md border-gray-300 pl-9 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+            "number-input",
           )}
+          value={formatMoney(props.value, false)}
           onChange={(e) => {
               let plain = e.target.value.replace(/[^0-9]/g, "");
               let value = Number(e.target.value.replace(/[^0-9]/g, ''));
