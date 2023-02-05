@@ -1,12 +1,14 @@
 import { Formik } from "formik";
 import React from "react";
 import { MMonth, RBudget } from "../../models";
+import Button from "../Button";
 import Select from "../Input/Select";
 
 interface IFormCopy {
   onSubmit: (args: RBudget) => void;
   errors?: RBudget;
   months: MMonth[];
+  loadingSubmit: boolean;
 }
 
 const FormCopy = (props: IFormCopy) => {
@@ -30,12 +32,12 @@ const FormCopy = (props: IFormCopy) => {
             options={months}
           />
           <div>
-            <button
+            <Button
               type="submit"
-              className="mt-2 inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm"
+              block
             >
               Simpan
-            </button>
+            </Button>
           </div>
         </form>
       )}

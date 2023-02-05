@@ -1,6 +1,7 @@
 import { Formik } from "formik";
 import React from "react";
 import { FBudget, MMonth } from "../../models";
+import Button from "../Button";
 import Select from "../Input/Select";
 import Text from "../Input/Text";
 
@@ -9,10 +10,14 @@ interface IFormFilter {
   initialFilter?: FBudget;
   onClear: () => void;
   months: MMonth[];
+  loadingSubmit: boolean;
 }
 
 const FormFilter = (props: IFormFilter) => {
-  const months = [{value: "", label: "Clear Bulan"}, { value: "0", label: "Pilih Semua" }].concat(
+  const months = [
+    { value: "", label: "Clear Bulan" },
+    { value: "0", label: "Pilih Semua" },
+  ].concat(
     props.months.map((month) => ({
       value: String(month.id),
       label: `${month.name} - ${month.year}`,
@@ -21,7 +26,11 @@ const FormFilter = (props: IFormFilter) => {
   return (
     <Formik initialValues={props.initialFilter ?? {}} onSubmit={props.onSubmit}>
       {(formik) => (
-        <form className="space-y-4" onSubmit={formik.handleSubmit} autoComplete="off">
+        <form
+          className="space-y-4"
+          onSubmit={formik.handleSubmit}
+          autoComplete="off"
+        >
           <Text
             label={"Rencana"}
             formik={formik}
@@ -35,20 +44,17 @@ const FormFilter = (props: IFormFilter) => {
             name={"month_id"}
             options={months}
           />
-          <div>
-            <button
-              type="submit"
-              className="mt-2 inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm"
-            >
+          <div className="grid grid-cols-1 gap-y-2">
+            <Button block type="submit" loading={props.loadingSubmit}>
               Simpan
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
-              className="mt-2 inline-flex w-full justify-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 sm:text-sm"
+              color="secondary"
               onClick={props.onClear}
             >
               Clear Filter
-            </button>
+            </Button>
           </div>
         </form>
       )}

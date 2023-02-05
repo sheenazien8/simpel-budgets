@@ -31,6 +31,7 @@ import FormData from "../Components/Bugets/FormData";
 import FormFilter from "../Components/Bugets/FormFilter";
 import { Inertia } from "@inertiajs/inertia";
 import FormCopy from "../Components/Bugets/FormCopy";
+import Button from "../Components/Button";
 
 interface IRecord {}
 
@@ -41,18 +42,17 @@ const List = () => {
   const [months, setMonths] = useState<MMonth[]>();
   const [updated, setUpdated] = useState<boolean>(false);
   const [isOpen, toggleActive] = useHashRouteToggle("#opened-modal");
-  const [isSettingFilterOpen, toggleFilterOpen] = useHashRouteToggle("#opened-setting-filter");
   const [isFilterOpen, toggleFilterActive] =
     useHashRouteToggle("#opened-filter");
   const [isMarkCheckboxOpen, toggleMarkOpen] =
     useHashRouteToggle("#opened-checkbox");
-  const [isDeleteOpen, toggleDeleteOpen] =
-    useHashRouteToggle("#deleted-checkbox");
   const [isCopyOpen, toggleCopyOpen] = useState(false);
   const [filter, setFilter] = useState<FBudget>();
   const [editData, setEditData] = useState<MBudget>();
   const [errors, setErrors] = useState<RBudget>();
   const [checkedsId, setCheckedsId] = useState<number[]>([]);
+  const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
+  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
 
   const load = async () => {
     const params = resolveQueryParameter(location.search);
@@ -75,6 +75,7 @@ const List = () => {
   };
 
   const onSubmit = async (values: RBudget) => {
+    setLoadingSubmit(true);
     let progess: any;
     if (!editData?.id) {
       progess = create(values, setErrors);
@@ -85,41 +86,55 @@ const List = () => {
       progess,
       `${!editData?.id ? "Pembuatan" : "Perubahan"} anggaran`,
       () => {
+        setLoadingSubmit(false);
         toggleActive(false);
         setUpdated(!updated);
         setEditData(undefined);
       },
+      () => setLoadingSubmit(false),
     );
   };
 
   const onCopy = async (values: RBudget) => {
+    setLoadingSubmit(true);
     toastProgress(
       copy({ ...values, ids: checkedsId }, setErrors),
       "Menyalin anggaran",
       () => {
+        setLoadingSubmit(false);
         toggleActive(false);
         setUpdated(!updated);
         setEditData(undefined);
         toggleCopyOpen(false);
         toggleMarkOpen(false);
       },
+      () => setLoadingSubmit(false),
     );
   };
 
   const onDelete = async () => {
+    setLoadingDelete(true);
     if (editData?.id != undefined) {
-      toastProgress(destroy(editData?.id), `Menghapus anggaran`, () => {
-        toggleActive(false);
-        setUpdated(!updated);
-        setEditData(undefined);
-      });
+      toastProgress(
+        destroy(editData?.id),
+        `Menghapus anggaran`,
+        () => {
+          setLoadingDelete(false);
+          toggleActive(false);
+          setUpdated(!updated);
+          setEditData(undefined);
+        },
+        () => setLoadingDelete(false),
+      );
     }
   };
 
   const onFilter = async (values: FBudget) => {
+    setLoadingSubmit(true);
     setFilter(values);
     const budgets = await get(values);
     setBudgets(budgets.data.data);
+    toggleFilterActive(false);
     Inertia.visit(`?${encodeQuery(values)}`);
   };
 
@@ -157,49 +172,38 @@ const List = () => {
               {formatMoney(budgets?.total_nominal_budgets)}{" "}
             </span>
           </h2>
-          <div className="overflow-y-scroll h-12 flex items-center gap-x-2" style={{ direction: "rtl" }}>
-            {/* <button
+          <div
+            className="overflow-y-scroll h-12 flex items-center gap-x-2"
+            style={{ direction: "rtl" }}
+          >
+            <Button
               type="button"
-              className="inline-flex items-center rounded-lg border border-transparent bg-red-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-              value="Filter"
-              onClick={() => {
-                toggleDeleteOpen(!isDeleteOpen);
-              }}
-            >
-              <TrashIcon className="h-5" />
-            </button> */}
-            <button
-              type="button"
-              className="inline-flex items-center rounded-lg border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-              value="Tambah"
               onClick={() => {
                 toggleActive(true);
                 setEditData(undefined);
               }}
             >
               <PlusIcon className="h-5" />
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
-              className="inline-flex items-center rounded-lg border border-transparent bg-gray-400 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-              value="Filter"
+              color="secondary"
               onClick={() => {
                 toggleFilterActive(true);
                 setEditData(undefined);
               }}
             >
               <AdjustmentsHorizontalIcon className="h-5" />
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
-              className="inline-flex items-center rounded-lg border border-transparent bg-gray-400 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-              value="Filter"
+              color="secondary"
               onClick={() => {
                 toggleMarkOpen(!isMarkCheckboxOpen);
               }}
             >
               <Cog6ToothIcon className="h-5" />
-            </button>
+            </Button>
           </div>
         </div>
         {isMarkCheckboxOpen && checkedsId.length > 0 && (
@@ -293,7 +297,9 @@ const List = () => {
                 </div>
               )}
               <div
-                className={classNames(isMarkCheckboxOpen ? "w-11/12" : "w-full")}
+                className={classNames(
+                  isMarkCheckboxOpen ? "w-11/12" : "w-full",
+                )}
               >
                 <CardList
                   key={index}
@@ -305,7 +311,8 @@ const List = () => {
                       className={classNames(
                         Number(budget.transactions_sum_nominal) >
                           Number(budget.nominal) && "text-yellow-600",
-                      "break-words")}
+                        "break-words",
+                      )}
                     >
                       {formatMoney(budget.transactions_sum_nominal)} /{" "}
                       {formatMoney(budget.nominal)}
@@ -329,6 +336,7 @@ const List = () => {
         title="Filter"
       >
         <FormFilter
+          loadingSubmit={loadingSubmit}
           onSubmit={onFilter}
           onClear={onClearFilter}
           initialFilter={filter}
@@ -341,6 +349,8 @@ const List = () => {
         title={editData ? "Ubah Anggaran" : "Tambah Anggaran"}
       >
         <FormData
+          loadingSubmit={loadingSubmit}
+          loadingDelete={loadingDelete}
           initialValues={
             editData ?? {
               month_id: filter?.month_id,
@@ -358,7 +368,12 @@ const List = () => {
         setOpen={(status) => toggleCopyOpen(status)}
         title="Pilih bulan untuk menyalin anggaran"
       >
-        <FormCopy onSubmit={onCopy} months={months ?? []} errors={errors} />
+        <FormCopy
+          onSubmit={onCopy}
+          months={months ?? []}
+          errors={errors}
+          loadingSubmit={loadingSubmit}
+        />
       </Modal>
     </>
   );
@@ -367,8 +382,13 @@ const List = () => {
 const Budget = (props: IRecord) => {
   return (
     <Layout
-        title="Anggaran"
-        description={<p className="flex items-center gap-x-2 bg-yellow-500 text-white p-1 border rounded-md"><ExclamationTriangleIcon className="w-6" />Anggaran yang nampil itu di bulan sekarang jika tidak difilter!</p>}
+      title="Anggaran"
+      description={
+        <p className="flex items-center gap-x-2 bg-yellow-500 text-white p-1 border rounded-md">
+          <ExclamationTriangleIcon className="w-6" />
+          Anggaran yang nampil itu di bulan sekarang jika tidak difilter!
+        </p>
+      }
     >
       <List {...props} />
     </Layout>

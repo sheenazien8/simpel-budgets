@@ -29,7 +29,7 @@ const Button = (props: IButton) => {
     props.color === "primary"
       ? "bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500"
       : props.color === "secondary"
-      ? "bg-gray-600 hover:bg-gray-700 focus:ring-gray-500"
+      ? "bg-gray-400 hover:bg-gray-700 focus:ring-gray-500"
       : props.color === "danger"
       ? "bg-red-600 hover:bg-red-700 focus:ring-red-500"
       : props.color === "success"
