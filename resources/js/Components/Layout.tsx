@@ -20,7 +20,9 @@ import {
   CurrencyDollarIcon,
   DocumentIcon,
   HomeIcon,
+  PowerIcon,
 } from "@heroicons/react/24/solid";
+import Button from "./Button";
 
 interface ILayout {
   children: JSX.Element;
@@ -75,7 +77,7 @@ const Layout = (props: ILayout) => {
       href: "/goals",
       icon: <DocumentIcon className="h-6 w-6 text-gray-500" />,
       toolbar: false,
-    }
+    },
   ];
   useLayoutEffect(() => {
     load();
@@ -108,10 +110,10 @@ const Layout = (props: ILayout) => {
                       {/* Mobile menu button */}
                       <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                         <span className="sr-only">Open main menu</span>
-                          <Bars3Icon
-                            className="block h-6 w-6"
-                            aria-hidden="true"
-                          />
+                        <Bars3Icon
+                          className="block h-6 w-6"
+                          aria-hidden="true"
+                        />
                       </Disclosure.Button>
                     </div>
                   </div>
@@ -137,6 +139,13 @@ const Layout = (props: ILayout) => {
                         {item.name}
                       </Link>
                     ))}
+                    <div
+                      className="p-3 shadow-transparent hover:shadow-none text-black flex justify-start w-full cursor-pointer gap-x-2 hover:bg-gray-100"
+                      onClick={() => logout()}
+                    >
+                      <PowerIcon className="h-6 w-6 text-gray-500" />
+                      <p>Logout</p>
+                    </div>
                   </div>
                 </Disclosure.Panel>
               </>
