@@ -1,7 +1,7 @@
 import { ExclamationCircleIcon } from "@heroicons/react/20/solid";
 import { FormikProps } from "formik";
-import React from "react";
-import { classNames } from "../../utils/helper";
+import React, { createRef } from "react";
+import { classNames, formatMoney } from "../../utils/helper";
 
 interface IPrice<t = any> {
   label: string | JSX.Element;
@@ -11,6 +11,7 @@ interface IPrice<t = any> {
   value: any;
 }
 const Price = (props: IPrice) => {
+  const ref = createRef<HTMLInputElement>();
   return (
     <div>
       <label
@@ -24,7 +25,27 @@ const Price = (props: IPrice) => {
           <span className="text-gray-500 sm:text-sm">Rp.</span>
         </div>
         <input
-          type="number"
+          type="text"
+          id={`${props.name}-price-id`}
+          className={classNames(
+            props.errors
+              ? "border-red-300 pr-10 text-red-900 placeholder-red-300 focus:border-red-500 focus:outline-none focus:ring-red-500 sm:text-sm"
+              : "",
+            "block w-full rounded-md border-gray-300 pl-9 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
+          )}
+          onChange={(e) => {
+              let plain = e.target.value.replace(/[^0-9]/g, "");
+              let value = Number(e.target.value.replace(/[^0-9]/g, ''));
+              e.target.value = formatMoney(value, false);
+              //e.target.value = formatMoney(Number(e.target.value), false);
+              props.formik.setFieldValue(props.name, plain);
+          }}
+          placeholder="0.00"
+          aria-describedby="price-currency"
+        />
+        <input
+          ref={ref}
+          type="hidden"
           name={props.name}
           id={`${props.name}-id`}
           className={classNames(
@@ -34,7 +55,7 @@ const Price = (props: IPrice) => {
             "block w-full rounded-md border-gray-300 pl-9 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm",
           )}
           onChange={props.formik.handleChange}
-          value={props.value}
+          value={formatMoney(props.value)}
           placeholder="0.00"
           aria-describedby="price-currency"
         />

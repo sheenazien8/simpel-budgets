@@ -6,14 +6,17 @@ export function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export function formatMoney(number?: number) {
+export function formatMoney(number?: number, withSymbol = true) {
   if (number == undefined) {
     number = 0;
   }
 
   let num = new Number(number);
+  if (withSymbol) {
+    return num?.toLocaleString("IDR", { style: "currency", currency: "IDR" });
+  }
 
-  return num?.toLocaleString("IDR", { style: "currency", currency: "IDR" });
+  return num.toLocaleString();
 }
 
 const encodeQuery = (data: any) => {
