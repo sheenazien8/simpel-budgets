@@ -121,7 +121,6 @@ const List = () => {
     setBudgets(budgets.data.data);
     toggleFilterActive(false);
     toggleActive(false);
-    console.log();
     if (cashflows.data.data?.data.length == (cashflowsData?.length ?? 0)) {
       setHasMore(false);
     }

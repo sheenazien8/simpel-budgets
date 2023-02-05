@@ -152,7 +152,6 @@ const List = () => {
   }, [updated]);
 
   useEffect(() => {
-    console.log(checkedsId);
   }, [checkedsId]);
 
   useEffect(() => {
