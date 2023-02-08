@@ -1,6 +1,7 @@
 interface ResponseGetMCashflow {
     data: MCashflow[],
-    transaction_sum_nominal: number;
+    transaction_sum_nominal_expense: number;
+    transaction_sum_nominal_income: number;
     total_transactions: number;
 }
 

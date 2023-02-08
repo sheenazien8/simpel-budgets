@@ -32,6 +32,13 @@ import FormData from "./../Components/Cashflow/FormData";
 import FormFilter from "./../Components/Cashflow/FormFilter";
 import { Inertia } from "@inertiajs/inertia";
 import InfiniteScroll from "react-infinite-scroll-component";
+import {
+  ArrowLeftOnRectangleIcon,
+  ArrowRightOnRectangleIcon,
+  ArrowsRightLeftIcon,
+  MinusSmallIcon,
+  PlusSmallIcon,
+} from "@heroicons/react/24/solid";
 
 interface IRecord {}
 
@@ -135,11 +142,19 @@ const List = () => {
       <div>
         <div className="flex justify-between items-center">
           <h2 className="text-sm font-medium text-gray-500">
-            Total pengeluaran bulan ini{" "}
-            <span className="font-bold">
-              {" "}
-              {formatMoney(cashflows?.transaction_sum_nominal)}{" "}
-            </span>
+            Bulan ini{" "}
+            <p>
+              <PlusSmallIcon className="inline-block w-4 h-4 text-green-500" />{" "}
+              <span className="font-bold">
+                {formatMoney(cashflows?.transaction_sum_nominal_income)}{" "}
+              </span>
+            </p>
+            <p>
+              <MinusSmallIcon className="inline-block w-4 h-4 text-red-500" />{" "}
+              <span className="font-bold">
+                {formatMoney(cashflows?.transaction_sum_nominal_expense)}{" "}
+              </span>
+            </p>
           </h2>
           <div className="space-x-2 flex">
             <button
@@ -229,6 +244,7 @@ const List = () => {
         {cashflowsData?.map((cashflow, index) => (
           <CardList
             key={index}
+            bgColor={Number(cashflow.type) == 1 ? "bg-red-600" : "bg-green-600"}
             title={
               <div className="flex justify-between">
                 <p>{cashflow.budget_name}</p>
@@ -243,7 +259,15 @@ const List = () => {
                 )}
               </div>
             }
-            icon={<CurrencyDollarIcon className="w-6" />}
+            icon={
+              Number(cashflow.type) == 1 ? (
+                <ArrowRightOnRectangleIcon className="w-6" />
+              ) : Number(cashflow.type) == 2 ? (
+                <ArrowLeftOnRectangleIcon className="w-6" />
+              ) : (
+                <ArrowsRightLeftIcon className="w-6" />
+              )
+            }
             details={[
               cashflow.date,
               <span className="flex">

@@ -26,13 +26,24 @@ class TransactionController extends Controller
             ->where('year', $currentYear)
             ->first();
         // $budgetIds = Budget::query()->where("month_id", $month->id)->get()->pluck("id")->toArray();
-        $transaction_sum_nominal_current_month = Transaction::selectRaw("SUM(nominal) as total")
-                        ->byCurrentUser()
-                        ->filter($request)
-                        // ->orWhereIn("budget_id", $budgetIds)
-                        ->whereMonth("date", now()->format("m"))
-                        ->whereYear("date", $month?->year)
-                        ->where('type', 1)->first()?->total;
+        $transactionAttrbite = Transaction::query()
+            ->addSelect([
+                "sum_expense_month" => Transaction::selectRaw("SUM(nominal)")
+                    ->byCurrentUser()
+                    ->filter($request)
+                    ->whereMonth("date", now()->format("m"))
+                    ->whereYear("date", $month->year)
+                    ->where('type', 1),
+                "sum_income_month" => Transaction::query()
+                    ->selectRaw("sum(nominal)")
+                    ->byCurrentUser()
+                    ->filter($request)
+                    ->whereMonth("date", now()->format("m"))
+                    ->whereYear("date", $month->year)
+                    ->where('type', 2),
+            ])
+            ->first();
+
         $total_transactions = Transaction::byCurrentUser()->selectRaw("count(id) as total")->first()->total;
         $transactions = Transaction::query()
                 ->selectRaw(DB::raw("IF(type = 1, nominal, 0) as expense"))
@@ -53,7 +64,8 @@ class TransactionController extends Controller
         return response()->json([
             'data' => [
                 'data' => $transactions,
-                'transaction_sum_nominal' => $transaction_sum_nominal_current_month,
+                'transaction_sum_nominal_expense' => $transactionAttrbite->sum_expense_month,
+                'transaction_sum_nominal_income' => $transactionAttrbite->sum_income_month,
                 'total_transactions' => $total_transactions,
             ],
         ]);

@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\TransactionController;
 use App\Models\Goal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
