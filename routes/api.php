@@ -9,6 +9,7 @@ use App\Http\Controllers\GoalDetailController;
 use App\Http\Controllers\MonthController;
 use App\Http\Controllers\SettingFilterController;
 use App\Http\Controllers\Api\TransactionController;
+use App\Http\Controllers\ProfileController;
 use App\Models\Account;
 use App\Models\Budget;
 use App\Models\Month;
@@ -27,7 +28,13 @@ Route::post("/auth/reset-token", [AuthController::class, 'resetToken']);
 Route::group([
     'middleware' => 'auth:api',
 ], function() {
-    Route::post("/auth/logout", [AuthController::class, 'logout']);
+    Route::group([
+        'prefix' => 'auth',
+    ], function() {
+        Route::post("/logout", [AuthController::class, 'logout']);
+        Route::post("/reset-password", [AuthController::class, 'resetPassword']);
+        Route::resource("profiles", ProfileController::class);
+    });
     Route::resource("months", MonthController::class);
     Route::get("info", function() {
         return response()->json([

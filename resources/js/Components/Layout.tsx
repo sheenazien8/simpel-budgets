@@ -2,14 +2,14 @@ import React, { useLayoutEffect, useState } from "react";
 import {
   Bars3Icon,
   BellIcon,
+  PlusCircleIcon,
   ExclamationTriangleIcon,
-  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Disclosure } from "@headlessui/react";
 import { Link, usePage } from "@inertiajs/inertia-react";
 import { useAuthAction } from "../actions/auth";
 import ToasterCustom from "./ToasterCustom";
-import { classNames } from "../utils/helper";
+import { classNames, useHashRouteToggle } from "../utils/helper";
 import { Inertia } from "@inertiajs/inertia";
 import { MInfo } from "../models";
 import { useInfoAction } from "../actions/info";
@@ -21,6 +21,7 @@ import {
   DocumentIcon,
   HomeIcon,
   PowerIcon,
+  UserIcon,
 } from "@heroicons/react/24/solid";
 import Button from "./Button";
 
@@ -33,6 +34,7 @@ interface ILayout {
 const Layout = (props: ILayout) => {
   const { get } = useInfoAction();
   const [info, setInfo] = useState<MInfo>();
+  const [isOpen, toggleActive] = useHashRouteToggle("#opened-sidebar");
   const load = async () => {
     const data = await get();
     setInfo(data.data.data);
@@ -78,6 +80,12 @@ const Layout = (props: ILayout) => {
       icon: <DocumentIcon className="h-6 w-6 text-gray-500" />,
       toolbar: false,
     },
+    {
+      name: "Profil",
+      href: "/profiles",
+      icon: <UserIcon className="h-6 w-6 text-gray-500" />,
+      toolbar: false,
+    },
   ];
   useLayoutEffect(() => {
     load();
@@ -106,7 +114,27 @@ const Layout = (props: ILayout) => {
                         />
                       </div>
                     </div>
-                    <div className="-mr-2 flex items-center">
+                    <div className="-mr-2 flex items-center gap-x-1">
+                      <Button
+                        href="/notifications"
+                        size="sm"
+                        color="plain"
+                        className={classNames(
+                          "inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 border-none shadow-none",
+                          url.includes("notifications") && "bg-gray-100"
+                        )}
+                        onClick={() => {}}
+                      >
+                        <BellIcon className="block h-6 w-6 text-gray-400" />
+                      </Button>
+                      {/* <Button */}
+                      {/*   size="sm" */}
+                      {/*   color="plain" */}
+                      {/*   className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 border-none shadow-none" */}
+                      {/*   onClick={() => {}} */}
+                      {/* > */}
+                      {/*   <PlusCircleIcon className="block h-6 w-6 text-gray-400" /> */}
+                      {/* </Button> */}
                       {/* Mobile menu button */}
                       <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                         <span className="sr-only">Open main menu</span>

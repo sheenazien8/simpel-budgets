@@ -66,26 +66,6 @@ const Home = () => {
   return (
     <Layout title="Dashboard">
       <div className="">
-        {/* <div className="border-gray-200 px-3 py-5 sm:px-6"> */}
-        {/*   <h3 className="font-medium leading-6 text-gray-900 break-words"> */}
-        {/*     Total Saldo:{" "} */}
-        {/*     <span className="font-bold"> */}
-        {/*       {formatMoney(account_total)} */}
-        {/*     </span> */}
-        {/*   </h3> */}
-        {/* </div> */}
-        {/* <div className="grid grid-cols-2"> */}
-        {/*   {accounts?.map((account) => ( */}
-        {/*     <div className="p-1"> */}
-        {/*       <div className="p-3 border rounded-lg border-gray-400"> */}
-        {/*         <p className="text-xs">{account.name}</p> */}
-        {/*         <p className="text-sm font-semibold break-words"> */}
-        {/*           {formatMoney(account.total)} */}
-        {/*         </p> */}
-        {/*       </div> */}
-        {/*     </div> */}
-        {/*   ))} */}
-        {/* </div> */}
       </div>
     </Layout>
   );

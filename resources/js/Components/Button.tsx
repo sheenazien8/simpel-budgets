@@ -35,7 +35,7 @@ const Button = (props: IButton) => {
       : props.color === "success"
       ? "bg-green-600 hover:bg-green-700 focus:ring-green-500"
       : props.color === "warning"
-      ? "bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500"
+      ? "bg-yellow-400 hover:bg-yellow-500 focus:ring-yellow-500"
       : props.color === "plain"
       ? "bg-transparent hover:bg-gray-100 focus:ring-gray-500"
       : "bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500";

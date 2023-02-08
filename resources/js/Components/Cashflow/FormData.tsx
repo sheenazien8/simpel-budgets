@@ -16,7 +16,7 @@ interface IFormData {
 
 const FormData = (props: IFormData) => {
   const type = (props.initialValues as unknown as RCashflow)?.type;
-  const defaultType = type == "" || type == 1 ? 1 : 2;
+  const defaultType = type == "" || type == 1 ? 1 : type == 2 ? 2 : 3;
 
   let initialValues: MCashflow | RCashflow = {
     ...props.initialValues,

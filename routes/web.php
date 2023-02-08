@@ -34,6 +34,8 @@ Route::group([], function() {
     Route::inertia('/accounts', "Account");
     Route::inertia('/cashflow', "Cashflow");
     Route::inertia('/goals', "Goal");
+    Route::inertia('/profiles', "Profile");
+    Route::inertia('/notifications', "Notification");
     Route::get('/goals/{goal}/details', function(Goal $goal) {
         return Inertia::render("GoalDetail", ["goal" => $goal->toArray()]);
     });

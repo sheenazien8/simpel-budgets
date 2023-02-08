@@ -10,6 +10,12 @@ interface RRegister {
   password_confirmation: string;
 }
 
+interface RResetPassword {
+  email: string;
+  password: string;
+  password_confirmation: string;
+}
+
 interface RResetToken {
   email: string;
 }
@@ -20,4 +26,14 @@ interface MJwt {
   expires_in: 3600;
 }
 
-export { RLogin, RRegister, MJwt, RResetToken };
+interface IProfile {
+  id: number;
+  name: string;
+  email: string;
+  email_verified_at: string;
+  joined_at?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export { RLogin, RRegister, MJwt, RResetToken, RResetPassword, IProfile };

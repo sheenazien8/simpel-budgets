@@ -16,6 +16,7 @@ class ResetPasswordRequest extends FormRequest
     {
         return [
             "email" => ["required", "email", "exists:users,email"],
+            "password" => ["required", "confirmed"]
         ];
     }
 
@@ -23,5 +24,19 @@ class ResetPasswordRequest extends FormRequest
     {
         Password::sendResetLink($this->request->all(), function($ok) {
         });
+    }
+
+    public function resetPassword(): void
+    {
+        if ($this->request->has("token")) {
+            $status = Password::reset($this->request->all(), function($user, $password) {
+                $user->password = bcrypt($password);
+                $user->save();
+            });
+        } else {
+            $user = auth()->user();
+            $user->password = bcrypt($this->password);
+            optional($user)->save();
+        }
     }
 }

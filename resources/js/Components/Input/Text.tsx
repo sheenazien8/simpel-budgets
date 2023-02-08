@@ -10,6 +10,7 @@ interface IText<t = any> {
   name: string;
   value: any;
   type?: string;
+  disabled?: boolean;
 }
 const Text = (props: IText) => {
   return (
@@ -22,6 +23,7 @@ const Text = (props: IText) => {
       </label>
       <div className="relative mt-1 rounded-md shadow-sm">
         <input
+          disabled={props.disabled}
           type={props.type ?? "text"}
           name={props.name}
           id={`${props.name}-id`}

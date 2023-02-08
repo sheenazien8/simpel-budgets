@@ -49,4 +49,11 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Success and link has been send to your email!']);
     }
+
+    public function resetPassword(ResetPasswordRequest $request)
+    {
+        $request->resetPassword();
+
+        return response()->json(['message' => 'Sukses mengganti kata sandi']);
+    }
 }
