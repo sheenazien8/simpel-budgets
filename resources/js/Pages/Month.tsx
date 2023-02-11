@@ -54,12 +54,17 @@ const List = () => {
   const onDelete = async () => {
     setLoadingDelete(true);
     if (editData?.id != undefined) {
-      toastProgress(destroy(editData?.id), "Menghapus bulan", () => {
-        setLoadingDelete(false);
-        toggleActive(false);
-        setUpdated(!updated);
-        setEditData(undefined);
-      }, () => setLoadingDelete(false));
+      toastProgress(
+        destroy(editData?.id),
+        "Menghapus bulan",
+        () => {
+          setLoadingDelete(false);
+          toggleActive(false);
+          setUpdated(!updated);
+          setEditData(undefined);
+        },
+        () => setLoadingDelete(false),
+      );
     }
   };
 
@@ -78,7 +83,7 @@ const List = () => {
         ),
         "Perubahan status bulan",
         () => {
-            setLoadingActivate(false);
+          setLoadingActivate(false);
           toggleActive(false);
           setUpdated(!updated);
           setEditData(undefined);
@@ -108,15 +113,17 @@ const List = () => {
           title="Data bulan kosong"
           description="Rencanakan anggaran bulan anda di bulan tertentu"
           button={
-            <Button
-              type="button"
-              onClick={() => {
-                toggleActive(true);
-                setEditData(undefined);
-              }}
-            >
-              <PlusIcon className="h-5" /> Tambah Bulan
-            </Button>
+            <div className="flex justify-center">
+              <Button
+                type="button"
+                onClick={() => {
+                  toggleActive(true);
+                  setEditData(undefined);
+                }}
+              >
+                <PlusIcon className="h-5" /> Tambah Bulan
+              </Button>
+            </div>
           }
         />
       )}

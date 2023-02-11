@@ -3,7 +3,7 @@ import Layout from "../Components/Layout";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import CardList from "../Components/List";
 import Modal from "../Components/Modal";
-import { DocumentIcon, ExclamationCircleIcon } from "@heroicons/react/20/solid";
+import { DocumentIcon } from "@heroicons/react/20/solid";
 import { Formik } from "formik";
 import { MAccount, RAccount } from "../models/account";
 import { useAccountAction } from "../actions";
@@ -89,17 +89,17 @@ const List = () => {
               title="Data akun kosong"
               description="Persiapkan kantung-kantung atau akun saldo anda!"
               button={
-                <button
-                  type="button"
-                  className="inline-flex items-center rounded-lg border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  value="Tambah"
-                  onClick={() => {
-                    toggleActive(true);
-                    setEditData(undefined);
-                  }}
-                >
-                  <PlusIcon className="h-5" /> Tambah Akun
-                </button>
+                <div className="flex justify-center">
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      toggleActive(true);
+                      setEditData(undefined);
+                    }}
+                  >
+                    <PlusIcon className="h-5" /> Tambah Akun
+                  </Button>
+                </div>
               }
             />
           )}

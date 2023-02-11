@@ -151,8 +151,7 @@ const List = () => {
     load();
   }, [updated]);
 
-  useEffect(() => {
-  }, [checkedsId]);
+  useEffect(() => {}, [checkedsId]);
 
   useEffect(() => {
     if (!isMarkCheckboxOpen) {
@@ -257,17 +256,17 @@ const List = () => {
               title="Data anggaran kosong"
               description="Persiapkan anggaran!"
               button={
-                <button
-                  type="button"
-                  className="inline-flex items-center rounded-lg border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  value="Tambah"
-                  onClick={() => {
-                    toggleActive(true);
-                    setEditData(undefined);
-                  }}
-                >
-                  <PlusIcon className="h-5" /> Tambah Anggaran
-                </button>
+                <div className="flex justify-center">
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      toggleActive(true);
+                      setEditData(undefined);
+                    }}
+                  >
+                    <PlusIcon className="h-5" /> Tambah Anggaran
+                  </Button>
+                </div>
               }
             />
           )}
