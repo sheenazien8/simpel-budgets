@@ -33,7 +33,7 @@ interface RGoal {
   reminder_per?: string;
   reminder_day?: string;
   reminder_time?: string;
-  nominal_target?: string;
+  nominal_target?: string | number;
 }
 
 interface RGoalDetail {

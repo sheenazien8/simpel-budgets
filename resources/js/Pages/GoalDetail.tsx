@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Layout from "../Components/Layout";
 import Modal from "../Components/Modal";
 import { useGoalAction, useGoalDetailAction } from "../actions";
-import { MGoal, RGoalDetail } from "../models";
+import { MGoal, RGoal, RGoalDetail } from "../models";
 import {
   formatMoney,
   toastProgress,
@@ -20,6 +20,7 @@ import { Formik } from "formik";
 import Button from "../Components/Button";
 import Price from "../Components/Input/Price";
 import { Inertia } from "@inertiajs/inertia";
+import FormData from "../Components/Goal/FormData";
 
 interface IGoalDetail {
   goal: MGoal;
@@ -27,14 +28,17 @@ interface IGoalDetail {
 
 const GoalDetail = (props: IGoalDetail) => {
   const { get, create, destroy } = useGoalDetailAction();
-  const { destroy: destroyGoal } = useGoalAction();
+  const { destroy: destroyGoal, update: updateGoal } = useGoalAction();
   const [goalDetails, setGoalDetails] = useState<MGoal>();
   const [updated, setUpdated] = useState<boolean>(false);
   const [errors, setErrors] = useState<RGoalDetail>();
+  const [errorsGoal, setErrorsGoal] = useState<RGoal>();
   const [isOpen, toggleActive] = useHashRouteToggle("#opened-modal");
   const [isOpenAciton, toggleAcitonActive] = useHashRouteToggle(
     "#opened-action-option",
   );
+  const [isOpenFormEdit, toggleOpenFormEdit] =
+    useHashRouteToggle("#opened-form-edit");
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
   const [loadingDelete, setLoadingDeleteGoal] = useState<boolean>(false);
@@ -238,7 +242,11 @@ const GoalDetail = (props: IGoalDetail) => {
           title="Aksi"
         >
           <div className="space-y-3">
-            <Button type="button" block>
+            <Button
+              type="button"
+              block
+              onClick={() => toggleOpenFormEdit(true)}
+            >
               Ubah
             </Button>
             <Button
@@ -251,6 +259,39 @@ const GoalDetail = (props: IGoalDetail) => {
               Hapus
             </Button>
           </div>
+        </Modal>
+        <Modal
+          open={isOpenFormEdit}
+          setOpen={(status) => {
+            toggleActive(status);
+            setErrors(undefined);
+          }}
+          title="Rubah Tujuan"
+        >
+          <FormData
+            onSubmit={(values: RGoal) => {
+              setLoadingSubmit(true);
+              toastProgress(
+                updateGoal(props.goal.id, values, setErrorsGoal),
+                `Pembuatan target ${values.title} berhasil`,
+                () => {
+                  toggleOpenFormEdit(false);
+                  setUpdated(!updated);
+                  setLoadingSubmit(false);
+                },
+                () => setLoadingSubmit(false),
+              );
+            }}
+            initialValues={{
+              reminder_per: goalDetails?.reminder_per,
+              reminder_day: goalDetails?.reminder_day,
+              reminder_time: goalDetails?.reminder_time,
+              title: goalDetails?.title,
+              target_date: goalDetails?.target_date,
+              nominal_target: goalDetails?.nominal_target ?? 0,
+            }}
+            loadingSubmit={loadingSubmit}
+          />
         </Modal>
       </>
     </Layout>

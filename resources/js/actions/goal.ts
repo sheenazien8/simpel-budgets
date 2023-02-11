@@ -78,6 +78,7 @@ const useGoalAction = () => {
       throw error;
     }
   };
+
   const update = async (
     id: string | number,
     values: RGoal,
@@ -115,6 +116,7 @@ const useGoalAction = () => {
       throw error;
     }
   };
+
   const destroy = async (
     id: string | number,
   ): Promise<AxiosResponse<ResponseData>> => {
