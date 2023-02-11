@@ -1,35 +1,25 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../Components/Layout";
-import { PlusIcon } from "@heroicons/react/20/solid";
-import CardList from "../Components/List";
 import Modal from "../Components/Modal";
-import { useGoalDetailAction } from "../actions";
-import { MGoal, MGoalDetail, RGoalDetail } from "../models";
+import { useGoalAction, useGoalDetailAction } from "../actions";
+import { MGoal, RGoalDetail } from "../models";
 import {
-  classNames,
   formatMoney,
-  kFormatter,
   toastProgress,
   useHashRouteToggle,
 } from "../utils/helper";
-import { EmptyState } from "../Components/EmptyState";
-import FormData from "./../Components/GoalDetail/FormData";
 import {
-  AcademicCapIcon,
-  BellAlertIcon,
   CalendarIcon,
   CheckCircleIcon,
-  ClockIcon,
-  PencilIcon,
-  PencilSquareIcon,
+  EllipsisVerticalIcon,
   PlusCircleIcon,
   TrashIcon,
-  XCircleIcon,
 } from "@heroicons/react/24/solid";
 import { numify } from "numify";
 import { Formik } from "formik";
 import Button from "../Components/Button";
 import Price from "../Components/Input/Price";
+import { Inertia } from "@inertiajs/inertia";
 
 interface IGoalDetail {
   goal: MGoal;
@@ -37,12 +27,17 @@ interface IGoalDetail {
 
 const GoalDetail = (props: IGoalDetail) => {
   const { get, create, destroy } = useGoalDetailAction();
+  const { destroy: destroyGoal } = useGoalAction();
   const [goalDetails, setGoalDetails] = useState<MGoal>();
   const [updated, setUpdated] = useState<boolean>(false);
   const [errors, setErrors] = useState<RGoalDetail>();
   const [isOpen, toggleActive] = useHashRouteToggle("#opened-modal");
+  const [isOpenAciton, toggleAcitonActive] = useHashRouteToggle(
+    "#opened-action-option",
+  );
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
+  const [loadingDelete, setLoadingDeleteGoal] = useState<boolean>(false);
 
   const onSubmit = async (values: RGoalDetail) => {
     setLoadingSubmit(true);
@@ -65,24 +60,20 @@ const GoalDetail = (props: IGoalDetail) => {
     });
   };
 
-  const onUpdateStatus = async () => {
-    /* if (editData?.id != undefined) {
-      toastProgress(
-        update(
-          editData?.id,
-          {
+  const deleteGoal = async () => {
+    setLoadingDeleteGoal(true);
+    toastProgress(
+      destroyGoal(props.goal.id),
+      "Menghapus target",
+      () => {
+        toggleActive(false);
+        setUpdated(!updated);
+        setLoadingDeleteGoal(false);
+        Inertia.visit("/goals");
+      },
 
-          },
-          setErrors,
-        ),
-        "Perubahan status tujuan",
-        () => {
-          toggleActive(false);
-          setUpdated(!updated);
-          setEditData(undefined);
-        },
-      );
-    } */
+      () => setLoadingDeleteGoal(false),
+    );
   };
 
   const load = () => {
@@ -101,7 +92,12 @@ const GoalDetail = (props: IGoalDetail) => {
   return (
     <Layout
       title={
-        <div className="grid grid-cols-3 text-xl items-center mt-14">
+        <div
+          className="grid text-xl mt-14 place-items-start"
+          style={{
+            gridTemplateColumns: "auto 1fr 1fr auto",
+          }}
+        >
           <div className="flex items-center justify-center">
             <CalendarIcon
               className="h-20 w-20 text-gray-600"
@@ -123,6 +119,15 @@ const GoalDetail = (props: IGoalDetail) => {
                 <CheckCircleIcon className="ml-1 h-5 w-5 text-green-500 inline" />
               )}
             </p>
+          </div>
+          <div
+            className="cursor-pointer"
+            onClick={() => toggleAcitonActive(true)}
+          >
+            <EllipsisVerticalIcon
+              className="h-5 w-5 text-gray-600"
+              aria-hidden="true"
+            />
           </div>
         </div>
       }
@@ -224,6 +229,28 @@ const GoalDetail = (props: IGoalDetail) => {
               </form>
             )}
           </Formik>
+        </Modal>
+        <Modal
+          open={isOpenAciton}
+          setOpen={(status) => {
+            toggleAcitonActive(status);
+          }}
+          title="Aksi"
+        >
+          <div className="space-y-3">
+            <Button type="button" block>
+              Ubah
+            </Button>
+            <Button
+              type="button"
+              block
+              color="danger"
+              loading={loadingDelete}
+              onClick={() => deleteGoal()}
+            >
+              Hapus
+            </Button>
+          </div>
         </Modal>
       </>
     </Layout>

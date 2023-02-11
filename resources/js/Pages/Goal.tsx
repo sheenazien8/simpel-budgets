@@ -67,14 +67,16 @@ const List = () => {
           title="Data tujuan kosong"
           description="Rencanakan anggaran tujuan anda di tujuan tertentu"
           button={
-            <Button
-              type="button"
-              onClick={() => {
-                toggleActive(true);
-              }}
-            >
-              <PlusIcon className="h-5" /> Tambah Tujuan
-            </Button>
+            <div className="flex justify-center">
+              <Button
+                type="button"
+                onClick={() => {
+                  toggleActive(true);
+                }}
+              >
+                <PlusIcon className="h-5" /> Tambah Tujuan
+              </Button>
+            </div>
           }
         />
       )}
@@ -104,7 +106,9 @@ const List = () => {
               <span>{goal.start_date}</span> s/d{" "}
               <span
                 className={classNames(
-                  Number(goal.over_target_date) == 1 && !Number(goal.status) ? "text-red-600" : "",
+                  Number(goal.over_target_date) == 1 && !Number(goal.status)
+                    ? "text-red-600"
+                    : "",
                 )}
               >
                 {goal.target_date}
@@ -135,7 +139,9 @@ const List = () => {
         </div>
         <ul
           role="list"
-          className="mt-3 grid grid-cols-1 content-start gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 h-[550px] overflow-x-scroll"
+          className={classNames(
+            "mt-3 grid grid-cols-1 content-start gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 h-[550px] overflow-x-scroll",
+          )}
         >
           {!loading ? (
             Results
