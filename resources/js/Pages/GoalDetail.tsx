@@ -8,54 +8,61 @@ import { MGoal, MGoalDetail, RGoalDetail } from "../models";
 import {
   classNames,
   formatMoney,
+  kFormatter,
   toastProgress,
   useHashRouteToggle,
 } from "../utils/helper";
 import { EmptyState } from "../Components/EmptyState";
 import FormData from "./../Components/GoalDetail/FormData";
 import {
+  AcademicCapIcon,
+  BellAlertIcon,
+  CalendarIcon,
   CheckCircleIcon,
   ClockIcon,
+  PencilIcon,
+  PencilSquareIcon,
+  PlusCircleIcon,
+  TrashIcon,
   XCircleIcon,
 } from "@heroicons/react/24/solid";
+import { numify } from "numify";
+import { Formik } from "formik";
+import Button from "../Components/Button";
+import Price from "../Components/Input/Price";
 
 interface IGoalDetail {
-    goal: MGoal
+  goal: MGoal;
 }
 
 const GoalDetail = (props: IGoalDetail) => {
-  const { get, create, detail, update, destroy } = useGoalDetailAction();
+  const { get, create, destroy } = useGoalDetailAction();
   const [goalDetails, setGoalDetails] = useState<MGoal>();
   const [updated, setUpdated] = useState<boolean>(false);
   const [errors, setErrors] = useState<RGoalDetail>();
   const [isOpen, toggleActive] = useHashRouteToggle("#opened-modal");
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
+
   const onSubmit = async (values: RGoalDetail) => {
-    // let progress: any;
-    // if (!editData?.id) {
-    //   progress = create(values, setErrors);
-    // } else {
-    //   progress = update(editData.id, values, setErrors);
-    // }
-    // toastProgress(
-    //   progress,
-    //   `${editData?.id ? "Perubahan" : "Pembuatan"} tujuan`,
-    //   () => {
-    //     toggleActive(false);
-    //     setUpdated(!updated);
-    //     setEditData(undefined);
-    //   },
-    // );
+    setLoadingSubmit(true);
+    toastProgress(
+      create(values, props.goal.id, setErrors),
+      `Penambahan nominal target berhasil`,
+      () => {
+        toggleActive(false);
+        setUpdated(!updated);
+        setLoadingSubmit(false);
+      },
+      () => setLoadingSubmit(false),
+    );
   };
 
-  const onDelete = async () => {
-    // if (editData?.id != undefined) {
-    //   toastProgress(destroy(editData?.id), "Menghapus tujuan", () => {
-    //     toggleActive(false);
-    //     setUpdated(!updated);
-    //     setEditData(undefined);
-    //   });
-    // }
+  const onDelete = async (detailId: number) => {
+    toastProgress(destroy(props.goal.id, detailId), "Menghapus nominal", () => {
+      toggleActive(false);
+      setUpdated(!updated);
+    });
   };
 
   const onUpdateStatus = async () => {
@@ -91,104 +98,132 @@ const GoalDetail = (props: IGoalDetail) => {
     load();
   }, [updated, props.goal]);
 
-  const Results = (
-    <>
-      {/* {goalDetails?.length == 0 && ( */}
-      {/*   <EmptyState */}
-      {/*     title="Data tujuan kosong" */}
-      {/*     description="Rencanakan anggaran tujuan anda di tujuan tertentu" */}
-      {/*     button={ */}
-      {/*       <button */}
-      {/*         type="button" */}
-      {/*         className="inline-flex items-center rounded-lg border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" */}
-      {/*         value="Tambah" */}
-      {/*         onClick={() => { */}
-      {/*           toggleActive(true); */}
-      {/*           setEditData(undefined); */}
-      {/*         }} */}
-      {/*       > */}
-      {/*         <PlusIcon className="h-5" /> Tambah Tujuan */}
-      {/*       </button> */}
-      {/*     } */}
-      {/*   /> */}
-      {/* )} */}
-      {/* {goalDetails?.map((goalDetail, index) => ( */}
-      {/*   <CardList */}
-      {/*     bgColor="" */}
-      {/*     key={index} */}
-      {/*     title="" */}
-      {/*     icon={<XCircleIcon className="w-6" />} */}
-      {/*     details={[]} */}
-      {/*     onClick={async () => { */}
-      {/*       const goalDetailData = await detail(goalDetail.id); */}
-      {/*       toggleActive(true); */}
-      {/*       setEditData(goalDetailData.data.data); */}
-      {/*       setErrors(undefined); */}
-      {/*     }} */}
-      {/*   /> */}
-      {/* ))} */}
-    </>
-  );
-
   return (
     <Layout
       title={
-        <span className="text-xl font-semibold">
-          Detail tujuan untuk {goalDetails?.title}
-        </span>
+        <div className="grid grid-cols-3 text-xl items-center mt-14">
+          <div className="flex items-center justify-center">
+            <CalendarIcon
+              className="h-20 w-20 text-gray-600"
+              aria-hidden="true"
+            />
+          </div>
+          <div className="col-span-2 space-y-1">
+            <p className="font-normal">
+              Detail tujuan untuk {goalDetails?.title}
+            </p>
+            <p className="font-normal text-sm text-gray-500 flex items-center">
+              {formatMoney(
+                Number(goalDetails?.goal_details_sum_nominal),
+                false,
+              )}{" "}
+              / {formatMoney(Number(goalDetails?.nominal_target), false)}
+              {goalDetails?.nominal_target ==
+                goalDetails?.goal_details_sum_nominal && (
+                <CheckCircleIcon className="ml-1 h-5 w-5 text-green-500 inline" />
+              )}
+            </p>
+          </div>
+        </div>
       }
     >
       <>
-        <div>
-          <div className="flex justify-between items-center">
-            <h2 className="text-sm font-medium text-gray-500"></h2>
-            <button
-              type="button"
-              className="inline-flex items-center rounded-lg border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-              value="Tambah"
-              onClick={() => {
-                toggleActive(true);
-                // setEditData(undefined);
-              }}
-            >
-              <PlusIcon className="h-5" />
-            </button>
+        <div className="space-y-5">
+          <div className="grid grid-cols-3 bg-indigo-600 items-center py-6 text-white rounded-xl">
+            <div className="grid grid-cols-1 justify-items-center items-center border-r-black">
+              <p className="text-4xl">
+                {goalDetails?.presentage?.toFixed(1) || 0}
+                <span className="text-sm">%</span>
+              </p>
+            </div>
+            <div className="grid grid-cols-1 justify-items-center items-center">
+              <p className="text-4xl">
+                {goalDetails?.less_days}
+                <span className="text-sm">Hari</span>
+              </p>
+            </div>
+            <div className="grid grid-cols-1 justify-items-center items-center">
+              <p className="text-4xl">
+                {numify(Number(goalDetails?.nominal_target))
+                  .toString()
+                  .replace(
+                    numify(Number(goalDetails?.nominal_target))
+                      .toString()
+                      .slice(-1),
+                    "",
+                  )}
+                <span className="text-sm">
+                  {numify(Number(goalDetails?.nominal_target))
+                    .toString()
+                    .slice(-1)}
+                </span>
+              </p>
+            </div>
           </div>
-          <ul
-            role="list"
-            className="mt-3 grid grid-cols-1 content-start gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 h-[550px] overflow-x-scroll"
-          >
-            {!loading ? (
-              Results
-            ) : (
-              <h2 className="text-center my-auto">Loading...</h2>
-            )}
-          </ul>
+          <div>
+            <div
+              className="flex flex-start items-center py-0 cursor-pointer active:underline"
+              onClick={() => toggleActive(true)}
+            >
+              <div className="-ml-3.5 mr-1">
+                <PlusCircleIcon
+                  className="h-7 w-7 text-indigo-600"
+                  aria-hidden="true"
+                />
+              </div>
+              <p className="text-gray-500 text-sm">Tambah nominal</p>
+            </div>
+            <ol className="border-l border-gray-300 space-y-6 h-[550px] overflow-x-scroll">
+              {goalDetails?.goal_details.map((goalDetail) => (
+                <li>
+                  <div className="flex flex-start items-center pt-3">
+                    <div className="bg-gray-300 w-2 h-2 -ml-1 mr-3 rotate-45 rounded-full"></div>
+                    <p className="text-gray-500 text-sm">{goalDetail.date}</p>
+                  </div>
+                  <div className="ml-4 flex justify-between justify-items-center items-center h-10">
+                    <h4 className="text-gray-800 font-semibold text-xl">
+                      {formatMoney(goalDetail.nominal)}
+                    </h4>
+                    <div className="flex gap-x-1">
+                      <TrashIcon
+                        className="w-6 text-red-500 cursor-pointer"
+                        onClick={() => onDelete(goalDetail.id)}
+                      />
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
         <Modal
           open={isOpen}
           setOpen={(status) => {
             toggleActive(status);
-            // setEditData(undefined);
             setErrors(undefined);
           }}
-          title={
-            false ? (
-              <div className="flex justify-between">
-                <p>Ubah tujuan</p>
-              </div>
-            ) : (
-              "Tambah Tujuan"
-            )
-          }
+          title="Tambah nominal"
         >
-          <FormData
-            onSubmit={onSubmit}
-            onDelete={onDelete}
-            onUpdateStatus={onUpdateStatus}
-            errors={errors}
-            //initialValues={editData}
-          />
+          <Formik initialValues={{}} onSubmit={onSubmit}>
+            {(formik) => (
+              <form
+                onSubmit={formik.handleSubmit}
+                autoComplete="off"
+                className="space-y-5"
+              >
+                <Price
+                  label="Nominal"
+                  name="nominal"
+                  formik={formik}
+                  value={formik.values.nominal}
+                  errors={errors?.nominal}
+                />
+                <Button type="submit" block loading={loadingSubmit}>
+                  Simpan
+                </Button>
+              </form>
+            )}
+          </Formik>
         </Modal>
       </>
     </Layout>

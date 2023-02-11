@@ -49,48 +49,56 @@ const Layout = (props: ILayout) => {
       href: "/dashboard",
       icon: <HomeIcon className="h-6 w-6 text-gray-500" />,
       toolbar: true,
+      component: "Home",
     },
     {
       name: "Bulan",
       href: "/months",
       icon: <CalendarIcon className="h-6 w-6 text-gray-500" />,
       toolbar: true,
+      component: "Month",
     },
     {
       name: "Cash flow",
       href: "/cashflow",
       icon: <BanknotesIcon className="h-6 w-6 text-gray-500" />,
       toolbar: true,
+      component: "Cashflow",
     },
     {
       name: "Anggaran",
       href: "/budgets",
       icon: <CurrencyDollarIcon className="h-6 w-6 text-gray-500" />,
       toolbar: true,
+      component: "Budget",
     },
     {
       name: "Akun",
       href: "/accounts",
       icon: <BuildingLibraryIcon className="h-6 w-6 text-gray-500" />,
       toolbar: true,
+      component: "Account",
     },
     {
       name: "Tujuan",
       href: "/goals",
       icon: <DocumentIcon className="h-6 w-6 text-gray-500" />,
       toolbar: false,
+      component: "Goal",
     },
     {
       name: "Profil",
       href: "/profiles",
       icon: <UserIcon className="h-6 w-6 text-gray-500" />,
       toolbar: false,
+      component: "Profile",
     },
   ];
   useLayoutEffect(() => {
     load();
   }, []);
-  const { url } = usePage();
+  const { component } = usePage();
+
   return (
     <>
       <div className="min-h-screen">
@@ -121,7 +129,7 @@ const Layout = (props: ILayout) => {
                         color="plain"
                         className={classNames(
                           "inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 border-none shadow-none",
-                          url.includes("notifications") && "bg-gray-100"
+                          component.includes("Notification") && "bg-gray-100"
                         )}
                         onClick={() => {}}
                       >
@@ -155,13 +163,13 @@ const Layout = (props: ILayout) => {
                         key={item.name}
                         as="a"
                         className={classNames(
-                          url.includes(item.href)
+                          component.includes(item.component)
                             ? "bg-indigo-50 border-indigo-500 text-indigo-700"
                             : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800",
                           "block pl-3 pr-4 py-2 border-l-4 text-base font-medium",
                         )}
                         aria-current={
-                          url.includes(item.href) ? "page" : undefined
+                          component.includes(item.component) ? "page" : undefined
                         }
                       >
                         {item.name}
@@ -244,7 +252,7 @@ const Layout = (props: ILayout) => {
                 <Link
                   className={classNames(
                     "flex-1 flex items-center justify-center cursor-pointer",
-                    url.includes(item.href) ? "bg-gray-200 border-r" : "",
+                    component.includes(item.component) ? "bg-gray-200 border-r" : "",
                   )}
                   href={item.href != "" ? item.href : "#"}
                   as="div"

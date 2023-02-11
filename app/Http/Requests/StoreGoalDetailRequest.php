@@ -16,7 +16,15 @@ class StoreGoalDetailRequest extends FormRequest
     {
         return [
             "date" => ["date_format:Y-m-d"],
-            "nominal" => ["required", "numeric"],
+            "nominal" => ["required", "numeric", "min:1", function ($attribute, $value, $fail) {
+                $goal = $this->route("goal");
+                $goalDetails = $goal->goalDetails->sum("nominal");
+                $total = $goalDetails + $value;
+
+                if ($total > $goal->nominal_target) {
+                    $fail("Nominal yang kamu masukkan melebihi nominal target");
+                }
+            }],
         ];
     }
 

@@ -17,7 +17,10 @@ const Text = (props: IText) => {
     <div>
       <label
         htmlFor={`${props.name}-id`}
-        className="block text-sm font-medium text-gray-700"
+        className={classNames(
+          "block text-sm font-medium text-gray-700",
+          props.type == "hidden" && "sr-only",
+        )}
       >
         {props.label}
       </label>
@@ -38,7 +41,12 @@ const Text = (props: IText) => {
           aria-invalid="true"
         />
         {props.errors && (
-          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+          <div
+            className={classNames(
+              "pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3",
+              props.type == "hidden" && "sr-only",
+            )}
+          >
             <ExclamationCircleIcon
               className="h-5 w-5 text-red-500"
               aria-hidden="true"
@@ -47,7 +55,13 @@ const Text = (props: IText) => {
         )}
       </div>
       {props.errors && (
-        <p className="mt-2 text-sm text-red-600" id="email-error">
+        <p
+          className={classNames(
+            "mt-2 text-sm text-red-600",
+            props.type == "hidden" && "sr-only",
+          )}
+          id="email-error"
+        >
           {props.errors}
         </p>
       )}

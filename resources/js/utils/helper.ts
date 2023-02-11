@@ -19,6 +19,10 @@ export function formatMoney(number?: number, withSymbol = true) {
   return num.toLocaleString("IDR");
 }
 
+export function kFormatter(num: number): string {
+    return num > 999 ? (num / 1000).toFixed() : num.toString();
+}
+
 const encodeQuery = (data: any) => {
   let query = "";
   for (let d in data)

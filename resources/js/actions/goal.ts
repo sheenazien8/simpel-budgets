@@ -45,7 +45,10 @@ const useGoalAction = () => {
           .errors;
         if (errorResponse != undefined) {
           setError({
-
+            title: errorResponse?.title ? errorResponse?.title[0] : "",
+            description: errorResponse?.description ? errorResponse?.description[0] : "",
+            target_date: errorResponse?.target_date ? errorResponse?.target_date[0] : "",
+            nominal_target: errorResponse?.nominal_target ? errorResponse?.nominal_target[0] : "",
           });
         }
       }
@@ -102,7 +105,10 @@ const useGoalAction = () => {
           .errors;
         if (errorResponse != undefined) {
           setError({
-
+            title: errorResponse?.title ? errorResponse?.title[0] : "",
+            description: errorResponse?.description ? errorResponse?.description[0] : "",
+            target_date: errorResponse?.target_date ? errorResponse?.target_date[0] : "",
+            nominal_target: errorResponse?.nominal_target ? errorResponse?.nominal_target[0] : "",
           });
         }
       }

@@ -26,7 +26,6 @@ import {
   ResponseGetMBudget,
   ResponseGetMCashflow,
 } from "../models";
-import { CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import { EmptyState } from "../Components/EmptyState";
 import FormData from "./../Components/Cashflow/FormData";
 import FormFilter from "./../Components/Cashflow/FormFilter";

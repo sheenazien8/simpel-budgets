@@ -4,14 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreGoalDetailRequest;
 use App\Models\Goal;
-use Illuminate\Http\Request;
 
 class GoalDetailController extends Controller
 {
-    public function index(Request $request, Goal $goal)
+    public function index(Goal $goal)
     {
+        $goal = $goal
+            ->loadSum("goalDetails", "nominal")
+            ->load("goalDetails");
+
         return response()->json([
-            "data" => $goal->load("goalDetails"),
+            "data" => $goal,
         ]);
     }
 
@@ -22,6 +25,17 @@ class GoalDetailController extends Controller
         return response()->json([
             "data" => [],
             "message" => "goal detail has been created",
+        ]);
+    }
+
+    public function destroy(Goal $goal, $goalDetailId)
+    {
+        $goalDetail = $goal->goalDetails()->findOrFail($goalDetailId);
+        $goalDetail->delete();
+
+        return response()->json([
+            "data" => [],
+            "message" => "goal detail has been deleted",
         ]);
     }
 }

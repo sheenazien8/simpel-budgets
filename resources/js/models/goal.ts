@@ -7,19 +7,22 @@ interface MGoal {
   reminder_per: string;
   reminder_day: string;
   reminder_time: string;
-  nominal_target: string;
+  nominal_target: number;
+  goal_details_sum_nominal?: number;
+  presentage?: number;
+  less_days?: number;
   status: boolean;
   over_target_date: boolean;
   created_at: string;
   updated_at: string;
-  goal_details: MGoalDetail[]
+  goal_details: MGoalDetail[];
 }
 
 interface MGoalDetail {
-    id: number;
-    goal_id: number;
-    date: string;
-    nominal: number;
+  id: number;
+  goal_id: number;
+  date: string;
+  nominal: number;
 }
 
 interface RGoal {
@@ -34,10 +37,9 @@ interface RGoal {
 }
 
 interface RGoalDetail {
-    goal_id?: number;
-    date?: string;
-    nominal?: number;
+  goal_id?: number;
+  date?: string;
+  nominal?: number | string;
 }
 
 export { MGoal, RGoal, MGoalDetail, RGoalDetail };
-

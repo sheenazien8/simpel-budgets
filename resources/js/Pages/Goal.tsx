@@ -19,63 +19,32 @@ import {
   XCircleIcon,
 } from "@heroicons/react/24/solid";
 import { Inertia } from "@inertiajs/inertia";
+import Button from "../Components/Button";
 
 interface IGoal {}
 
 const List = () => {
-  const { get, create, update, destroy } = useGoalAction();
+  const { get, create } = useGoalAction();
   const [goals, setGoals] = useState<MGoal[]>();
   const [updated, setUpdated] = useState<boolean>(false);
-  const [editData, setEditData] = useState<MGoal>();
+
   const [errors, setErrors] = useState<RGoal>();
   const [isOpen, toggleActive] = useHashRouteToggle("#opened-modal");
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
+
   const onSubmit = async (values: RGoal) => {
-    let progress: any;
-    if (!editData?.id) {
-      progress = create(values, setErrors);
-    } else {
-      progress = update(editData.id, values, setErrors);
-    }
+    setLoadingSubmit(true);
     toastProgress(
-      progress,
-      `${editData?.id ? "Perubahan" : "Pembuatan"} tujuan`,
+      create(values, setErrors),
+      `Pembuatan target ${values.title} berhasil`,
       () => {
         toggleActive(false);
         setUpdated(!updated);
-        setEditData(undefined);
+        setLoadingSubmit(false);
       },
+      () => setLoadingSubmit(false),
     );
-  };
-
-  const onDelete = async () => {
-    if (editData?.id != undefined) {
-      toastProgress(destroy(editData?.id), "Menghapus tujuan", () => {
-        toggleActive(false);
-        setUpdated(!updated);
-        setEditData(undefined);
-      });
-    }
-  };
-
-  const onUpdateStatus = async () => {
-    if (editData?.id != undefined) {
-      /* toastProgress(
-        update(
-          editData?.id,
-          {
-
-          },
-          setErrors,
-        ),
-        "Perubahan status tujuan",
-        () => {
-          toggleActive(false);
-          setUpdated(!updated);
-          setEditData(undefined);
-        },
-      ); */
-    }
   };
 
   const load = () => {
@@ -98,36 +67,33 @@ const List = () => {
           title="Data tujuan kosong"
           description="Rencanakan anggaran tujuan anda di tujuan tertentu"
           button={
-            <button
+            <Button
               type="button"
-              className="inline-flex items-center rounded-lg border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-              value="Tambah"
               onClick={() => {
                 toggleActive(true);
-                setEditData(undefined);
               }}
             >
               <PlusIcon className="h-5" /> Tambah Tujuan
-            </button>
+            </Button>
           }
         />
       )}
       {goals?.map((goal, index) => (
         <CardList
           bgColor={
-            Number(goal.over_target_date) == 1
-              ? "bg-red-600"
-              : Number(goal.status) == 1
+            Number(goal.status) == 1
               ? "bg-green-600"
+              : Number(goal.over_target_date) == 1
+              ? "bg-red-600"
               : "bg-yellow-600"
           }
           key={index}
           title={goal.title}
           icon={
-            Number(goal.over_target_date) == 1 ? (
-              <XCircleIcon className="w-6" />
-            ) : Number(goal.status) == 1 ? (
+            Number(goal.status) == 1 ? (
               <CheckCircleIcon className="w-6" />
+            ) : Number(goal.over_target_date) == 1 ? (
+              <XCircleIcon className="w-6" />
             ) : (
               <ClockIcon className="w-6" />
             )
@@ -138,7 +104,7 @@ const List = () => {
               <span>{goal.start_date}</span> s/d{" "}
               <span
                 className={classNames(
-                  Number(goal.over_target_date) == 1 ? "text-red-600" : "",
+                  Number(goal.over_target_date) == 1 && !Number(goal.status) ? "text-red-600" : "",
                 )}
               >
                 {goal.target_date}
@@ -146,7 +112,7 @@ const List = () => {
             </p>,
           ]}
           onClick={async () => {
-              Inertia.visit(`/goals/${goal.id}/details`);
+            Inertia.visit(`/goals/${goal.id}/details`);
           }}
         />
       ))}
@@ -158,17 +124,14 @@ const List = () => {
       <div>
         <div className="flex justify-between items-center">
           <h2 className="text-sm font-medium text-gray-500"></h2>
-          <button
+          <Button
             type="button"
-            className="inline-flex items-center rounded-lg border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            value="Tambah"
             onClick={() => {
               toggleActive(true);
-              setEditData(undefined);
             }}
           >
             <PlusIcon className="h-5" />
-          </button>
+          </Button>
         </div>
         <ul
           role="list"
@@ -185,25 +148,19 @@ const List = () => {
         open={isOpen}
         setOpen={(status) => {
           toggleActive(status);
-          setEditData(undefined);
           setErrors(undefined);
         }}
-        title={
-          editData ? (
-            <div className="flex justify-between">
-              <p>Ubah tujuan</p>
-            </div>
-          ) : (
-            "Tambah Tujuan"
-          )
-        }
+        title="Tambah Tujuan"
       >
         <FormData
           onSubmit={onSubmit}
-          onDelete={onDelete}
-          onUpdateStatus={onUpdateStatus}
           errors={errors}
-          initialValues={editData}
+          initialValues={{
+            reminder_per: "dayly",
+            reminder_day: "",
+            reminder_time: "2023-03-29 21:00:00",
+          }}
+          loadingSubmit={loadingSubmit}
         />
       </Modal>
     </>
