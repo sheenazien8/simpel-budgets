@@ -187,6 +187,7 @@ const List = () => {
         next={async () => {
           let updateScroll = scroll + 20;
           const cashflows = await get({
+            ...filter,
             offset: updateScroll,
           });
           let cashflowMapped: MCashflow[] = [];
