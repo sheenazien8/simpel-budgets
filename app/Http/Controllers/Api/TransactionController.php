@@ -32,14 +32,14 @@ class TransactionController extends Controller
                     ->byCurrentUser()
                     ->filter($request)
                     ->whereMonth("date", now()->format("m"))
-                    ->whereYear("date", $month->year)
+                    ->whereYear("date", $month?->year)
                     ->where('type', 1),
                 "sum_income_month" => Transaction::query()
                     ->selectRaw("sum(nominal)")
                     ->byCurrentUser()
                     ->filter($request)
                     ->whereMonth("date", now()->format("m"))
-                    ->whereYear("date", $month->year)
+                    ->whereYear("date", $month?->year)
                     ->where('type', 2),
             ])
             ->first();
