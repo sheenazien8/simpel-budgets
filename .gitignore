@@ -6,6 +6,7 @@
 /public/js/*
 /public/storage
 /storage/*.key
+/public/index_server.php
 /vendor
 .env
 .env.backup
