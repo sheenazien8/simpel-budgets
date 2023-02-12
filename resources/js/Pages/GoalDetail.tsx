@@ -273,7 +273,7 @@ const GoalDetail = (props: IGoalDetail) => {
               setLoadingSubmit(true);
               toastProgress(
                 updateGoal(props.goal.id, values, setErrorsGoal),
-                `Pembuatan target ${values.title} berhasil`,
+                `Perubahan target ${values.title}`,
                 () => {
                   toggleOpenFormEdit(false);
                   setUpdated(!updated);
