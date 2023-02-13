@@ -30,7 +30,13 @@ class TransactionController extends Controller
             ->addSelect([
                 "sum_expense_month" => Transaction::selectRaw("SUM(nominal)")
                     ->byCurrentUser()
-                    ->whereMonth("date", now()->format("m"))
+                    ->when(
+                        !$request->filled("date") &&
+                        !($request->filled("start_date") && $request->filled("end_date")) &&
+                        !$request->filled("month"), function ($query) use ($month) {
+                            $query->whereMonth("date", now()->format("m"))
+                                  ->whereYear("date", $month?->year);
+                        })
                     ->when($request->filled("date"), function ($query) use ($request) {
                         $query->where("date", $request->date);
                     })
@@ -40,13 +46,17 @@ class TransactionController extends Controller
                     ->when($request->filled("month"), function ($query) use ($request) {
                         $query->whereMonth("date", $request->month);
                     })
-                    ->whereYear("date", $month?->year)
                     ->where('type', 1),
                 "sum_income_month" => Transaction::query()
                     ->selectRaw("sum(nominal)")
                     ->byCurrentUser()
-                    ->whereMonth("date", now()->format("m"))
-                    ->whereYear("date", $month?->year)
+                    ->when(
+                        !$request->filled("date") &&
+                        !($request->filled("start_date") && $request->filled("end_date")) &&
+                        !$request->filled("month"), function ($query) use ($month) {
+                            $query->whereMonth("date", now()->format("m"))
+                                  ->whereYear("date", $month?->year);
+                        })
                     ->when($request->filled("date"), function ($query) use ($request) {
                         $query->where("date", $request->date);
                     })
@@ -62,9 +72,19 @@ class TransactionController extends Controller
 
         $total_transactions = Transaction::byCurrentUser()
             ->filter($request)
+            ->when($request->filled("date"), function ($query) use ($request) {
+                $query->where("date", $request->date);
+            })
+            ->when($request->filled("start_date") && $request->filled("end_date"), function ($query) use ($request) {
+                $query->whereBetween("date", [$request->start_date, $request->end_date]);
+            })
+            ->when($request->filled("month"), function ($query) use ($request) {
+                $query->whereMonth("date", $request->month);
+            })
             ->selectRaw("count(id) as total")
             ->first()
             ->total;
+
         $transactions = Transaction::query()
                 ->selectRaw(DB::raw("IF(type = 1, nominal, 0) as expense"))
                 ->addSelect([
@@ -75,6 +95,15 @@ class TransactionController extends Controller
                 ])
                 ->filter($request)
                 ->byCurrentUser()
+                ->when($request->filled("date"), function ($query) use ($request) {
+                    $query->where("date", $request->date);
+                })
+                ->when($request->filled("start_date") && $request->filled("end_date"), function ($query) use ($request) {
+                    $query->whereBetween("date", [$request->start_date, $request->end_date]);
+                })
+                ->when($request->filled("month"), function ($query) use ($request) {
+                    $query->whereMonth("date", $request->month);
+                })
                 ->orderBy("created_at", "desc")
                 ->limit(20)
                 ->offset($request->input("offset") ?? 0)
