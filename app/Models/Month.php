@@ -19,7 +19,10 @@ class Month extends Model
 
     protected $filter = MonthFilter::class;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'name',
+        'year',
+    ];
 
     protected static function boot()
     {

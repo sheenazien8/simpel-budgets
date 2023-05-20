@@ -14,7 +14,12 @@ class Budget extends Model
 {
     use HasFactory, AssignToAuth, Filterable;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'plan',
+        'month_id',
+        'nominal',
+        'user_id'
+    ];
 
     protected $filter = BudgetFilter::class;
 

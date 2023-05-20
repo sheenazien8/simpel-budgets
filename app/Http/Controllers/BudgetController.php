@@ -53,6 +53,9 @@ class BudgetController extends Controller
 
     public function show(Budget $budget)
     {
+        // sum of transactions by budget
+        $budget->loadSum("transactions", "nominal");
+
         return response()->json([
             "data" => $budget,
         ]);

@@ -1,6 +1,6 @@
 import { Formik } from "formik";
-import React from "react";
-import { MAccount, MBudget, MCashflow, RCashflow } from "../../models";
+import React, { useState } from "react";
+import { MAccount, MBudget, MCashflow, MMonth, RCashflow } from "../../models";
 import Button from "../Button";
 import Price from "../Input/Price";
 import Select from "../Input/Select";
@@ -11,11 +11,13 @@ interface IFormData {
   errors?: RCashflow;
   accounts: MAccount[];
   budgets: MBudget[];
+  months: MMonth[];
   onDelete: () => void;
   initialValues?: MCashflow | RCashflow;
 }
 
 const FormData = (props: IFormData) => {
+  const [showFilterBudget, setShowFilterBudget] = useState(false);
   const type = (props.initialValues as unknown as RCashflow)?.type;
   const defaultType = type == "" || type == 1 ? 1 : type == 2 ? 2 : 3;
 
@@ -38,10 +40,21 @@ const FormData = (props: IFormData) => {
     })),
   );
 
+  const months = [{ value: "", label: "Pilih Anggaran" }].concat(
+    props.months.map((month) => ({
+      value: String(month.id),
+      label: `${month.name} - ${month.year}`,
+    })),
+  );
+
   return (
     <Formik initialValues={initialValues} onSubmit={props.onSubmit}>
       {(formik) => (
-        <form className="space-y-4" onSubmit={formik.handleSubmit} autoComplete="off">
+        <form
+          className="space-y-4"
+          onSubmit={formik.handleSubmit}
+          autoComplete="off"
+        >
           <Price
             label="Nominal"
             formik={formik}
@@ -81,14 +94,35 @@ const FormData = (props: IFormData) => {
             />
           )}
           {formik.values.type == 1 && (
-            <Select
-              label="Budget"
-              formik={formik}
-              name={"budget_id"}
-              errors={String(props.errors?.budget_id ?? "")}
-              value={String(formik.values?.budget_id ?? "")}
-              options={budgets}
-            />
+            <>
+              <Select
+                label={
+                  <p>
+                    Anggaran{" "}
+                    <span
+                      className="cursor-pointer text-indigo-800"
+                      onClick={() => setShowFilterBudget(!showFilterBudget)}
+                    >
+                      Filter anggaran
+                    </span>
+                    {showFilterBudget && (
+                      <Select
+                        label=""
+                        formik={formik}
+                        name={"budget_id"}
+                        options={months}
+                        value={formik.values.month}
+                      />
+                    )}
+                  </p>
+                }
+                formik={formik}
+                name={"budget_id"}
+                errors={String(props.errors?.budget_id ?? "")}
+                value={String(formik.values?.budget_id ?? "")}
+                options={budgets}
+              />
+            </>
           )}
           <Text
             label="Tanggal"
@@ -106,10 +140,7 @@ const FormData = (props: IFormData) => {
             value={formik.values?.notes}
           />
           <div className="grid grid-cols-1 gap-y-2">
-            <Button
-              type="submit"
-              block
-            >
+            <Button type="submit" block>
               Simpan
             </Button>
             {(props.initialValues as MCashflow)?.id && (

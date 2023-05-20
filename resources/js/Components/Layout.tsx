@@ -129,7 +129,7 @@ const Layout = (props: ILayout) => {
                         color="plain"
                         className={classNames(
                           "inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 border-none shadow-none",
-                          component.includes("Notification") && "bg-gray-100"
+                          component.includes("Notification") && "bg-gray-100",
                         )}
                         onClick={() => {}}
                       >
@@ -169,7 +169,9 @@ const Layout = (props: ILayout) => {
                           "block pl-3 pr-4 py-2 border-l-4 text-base font-medium",
                         )}
                         aria-current={
-                          component.includes(item.component) ? "page" : undefined
+                          component.includes(item.component)
+                            ? "page"
+                            : undefined
                         }
                       >
                         {item.name}
@@ -227,18 +229,24 @@ const Layout = (props: ILayout) => {
             ) : (
               ""
             )}
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900 mb-3">
-                {props.title}
-              </h1>
-              {props.description && (
-                <p className="text-gray-600 text-[14px]">{props.description}</p>
-              )}
-            </div>
+            {(props.title || props.description) && (
+              <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                {props.title && (
+                  <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900 mb-3">
+                    {props.title}
+                  </h1>
+                )}
+                {props.description && (
+                  <p className="text-gray-600 text-[14px]">
+                    {props.description}
+                  </p>
+                )}
+              </div>
+            )}
           </header>
           <main>
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-              <div className="px-4 py-8 sm:px-0">{props.children}</div>
+              <div className={`px-4 ${(props.title || props.description) ? '' : ''} sm:px-0`}>{props.children}</div>
             </div>
           </main>
         </div>
@@ -252,7 +260,9 @@ const Layout = (props: ILayout) => {
                 <Link
                   className={classNames(
                     "flex-1 flex items-center justify-center cursor-pointer",
-                    component.includes(item.component) ? "bg-gray-200 border-r" : "",
+                    component.includes(item.component)
+                      ? "bg-gray-200 border-r"
+                      : "",
                   )}
                   href={item.href != "" ? item.href : "#"}
                   as="div"

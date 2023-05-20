@@ -10,5 +10,10 @@ class GoalDetail extends Model
 {
     use HasFactory, AssignToAuth;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'date',
+        'goal_id',
+        'date',
+        'nominal',
+    ];
 }

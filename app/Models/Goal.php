@@ -11,7 +11,16 @@ class Goal extends Model
 {
     use HasFactory, AssignToAuth;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'title',
+        'description',
+        'start_date',
+        'target_date',
+        'reminder_per',
+        'reminder_day',
+        'reminder_time',
+        'nominal_target',
+    ];
 
     protected $appends = [
         "presentage",

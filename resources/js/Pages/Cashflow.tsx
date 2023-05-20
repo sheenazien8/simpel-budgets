@@ -18,10 +18,12 @@ import {
   useAccountAction,
   useBudgetAction,
   useCashflowAction,
+  useMonthAction,
 } from "../actions";
 import {
   MAccount,
   MCashflow,
+  MMonth,
   RCashflow,
   ResponseGetMBudget,
   ResponseGetMCashflow,
@@ -46,10 +48,12 @@ const List = () => {
   const { get, create, detail, update, destroy } = useCashflowAction();
   const { get: getAccount } = useAccountAction();
   const { get: getBudget } = useBudgetAction();
+  const { get: getMonth } = useMonthAction();
   const [cashflows, setCashflows] = useState<ResponseGetMCashflow>();
   const [cashflowsData, setCashflowsData] = useState<MCashflow[]>();
   const [accounts, setAccounts] = useState<MAccount[]>();
   const [budgets, setBudgets] = useState<ResponseGetMBudget>();
+  const [months, setMonths] = useState<MMonth[]>();
   const [updated, setUpdated] = useState<boolean>(false);
   const [isOpen, toggleActive] = useHashRouteToggle("#opened-modal");
   const [isOpenFilter, toggleFilterActive] =
@@ -117,6 +121,7 @@ const List = () => {
       notes: params.get("notes") ?? "",
       date: params.get("date") ?? "",
       type: params.get("type") ?? "",
+      month: params.get("month") ?? ""
     };
     setFilter(filters);
     const cashflows = await get(filters);
@@ -126,6 +131,8 @@ const List = () => {
     setAccounts(accounts.data.data?.data);
     const budgets = await getBudget();
     setBudgets(budgets.data.data);
+    const months = await getMonth();
+    setMonths(months.data.data);
     toggleFilterActive(false);
     toggleActive(false);
     if (cashflows.data.data?.data.length == (cashflowsData?.length ?? 0)) {
@@ -319,6 +326,7 @@ const List = () => {
           errors={errors}
           accounts={accounts ?? []}
           budgets={budgets?.data ?? []}
+          months={months ?? []}
           onDelete={onDelete}
         />
       </Modal>

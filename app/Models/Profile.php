@@ -11,5 +11,10 @@ class Profile extends Model
     use HasFactory,
         AssignToAuth;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'user_id',
+        'address',
+        'phone',
+        'photo',
+    ];
 }

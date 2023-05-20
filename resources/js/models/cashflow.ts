@@ -29,6 +29,7 @@ interface RCashflow {
   nominal?: number | string;
   notes?: string;
   date?: string;
+  month?: string;
   reccuring?: boolean | string;
   type?: number | string;
   offset?: number | string;

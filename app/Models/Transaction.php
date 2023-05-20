@@ -15,7 +15,14 @@ class Transaction extends Model
 
     protected $filter = TransactionFilter::class;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'account_id',
+        'budget_id',
+        'nominal',
+        'date',
+        'reccuring',
+        'type'
+    ];
 
     public function account(): BelongsTo
     {

@@ -11,7 +11,10 @@ class Account extends Model
 {
     use HasFactory, AssignToAuth;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'name',
+        'total',
+    ];
 
     public function transactions(): HasMany
     {

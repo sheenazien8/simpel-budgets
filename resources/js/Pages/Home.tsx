@@ -12,7 +12,10 @@ import {
 import { faker } from "@faker-js/faker";
 import { formatMoney } from "../utils/helper";
 import { useAccountAction } from "../actions";
-import { MAccount } from "../models";
+import { IProfile, MAccount } from "../models";
+import { useAuthAction } from "../actions/auth";
+import { UserIcon } from "@heroicons/react/24/solid";
+import { Link } from "@inertiajs/inertia-react";
 
 ChartJS.register(
   CategoryScale,
@@ -63,10 +66,43 @@ export const data = {
 };
 
 const Home = () => {
+  const { getProfile } = useAuthAction();
+  const [profile, setProfile] = useState<IProfile>();
+  const [greetingWord, setGreetingWord] = useState<string>("");
+  const greeting = () => {
+    const date = new Date();
+    const hour = date.getHours();
+    if (hour < 12) {
+      setGreetingWord("Selamat Pagi");
+    } else if (hour < 18) {
+      setGreetingWord("Selamat Siang");
+    } else {
+      setGreetingWord("Selamat Malam");
+    }
+  };
+
+  const load = async () => {
+    const data = await getProfile();
+    setProfile(data.data.data);
+    greeting();
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
   return (
-    <Layout title="Dashboard">
-      <div className="">
-      </div>
+    <Layout>
+      <Link href="/profiles">
+        <div className="flex items-center gap-x-2">
+          <UserIcon className="w-10 h-10 text-gray-400" />
+          <div>
+            <p className="text-lg font-semibold text-gray-600">
+              Hai, {profile?.name}
+            </p>
+            <span className="text-gray-400">{greetingWord}</span>
+          </div>
+        </div>
+      </Link>
     </Layout>
   );
 };

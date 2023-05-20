@@ -52,7 +52,6 @@ class AccountController extends Controller
     public function destroy(Account $account)
     {
         throw_if($account->transactions()->exists(), Exception::class, 'Akun ini tidak bisa dihapus karena masih memiliki transaksi');
-        throw_if($account->user_id !== auth()->id(), Exception::class, 'Akun ini tidak bisa dihapus karena bukan milik anda');
         $account->delete();
 
         return response()->json([

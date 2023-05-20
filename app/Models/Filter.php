@@ -9,7 +9,11 @@ class Filter extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'key',
+        'model',
+        'default',
+    ];
 
     protected $casts = [
         "default" => "object",
