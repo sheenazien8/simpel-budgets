@@ -141,7 +141,7 @@ const List = () => {
     }
   };
 
-  const height = window.innerHeight - 280;
+  const height = window.innerHeight - 350;
 
   useEffect(() => {
     load();
@@ -183,21 +183,6 @@ const List = () => {
           </div>
         </div>
         <div className="flex justify-between items-center flex-row-reverse">
-          {/* <h2 className="text-sm font-medium text-gray-500">
-            Bulan ini{" "}
-            <p>
-              <PlusSmallIcon className="inline-block w-4 h-4 text-green-500" />{" "}
-              <span className="font-bold">
-                {formatMoney(cashflows?.transaction_sum_nominal_income)}{" "}
-              </span>
-            </p>
-            <p>
-              <MinusSmallIcon className="inline-block w-4 h-4 text-red-500" />{" "}
-              <span className="font-bold">
-                {formatMoney(cashflows?.transaction_sum_nominal_expense)}{" "}
-              </span>
-            </p>
-          </h2> */}
           <div className="space-x-2 flex">
             <button
               type="button"
