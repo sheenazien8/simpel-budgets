@@ -154,7 +154,6 @@ class TransactionController extends Controller
 
     public function destroy(Transaction $transaction)
     {
-        throw_if($transaction->user_id !== auth()->id(), Exception::class, "Kamu tidak memiliki akses untuk menghapus transaksi ini");
         $this->transaction = $transaction;
         switch ($transaction->type) {
         case 1:
