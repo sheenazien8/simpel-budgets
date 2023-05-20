@@ -187,7 +187,7 @@ const List = () => {
                     loading={loadingDelete}
                     type="button"
                     block
-                    color="secondary"
+                    color="danger"
                     onClick={async () => {
                       setLoadingDelete(true);
                       if (editData?.id != undefined) {

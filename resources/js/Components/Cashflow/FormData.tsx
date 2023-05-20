@@ -33,7 +33,7 @@ const FormData = (props: IFormData) => {
     })),
   );
 
-  const budgets = [{ value: "", label: "Pilih Anggaran" }].concat(
+  const budgets = [{ value: "", label: "Pilih Bulan" }].concat(
     props.budgets.map((budget) => ({
       value: String(budget.id),
       label: `${budget.plan}`,
