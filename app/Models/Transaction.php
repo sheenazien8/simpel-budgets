@@ -21,7 +21,8 @@ class Transaction extends Model
         'nominal',
         'date',
         'reccuring',
-        'type'
+        'type',
+        'notes'
     ];
 
     public function account(): BelongsTo

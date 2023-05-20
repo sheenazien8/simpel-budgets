@@ -33,14 +33,14 @@ const FormData = (props: IFormData) => {
     })),
   );
 
-  const budgets = [{ value: "", label: "Pilih Bulan" }].concat(
+  const budgets = [{ value: "", label: "Pilih Anggaran" }].concat(
     props.budgets.map((budget) => ({
       value: String(budget.id),
       label: `${budget.plan}`,
     })),
   );
 
-  const months = [{ value: "", label: "Pilih Anggaran" }].concat(
+  const months = [{ value: "", label: "Pilih Bulan" }].concat(
     props.months.map((month) => ({
       value: String(month.id),
       label: `${month.name} - ${month.year}`,
