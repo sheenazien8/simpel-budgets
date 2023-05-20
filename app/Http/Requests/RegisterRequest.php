@@ -73,7 +73,7 @@ class RegisterRequest extends FormRequest
                 ]);
             }
         }
-        // buat 12 bulan untuk tahun ketika dia setelah mendaftar bulan menggunakan bahasa indonesia
+
         $months = [
             "Januari", "Februari", "Maret", "April", "Mei", "Juni",
             "Juli", "Agustus", "September", "Oktober", "November", "Desember"
@@ -83,6 +83,7 @@ class RegisterRequest extends FormRequest
             $user->months()->create([
                 "name" => $month,
                 "year" => $year,
+                "status" => 1
             ]);
         }
     }
