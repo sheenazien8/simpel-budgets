@@ -178,6 +178,7 @@ const Goal = (props: IGoal) => {
     <Layout
       title="Tujuan"
       description="Catat tujuanmu di sini untuk memberikan semangat menabungmu"
+      noBottomNav
     >
       <List {...props} />
     </Layout>

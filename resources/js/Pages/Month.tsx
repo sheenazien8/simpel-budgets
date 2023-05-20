@@ -188,7 +188,7 @@ const List = () => {
         </div>
         <ul
           role="list"
-          className="mt-3 grid grid-cols-1 content-start gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 h-[550px] overflow-x-scroll"
+          className="mt-3 grid grid-cols-1 content-start gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4"
         >
           {!loading ? (
             Results
@@ -238,7 +238,7 @@ const List = () => {
 
 const Month = (props: IMonth) => {
   return (
-    <Layout title="Bulan">
+    <Layout title="Bulan" noBottomNav>
       <List {...props} />
     </Layout>
   );

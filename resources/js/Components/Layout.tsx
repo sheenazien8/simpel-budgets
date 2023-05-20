@@ -29,6 +29,7 @@ interface ILayout {
   children: JSX.Element;
   title?: string | JSX.Element;
   description?: string | JSX.Element;
+  noBottomNav?: boolean;
 }
 
 const Layout = (props: ILayout) => {
@@ -50,13 +51,6 @@ const Layout = (props: ILayout) => {
       icon: <HomeIcon className="h-6 w-6 text-gray-500" />,
       toolbar: true,
       component: "Home",
-    },
-    {
-      name: "Bulan",
-      href: "/months",
-      icon: <CalendarIcon className="h-6 w-6 text-gray-500" />,
-      toolbar: true,
-      component: "Month",
     },
     {
       name: "Cash flow",
@@ -246,32 +240,40 @@ const Layout = (props: ILayout) => {
           </header>
           <main>
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-              <div className={`px-4 ${(props.title || props.description) ? '' : ''} sm:px-0`}>{props.children}</div>
+              <div
+                className={`px-4 ${
+                  props.title || props.description ? "" : ""
+                } sm:px-0`}
+              >
+                {props.children}
+              </div>
             </div>
           </main>
         </div>
-        <section
-          id="bottom-bar"
-          className="bg-white fixed w-full bottom-0 h-14 border border-gray-300 shadow-2xl flex"
-        >
-          {navigation.map(
-            (item) =>
-              item.toolbar && (
-                <Link
-                  className={classNames(
-                    "flex-1 flex items-center justify-center cursor-pointer",
-                    component.includes(item.component)
-                      ? "bg-gray-200 border-r"
-                      : "",
-                  )}
-                  href={item.href != "" ? item.href : "#"}
-                  as="div"
-                >
-                  {item.icon}
-                </Link>
-              ),
-          )}
-        </section>
+        {!props.noBottomNav && (
+          <section
+            id="bottom-bar"
+            className="bg-white fixed w-full bottom-0 h-14 border border-gray-300 shadow-2xl flex"
+          >
+            {navigation.map(
+              (item) =>
+                item.toolbar && (
+                  <Link
+                    className={classNames(
+                      "flex-1 flex items-center justify-center cursor-pointer",
+                      component.includes(item.component)
+                        ? "bg-gray-200 border-r"
+                        : "",
+                    )}
+                    href={item.href != "" ? item.href : "#"}
+                    as="div"
+                  >
+                    {item.icon}
+                  </Link>
+                ),
+            )}
+          </section>
+        )}
       </div>
       <ToasterCustom />
     </>

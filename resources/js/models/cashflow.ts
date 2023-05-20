@@ -3,6 +3,7 @@ interface ResponseGetMCashflow {
     transaction_sum_nominal_expense: number;
     transaction_sum_nominal_income: number;
     total_transactions: number;
+    total_plan: number;
 }
 
 interface MCashflow {

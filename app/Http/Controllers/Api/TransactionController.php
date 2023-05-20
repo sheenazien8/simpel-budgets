@@ -108,6 +108,11 @@ class TransactionController extends Controller
                 ->limit(20)
                 ->offset($request->input("offset") ?? 0)
                 ->get();
+        $budgets = Budget::query()
+            ->selectRaw("SUM(nominal) as total_plan")
+            ->byCurrentUser()
+            ->where("month_id", $month->id)
+            ->first();
 
         return response()->json([
             'data' => [
@@ -115,6 +120,7 @@ class TransactionController extends Controller
                 'transaction_sum_nominal_expense' => $transactionAttrbite->sum_expense_month,
                 'transaction_sum_nominal_income' => $transactionAttrbite->sum_income_month,
                 'total_transactions' => $total_transactions,
+                'total_plan' => $budgets->total_plan,
             ],
         ]);
     }

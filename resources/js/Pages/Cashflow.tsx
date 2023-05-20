@@ -34,11 +34,12 @@ import FormFilter from "./../Components/Cashflow/FormFilter";
 import { Inertia } from "@inertiajs/inertia";
 import InfiniteScroll from "react-infinite-scroll-component";
 import {
+  ArrowDownIcon,
   ArrowLeftOnRectangleIcon,
   ArrowRightOnRectangleIcon,
   ArrowsRightLeftIcon,
-  MinusSmallIcon,
-  PlusSmallIcon,
+  ArrowUpIcon,
+  CurrencyDollarIcon,
 } from "@heroicons/react/24/solid";
 import Button from "../Components/Button";
 
@@ -121,7 +122,7 @@ const List = () => {
       notes: params.get("notes") ?? "",
       date: params.get("date") ?? "",
       type: params.get("type") ?? "",
-      month: params.get("month") ?? ""
+      month: params.get("month") ?? "",
     };
     setFilter(filters);
     const cashflows = await get(filters);
@@ -140,6 +141,8 @@ const List = () => {
     }
   };
 
+  const height = window.innerHeight - 280;
+
   useEffect(() => {
     load();
   }, [updated]);
@@ -147,8 +150,40 @@ const List = () => {
   return (
     <>
       <div>
-        <div className="flex justify-between items-center">
-          <h2 className="text-sm font-medium text-gray-500">
+        <div className="border border-gray-200 px-2 py-6 rounded-lg my-4">
+          <p className="text-center mb-5">Transaksi bulan ini</p>
+          <div className="grid grid-cols-3 break-words">
+            <div className="mx-auto text-center">
+              <p className="flex items-center justify-center gap-x-1">
+                <ArrowDownIcon className="inline-block w-4 h-4 text-green-500" />
+                <span className="text-sm font-light">Income</span>
+              </p>
+              <span className="font-semibold text-sm text-green-500">
+                {formatMoney(cashflows?.transaction_sum_nominal_income, false)}
+              </span>
+            </div>
+            <div className="mx-auto text-center">
+              <p className="flex items-center justify-center gap-x-1">
+                <ArrowUpIcon className="inline-block w-4 h-4 text-red-500" />
+                <span className="text-sm font-light">Expense</span>
+              </p>
+              <span className="font-semibold text-sm text-red-500">
+                {formatMoney(cashflows?.transaction_sum_nominal_expense, false)}
+              </span>
+            </div>
+            <div className="mx-auto text-center">
+              <p className="flex items-center justify-center gap-x-1">
+                <CurrencyDollarIcon className="inline-block w-4 h-4 text-indigo-500" />
+                <span className="text-sm font-light">Budget</span>
+              </p>
+              <span className="font-semibold text-sm text-indigo-500">
+                {formatMoney(cashflows?.total_plan, false)}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-between items-center flex-row-reverse">
+          {/* <h2 className="text-sm font-medium text-gray-500">
             Bulan ini{" "}
             <p>
               <PlusSmallIcon className="inline-block w-4 h-4 text-green-500" />{" "}
@@ -162,7 +197,7 @@ const List = () => {
                 {formatMoney(cashflows?.transaction_sum_nominal_expense)}{" "}
               </span>
             </p>
-          </h2>
+          </h2> */}
           <div className="space-x-2 flex">
             <button
               type="button"
@@ -216,7 +251,7 @@ const List = () => {
           }
         }}
         hasMore={hasMore}
-        height="550px"
+        height={height + "px"}
         dataLength={cashflowsData?.length ?? 0}
         loader={
           <h4 className="text-center lg:col-span-4 sm:col-span-2">
@@ -336,7 +371,7 @@ const List = () => {
 
 const Cashflow = (props: IRecord) => {
   return (
-    <Layout title="Cashflow">
+    <Layout>
       <List {...props} />
     </Layout>
   );

@@ -95,6 +95,7 @@ const GoalDetail = (props: IGoalDetail) => {
 
   return (
     <Layout
+      noBottomNav
       title={
         <div
           className="grid text-xl mt-14 place-items-start"
