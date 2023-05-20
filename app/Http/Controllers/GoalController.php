@@ -48,7 +48,6 @@ class GoalController extends Controller
 
     public function update(UpdateGoalRequest $request, Goal $goal)
     {
-        throw_if($goal->user_id !== auth()->id(), new Exception("Kamu tidak memiliki akses untuk mengubah goal ini"));
         $request->updated($goal);
 
         return response()->json([
@@ -59,7 +58,6 @@ class GoalController extends Controller
 
     public function destroy(Goal $goal)
     {
-        throw_if($goal->user_id !== auth()->id(), new Exception("Kamu tidak memiliki akses untuk menghapus data ini"));
         throw_if($goal->goalDetails()->exists(), new Exception("Kamu tidak bisa menghapus tujuan yang sudah memiliki detail"));
         $goal->delete();
 
