@@ -1,7 +1,7 @@
 {
   "short_name": "Simple Budget",
   "name": "Catat keuangan anda disini!",
-  "start_url": "/months",
+  "start_url": "/dashboard",
   "display": "standalone",
   "icons": [
     {
