@@ -147,6 +147,8 @@ const List = () => {
 
   const checkboxRef = useRef<HTMLInputElement[]>([]);
 
+  const height = window.innerHeight - 310;
+
   useEffect(() => {
     load();
   }, [updated]);
@@ -249,7 +251,8 @@ const List = () => {
         )}
         <ul
           role="list"
-          className="mt-3 grid grid-cols-1 content-start gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 h-[550px] overflow-x-scroll"
+          className={`mt-3 grid grid-cols-1 content-start gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 overflow-x-scroll`}
+          style={{ height: height }}
         >
           {budgets?.data?.length == 0 && (
             <EmptyState

@@ -40,6 +40,8 @@ const List = () => {
     toggleActive(false);
   };
 
+  const height = window.innerHeight - 310;
+
   useEffect(() => {
     load();
   }, [updated]);
@@ -82,7 +84,8 @@ const List = () => {
         </div>
         <ul
           role="list"
-          className="mt-3 grid grid-cols-1 place-content-start gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 h-[550px] overflow-x-scroll"
+          className="mt-3 grid grid-cols-1 place-content-start gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 overflow-x-scroll"
+          style={{height: height}}
         >
           {accounts?.length == 0 && (
             <EmptyState

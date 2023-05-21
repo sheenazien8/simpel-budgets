@@ -3,32 +3,35 @@ import { FormikProps } from "formik";
 import React from "react";
 import { classNames } from "../../utils/helper";
 
-interface IOption {
+export interface IOption {
   label: string | JSX.Element;
   value: string | number;
 }
 interface ISelect<t = any> {
   options: IOption[];
-  label: string | JSX.Element;
-  formik: FormikProps<t>;
+  label?: string | JSX.Element;
+  formik?: FormikProps<t>;
   errors?: string;
   name: string;
   value: any;
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 const Select = (props: ISelect) => {
   return (
     <div>
-      <label
-        htmlFor={`${props.name}-id`}
-        className="block text-sm font-medium text-gray-700"
-      >
-        {props.label}
-      </label>
+      {props.label && (
+        <label
+          htmlFor={`${props.name}-id`}
+          className="block text-sm font-medium text-gray-700"
+        >
+          {props.label}
+        </label>
+      )}
       <div className="relative mt-1 rounded-md shadow-sm">
         <select
           name={props.name}
           id={`${props.name}-id`}
-          onChange={props.formik.handleChange}
+          onChange={props.formik?.handleChange ?? props.onChange ?? (() => {})}
           value={props.value}
           className={classNames(
             props.errors

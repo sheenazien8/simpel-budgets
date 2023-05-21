@@ -30,6 +30,7 @@ interface ILayout {
   title?: string | JSX.Element;
   description?: string | JSX.Element;
   noBottomNav?: boolean;
+  noPadding?: boolean;
 }
 
 const Layout = (props: ILayout) => {
@@ -72,6 +73,13 @@ const Layout = (props: ILayout) => {
       icon: <BuildingLibraryIcon className="h-6 w-6 text-gray-500" />,
       toolbar: true,
       component: "Account",
+    },
+    {
+      name: "Bulan",
+      href: "/months",
+      icon: <BuildingLibraryIcon className="h-6 w-6 text-gray-500" />,
+      toolbar: false,
+      component: "Month",
     },
     {
       name: "Tujuan",
@@ -241,7 +249,7 @@ const Layout = (props: ILayout) => {
           <main>
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
               <div
-                className={`px-4 ${
+                className={`${props.noPadding ? "" : "px-4"} ${
                   props.title || props.description ? "" : ""
                 } sm:px-0`}
               >

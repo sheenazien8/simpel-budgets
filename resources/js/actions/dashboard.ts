@@ -1,23 +1,30 @@
 import { Inertia } from "@inertiajs/inertia";
 import { AxiosError, AxiosResponse } from "axios";
 import { ResponseData } from "../models";
-import { ResponseGetDashboard } from "../models/dashboard";
-import { instance } from "../utils/helper";
+import { SummaryFinancialRecord } from "../models/dashboard";
+import { encodeQuery, instance } from "../utils/helper";
+
+export interface IQueryDashboard {
+  recapBy: string;
+}
 
 const useDashboardAction = () => {
-  const get = async (): Promise<AxiosResponse<ResponseData<ResponseGetDashboard>>> => {
+  const financialRecord = async (query: IQueryDashboard): Promise<
+    ResponseData<SummaryFinancialRecord>
+  > => {
     try {
-      const response = await instance.get<ResponseData<ResponseGetDashboard>>("/api/dashboard");
+      const response = await instance.get<ResponseData<SummaryFinancialRecord>>(
+        `/api/dashboard/financial-record?${encodeQuery(query)}`,
+      );
       if (response.status != 200) {
-        console.log(response);
-        throw response.data;
+        throw response.statusText;
       }
-      return response;
+      return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          Inertia.visit("login")
+          Inertia.visit("login");
           throw error;
         }
       }
@@ -26,8 +33,8 @@ const useDashboardAction = () => {
   };
 
   return {
-      get
-  }
-}
+    financialRecord,
+  };
+};
 
-export { useDashboardAction }
+export { useDashboardAction };

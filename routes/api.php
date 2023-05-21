@@ -56,7 +56,11 @@ Route::group([
     Route::resource("transactions", TransactionController::class);
     Route::resource("filters", SettingFilterController::class);
     Route::resource("goals", GoalController::class);
-    Route::get("dashboard", DashboardController::class);
+    Route::group([
+        'prefix' => '/dashboard',
+    ], function() {
+        Route::get("/financial-record", [DashboardController::class, 'financialRecord']);
+    });
     Route::group([
         'prefix' => 'goals/{goal}',
     ], function() {

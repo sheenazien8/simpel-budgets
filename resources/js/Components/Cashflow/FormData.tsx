@@ -109,7 +109,7 @@ const FormData = (props: IFormData) => {
                       <Select
                         label=""
                         formik={formik}
-                        name={"budget_id"}
+                        name={"month_id"}
                         options={months}
                         value={formik.values.month}
                       />
