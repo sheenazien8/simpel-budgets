@@ -24,6 +24,10 @@ class LoginRequest extends FormRequest
                     $fail("User doesn't exist in database");
                     return false;
                 }
+                if (!$user->email_verified_at) {
+                    $fail("User is not verified");
+                    return false;
+                }
                 if (!Hash::check($this->request->get("password"), $user->password)) {
                     $fail("Password or username is invalid");
                     return false;

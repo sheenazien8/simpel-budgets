@@ -157,8 +157,8 @@ const Layout = (props: ILayout) => {
                   </div>
                 </div>
 
-                <Disclosure.Panel>
-                  <div className="space-y-1 pt-2 pb-3">
+                <Disclosure.Panel className="z-50">
+                  <div className="space-y-1 pt-2 pb-3 z-50">
                     {navigation.map((item) => (
                       <Link
                         href={item.href != "" ? item.href : "#"}

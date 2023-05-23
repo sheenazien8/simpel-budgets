@@ -5,7 +5,10 @@ namespace App\Http\Requests;
 use App\Models\Budget;
 use App\Models\Transaction;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class RegisterRequest extends FormRequest
 {
@@ -35,56 +38,65 @@ class RegisterRequest extends FormRequest
 
     public function register()
     {
-        $this->replace([
-            'name' => $this->request->get('name'),
-            'email' => $this->request->get('email'),
-            'password' => bcrypt($this->request->get('password')),
-        ]);
+        try {
+            DB::beginTransaction();
+            $this->replace([
+                'name' => $this->request->get('name'),
+                'email' => $this->request->get('email'),
+                'password' => bcrypt($this->request->get('password')),
+            ]);
 
-        $user = User::create($this->all());
-        $keys = [
-            [
-                'keys' => 'budgets',
-                'model' => Budget::class,
-                'default' => [
-                    "show_current_month" => true,
-                    "show_current_and_next_month" => false,
-                    "show_active_month" => true,
+            $user = User::create($this->all());
+            $keys = [
+                [
+                    'keys' => 'budgets',
+                    'model' => Budget::class,
+                    'default' => [
+                        "show_current_month" => true,
+                        "show_current_and_next_month" => false,
+                        "show_active_month" => true,
+                    ]
+                ],
+                [
+                    'keys' => 'transactions',
+                    'model' => Transaction::class,
+                    'default' => [
+                        "show_current_month" => true,
+                        "show_current_and_next_month" => false,
+                        "show_active_month" => true,
+                    ]
                 ]
-            ],
-            [
-                'keys' => 'transactions',
-                'model' => Transaction::class,
-                'default' => [
-                    "show_current_month" => true,
-                    "show_current_and_next_month" => false,
-                    "show_active_month" => true,
-                ]
-            ]
-        ];
+            ];
 
-        foreach ($keys as $key) {
-            $filter = $user->filters()->where("key", $key["keys"])->first();
-            if (!$filter) {
-                $user->filters()->create([
-                    "key" => $key["keys"],
-                    "model" => $key["model"],
-                    "default" => $key["default"],
+            foreach ($keys as $key) {
+                $filter = $user->filters()->where("key", $key["keys"])->first();
+                if (!$filter) {
+                    $user->filters()->create([
+                        "key" => $key["keys"],
+                        "model" => $key["model"],
+                        "default" => $key["default"],
+                    ]);
+                }
+            }
+
+            $months = [
+                "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+            ];
+            $year = now()->format("Y");
+            foreach ($months as $month) {
+                $user->months()->create([
+                    "name" => $month,
+                    "year" => $year,
+                    "status" => 1
                 ]);
             }
-        }
 
-        $months = [
-            "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-            "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-        ];
-        $year = now()->format("Y");
-        foreach ($months as $month) {
-            $user->months()->create([
-                "name" => $month,
-                "year" => $year,
-                "status" => 1
-            ]);
+            event(new Registered($user));
+            DB::commit();
+        } catch (Throwable $th) {
+            DB::rollBack();
+            throw $th;
         }
     }
 }

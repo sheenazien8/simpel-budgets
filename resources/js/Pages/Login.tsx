@@ -3,21 +3,35 @@ import {
   EyeIcon,
   EyeSlashIcon,
 } from "@heroicons/react/20/solid";
+import { Inertia } from "@inertiajs/inertia";
 import { Link } from "@inertiajs/inertia-react";
 import { Formik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 import { useAuthAction } from "../actions/auth";
 import Button from "../Components/Button";
 import Text from "../Components/Input/Text";
 import LayoutGuest from "../Components/LayoutGuest";
 import { RLogin } from "../models";
-import { classNames, toastProgress } from "../utils/helper";
+import {
+  classNames,
+  resolveQueryParameter,
+  toastProgress,
+} from "../utils/helper";
 
 export default function Login() {
+  const params = resolveQueryParameter(location.search);
   const { login } = useAuthAction();
   const [errors, setErrors] = useState<RLogin>();
   const [showPassword, setShowpassword] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (params?.get("verified") === "true") {
+      toast.success("Email berhasil diverifikasi, silahkan login!");
+      Inertia.visit("/login");
+    }
+  }, [params]);
 
   return (
     <LayoutGuest>

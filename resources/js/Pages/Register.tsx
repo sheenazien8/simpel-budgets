@@ -5,6 +5,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { Formik } from "formik";
 import React, { useState } from "react";
+import { toast } from "react-hot-toast";
 import { useAuthAction } from "../actions/auth";
 import Button from "../Components/Button";
 import Text from "../Components/Input/Text";
@@ -53,7 +54,14 @@ export default function Register() {
                   toastProgress(
                     register(values, setErrors),
                     "Register",
-                    () => setLoading(false),
+                    () => {
+                      setLoading(false);
+                      setTimeout(() => {
+                        toast.success(
+                          "Email verifikasi telah dikirim, silahkan cek email anda!",
+                        );
+                      }, 1000);
+                    },
                     () => setLoading(false),
                   );
                 }}
