@@ -29,7 +29,7 @@ class ResetPasswordRequest extends FormRequest
     public function resetPassword(): void
     {
         if ($this->request->has("token")) {
-            $status = Password::reset($this->request->all(), function($user, $password) {
+            Password::reset($this->request->all(), function($user, $password) {
                 $user->password = bcrypt($password);
                 $user->save();
             });

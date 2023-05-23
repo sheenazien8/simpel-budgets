@@ -3,20 +3,38 @@ import {
   EyeIcon,
   EyeSlashIcon,
 } from "@heroicons/react/20/solid";
+import { Inertia } from "@inertiajs/inertia";
 import { Link } from "@inertiajs/inertia-react";
 import { Formik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 import { useAuthAction } from "../actions/auth";
+import Button from "../Components/Button";
+import Text from "../Components/Input/Text";
+import LayoutGuest from "../Components/LayoutGuest";
 import { RLogin } from "../models";
-import { classNames } from "../utils/helper";
+import {
+  classNames,
+  resolveQueryParameter,
+  toastProgress,
+} from "../utils/helper";
 
 export default function LoginDemo() {
+  const params = resolveQueryParameter(location.search);
   const { login } = useAuthAction();
   const [errors, setErrors] = useState<RLogin>();
   const [showPassword, setShowpassword] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (params?.get("verified") === "true") {
+      toast.success("Email berhasil diverifikasi, silahkan login!");
+      Inertia.visit("/login");
+    }
+  }, [params]);
 
   return (
-    <>
+    <LayoutGuest>
       <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <img
@@ -27,12 +45,6 @@ export default function LoginDemo() {
           <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
             Masuk ke rencana keuangan anda!
           </h2>
-          {/* <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
-            <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
-              start your 14-day free trial
-            </a>
-          </p> */}
         </div>
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -43,49 +55,29 @@ export default function LoginDemo() {
                 password: "password",
               }}
               onSubmit={async (values: RLogin) => {
-                await login(values, setErrors);
+                setLoading(true);
+                toastProgress(
+                  login(values, setErrors),
+                  "Login",
+                  () => setLoading(false),
+                  () => setLoading(false),
+                );
               }}
             >
               {(formik) => (
-                <form className="space-y-6" onSubmit={formik.handleSubmit}>
-                  <div>
-                    <label
-                      htmlFor="year"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Username
-                    </label>
-                    <div className="relative mt-1 rounded-md shadow-sm">
-                      <input
-                        type="text"
-                        name="username"
-                        id="username"
-                        onChange={formik.handleChange}
-                        value={formik.values.username}
-                        className={classNames(
-                          errors?.username
-                            ? "border-red-300 pr-10 text-red-900 placeholder-red-300 focus:border-red-500 focus:outline-none focus:ring-red-500 sm:text-sm"
-                            : "",
-                          "block w-full rounded-md border-gray-300",
-                        )}
-                        aria-invalid="true"
-                      />
-                      {errors?.username && (
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                          <ExclamationCircleIcon
-                            className="h-5 w-5 text-red-500"
-                            aria-hidden="true"
-                          />
-                        </div>
-                      )}
-                    </div>
-                    {errors?.username && (
-                      <p className="mt-2 text-sm text-red-600" id="email-error">
-                        {errors.username}
-                      </p>
-                    )}
-                  </div>
-
+                <form
+                  className="space-y-6"
+                  onSubmit={formik.handleSubmit}
+                  autoComplete="off"
+                >
+                  <Text
+                    name="username"
+                    label="Username"
+                    type="text"
+                    formik={formik}
+                    value={formik.values.username}
+                    errors={errors?.username}
+                  />
                   <div>
                     <label
                       htmlFor="year"
@@ -143,7 +135,7 @@ export default function LoginDemo() {
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                      <input
+                      {/* <input
                         id="remember-me"
                         name="remember-me"
                         type="checkbox"
@@ -154,12 +146,12 @@ export default function LoginDemo() {
                         className="ml-2 block text-sm text-gray-900"
                       >
                         Remember me
-                      </label>
+                      </label> */}
                     </div>
 
                     <div className="text-sm">
                       <Link
-                        href="reset-password"
+                        href="/reset-password"
                         as="a"
                         className="font-medium text-indigo-600 hover:text-indigo-500"
                       >
@@ -169,12 +161,9 @@ export default function LoginDemo() {
                   </div>
 
                   <div>
-                    <button
-                      type="submit"
-                      className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    >
+                    <Button type="submit" block size="md" loading={loading}>
                       Sign in
-                    </button>
+                    </Button>
                   </div>
                 </form>
               )}
@@ -194,20 +183,20 @@ export default function LoginDemo() {
 
               <div className="mt-6 grid grid-cols-1 gap-3">
                 <div>
-                  <Link
-                    href="register"
-                    as="a"
-                    className="inline-flex w-full justify-center rounded-md border border-indigo-300 bg-white py-2 px-4 text-sm font-medium text-indigo-500 shadow-sm hover:bg-indigo-50"
+                  <Button
+                    color="plain"
+                    href="/register"
+                    className="hover:bg-indigo-50 border border-indigo-300 text-indigo-500"
                   >
-                    <span className="sr-only">Daftar!</span>
-                    <p>Register</p>
-                  </Link>
+                    <span className="sr-only">Register!</span>
+                    <p>Register!</p>
+                  </Button>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </>
+    </LayoutGuest>
   );
 }

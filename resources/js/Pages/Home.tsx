@@ -75,8 +75,8 @@ const Home = () => {
   const { getProfile } = useAuthAction();
   const { financialRecord } = useDashboardAction();
   const [financialRecordOption, setFinancialRecordOption] = useState<IOption>({
-    label: "7 Hari",
-    value: "7 days",
+    label: "1 bulan ini",
+    value: "1 month",
   });
   const [financialRecordData, setFinancialRecordData] =
     useState<SummaryFinancialRecord>();
@@ -142,7 +142,7 @@ const Home = () => {
               }}
             />
           </div>
-          <div className="z-20 relative overflow-x-scroll">
+          <div className="overflow-x-scroll">
             <div className="grid grid-cols-[200px_200px_200px] gap-x-3 my-4">
               <div className="px-3 py-4 border border-gray-300 rounded-lg shadow-gray-300 shadow">
                 <p className="font-light text-sm">Total Income</p>
