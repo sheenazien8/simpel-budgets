@@ -53,7 +53,9 @@ Route::group([
     Route::resource("budgets", BudgetController::class);
     Route::post("budgets/copy", [BudgetController::class, 'copy'])->name("budgets.copy");
     Route::resource("accounts", AccountController::class);
-    Route::resource("transactions", TransactionController::class);
+    Route::group(["prefix" => "transactions"], function() {
+        Route::resource("/", TransactionController::class);
+    });
     Route::resource("filters", SettingFilterController::class);
     Route::resource("goals", GoalController::class);
     Route::group([

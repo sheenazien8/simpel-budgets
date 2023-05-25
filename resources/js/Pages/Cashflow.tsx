@@ -122,7 +122,7 @@ const List = () => {
       notes: params.get("notes") ?? "",
       date: params.get("date") ?? "",
       type: params.get("type") ?? "",
-      month: params.get("month") ?? "",
+      month_id: params.get("month_id") ?? "",
     };
     setFilter(filters);
     const cashflows = await get(filters);
@@ -141,7 +141,7 @@ const List = () => {
     }
   };
 
-  const height = window.innerHeight - 350;
+  const height = window.innerHeight - 310;
 
   useEffect(() => {
     load();
@@ -151,7 +151,6 @@ const List = () => {
     <>
       <div>
         <div className="border border-gray-200 px-2 py-6 rounded-lg my-4">
-          <p className="text-center mb-5">Transaksi bulan ini</p>
           <div className="grid grid-cols-3 break-words">
             <div className="mx-auto text-center">
               <p className="flex items-center justify-center gap-x-1">
@@ -332,6 +331,7 @@ const List = () => {
           budgets={budgets?.data ?? []}
           onSubmit={onFilter}
           onClear={onClearFilter}
+          months={months ?? []}
           initialFilter={filter}
         />
       </Modal>

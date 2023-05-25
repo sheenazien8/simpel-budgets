@@ -1,6 +1,6 @@
 import React from "react";
 import { Formik } from "formik";
-import { MAccount, MBudget, RCashflow } from "../../models";
+import { MAccount, MBudget, MMonth, RCashflow } from "../../models";
 import { classNames } from "../../utils/helper";
 
 interface IFormFilter {
@@ -9,6 +9,7 @@ interface IFormFilter {
   onClear: () => void;
   accounts: MAccount[];
   budgets: MBudget[];
+  months: MMonth[];
 }
 
 const FormFilter = (props: IFormFilter) => {
@@ -151,6 +152,34 @@ const FormFilter = (props: IFormFilter) => {
               </div>
             </div>
           )}
+          <div>
+            <label
+              htmlFor="month_id"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Bulan
+            </label>
+            <div className="relative mt-1 rounded-md shadow-sm">
+              <select
+                name="month_id"
+                id="month_id"
+                className={classNames(
+                  "block w-full rounded-md border-gray-300",
+                )}
+                onChange={formik.handleChange}
+                value={formik.values.month_id}
+                aria-invalid="true"
+              >
+                <option value="">Pilih Semua</option>
+                {props.months?.map(
+                  (option) =>
+                    option != undefined && (
+                      <option value={option.id}>{option.name}</option>
+                    ),
+                )}
+              </select>
+            </div>
+          </div>
           <div>
             <button
               type="submit"

@@ -11,5 +11,6 @@ class Filter extends AbstractFilter
         'account_target' => AccountTarget::class,
         'budget_id' => BudgetId::class,
         'type' => Type::class,
+        'month_id' => MonthId::class,
     ];
 }
