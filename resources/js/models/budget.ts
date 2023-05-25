@@ -5,6 +5,8 @@ interface ResponseGetMBudget {
 interface MBudget {
   id: number;
   plan: string;
+  type: number;
+  account_id?: number;
   month_id: number;
   month: string;
   nominal: number;
@@ -15,7 +17,9 @@ interface MBudget {
 
 interface RBudget {
   plan?: number | string;
+  type?: number | string;
   month_id?: number | string;
+  account_id?: number | string;
   nominal?: number | string;
   ids?: number[] | string[];
 }

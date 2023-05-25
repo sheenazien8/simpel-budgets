@@ -18,6 +18,7 @@ class StoreBudgetRequest extends FormRequest
             "plan" => "required",
             "month_id" => [ "required", "numeric", "min:1" ],
             "nominal" => [ "required", "numeric" ],
+            "account_id" => [ "required_if:type,2"]
         ];
     }
 
@@ -29,7 +30,8 @@ class StoreBudgetRequest extends FormRequest
     public function messages(): array
     {
         return [
-            "month_id.min" => "Bulan harus dipilih"
+            "month_id.min" => "Bulan harus dipilih",
+            "account_id.required_if" => "Jika tipenya tabungan akun harus dipilih"
         ];
     }
 }

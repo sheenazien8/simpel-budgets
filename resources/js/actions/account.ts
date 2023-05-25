@@ -1,14 +1,17 @@
 import { Inertia } from "@inertiajs/inertia";
 import { AxiosError, AxiosResponse } from "axios";
 import { ResponseData, MAccount, RAccount, ResponseGetAccount } from "../models";
-import { instance } from "../utils/helper";
+import { instance, encodeQuery } from "../utils/helper";
+
+export interface QAccount {
+    saving?: boolean;
+}
 
 const useAccountAction = () => {
-  const get = async (): Promise<AxiosResponse<ResponseData<ResponseGetAccount>>> => {
+  const get = async (query?: QAccount): Promise<AxiosResponse<ResponseData<ResponseGetAccount>>> => {
     try {
-      const response = await instance.get<ResponseData<ResponseGetAccount>>("/api/accounts");
+      const response = await instance.get<ResponseData<ResponseGetAccount>>(`/api/accounts?${encodeQuery(query)}`);
       if (response.status != 200) {
-        console.log(response);
         throw response.data;
       }
       return response;

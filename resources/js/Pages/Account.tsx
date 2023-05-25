@@ -181,6 +181,13 @@ const List = () => {
                 checked={Number(editData?.hide) == 1}
                 label="Sembunyikan saldo"
               />
+              <Toggle
+                formik={formik}
+                name="saving"
+                value={formik.values.saving}
+                checked={Number(editData?.saving) == 1}
+                label="Jadikan akun tabungan"
+              />
               <div className="grid grid-cols-1 gap-y-2">
                 <Button loading={loadingSubmit} type="submit" block>
                   Simpan

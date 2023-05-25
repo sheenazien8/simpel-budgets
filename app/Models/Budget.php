@@ -8,6 +8,7 @@ use App\Traits\Filterable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Budget extends Model
@@ -18,7 +19,9 @@ class Budget extends Model
         'plan',
         'month_id',
         'nominal',
-        'user_id'
+        'user_id',
+        'type',
+        'account_id',
     ];
 
     protected $filter = BudgetFilter::class;
@@ -26,6 +29,11 @@ class Budget extends Model
     public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    public function account(): BelongsTo
+    {
+        return $this->belongsTo(Account::class);
     }
 
     public function scopeWithDefaultFilter(Builder $builder, ?Filter $filter, callable $bypass): Builder

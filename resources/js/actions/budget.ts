@@ -53,6 +53,7 @@ const useBudgetAction = () => {
             plan: errorResponse?.plan ? errorResponse?.plan[0] : "",
             month_id: errorResponse?.month_id ? errorResponse?.month_id[0] : "",
             nominal: errorResponse?.nominal ? errorResponse?.nominal[0] : "",
+            account_id: errorResponse?.account_id ? errorResponse?.account_id[0] : "",
           });
         }
       }
@@ -112,6 +113,7 @@ const useBudgetAction = () => {
             plan: errorResponse?.plan ? errorResponse?.plan[0] : "",
             month_id: errorResponse?.month_id ? errorResponse?.month_id[0] : "",
             nominal: errorResponse?.nominal ? errorResponse?.nominal[0] : "",
+            account_id: errorResponse?.account_id ? errorResponse?.account_id[0] : "",
           });
         }
       }

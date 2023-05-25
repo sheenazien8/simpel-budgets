@@ -7,14 +7,16 @@ use App\Http\Requests\UpdateAccountRequest;
 use App\Models\Account;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class AccountController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         return response()->json([
             'data' => [
-                'data' => $account = Account::where("user_id", auth()->id())
+                'data' => $account = Account::byCurrentUser()
+                    ->filter($request)
                     ->orderBy("name")
                     ->get(),
                 'account_sum_total' => $account->sum('total'),

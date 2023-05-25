@@ -173,17 +173,17 @@ const Home = () => {
                 </p>
               </div>
               <div className="px-3 py-4 border border-gray-300 rounded-lg shadow-gray-300 shadow">
-                <p className="font-light text-sm">Total Tabungan</p>
+                <p className="font-light text-sm">Sisa saldo</p>
                 <p className="font-semibold text-base">
-                  {formatMoney(financialRecordData?.saving?.total)}
+                  {formatMoney(financialRecordData?.remaining?.total)}
                 </p>
                 <p className="font-light text-xs flex items-center">
-                  {financialRecordData?.saving?.isUp ? (
+                  {financialRecordData?.remaining?.isUp ? (
                     <ArrowUpRightIcon className="w-5 h-5 text-green-500" />
                   ) : (
                     <ArrowDownLeftIcon className="w-5 h-5 text-red-500" />
                   )}{" "}
-                  {financialRecordData?.saving?.percentage}
+                  {financialRecordData?.remaining?.percentage}
                 </p>
               </div>
             </div>

@@ -114,6 +114,7 @@ class TransactionController extends Controller
                 'transaction_sum_nominal_income' => $transactionAttrbite->sum_income_month,
                 'total_transactions' => $total_transactions,
                 'total_plan' => $budgets->total_plan,
+                'total_saving' => $transactionAttrbite->sum_income_month - $transactionAttrbite->sum_expense_month,
             ],
         ]);
     }

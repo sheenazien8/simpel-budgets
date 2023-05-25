@@ -9,7 +9,7 @@ interface SummaryFinancialRecord {
     percentage: string;
     isUp: boolean;
   };
-  saving: {
+  remaining: {
     total: number;
     percentage: string;
     isUp: boolean;

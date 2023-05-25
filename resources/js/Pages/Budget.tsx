@@ -10,9 +10,10 @@ import {
   toastProgress,
   useHashRouteToggle,
 } from "../utils/helper";
-import { useBudgetAction, useMonthAction } from "../actions";
+import { useBudgetAction, useMonthAction, useAccountAction } from "../actions";
 import {
   FBudget,
+  MAccount,
   MBudget,
   MMonth,
   RBudget,
@@ -25,6 +26,7 @@ import {
   ClipboardDocumentListIcon,
   Cog6ToothIcon,
   ExclamationTriangleIcon,
+  CreditCardIcon,
 } from "@heroicons/react/24/solid";
 import { EmptyState } from "../Components/EmptyState";
 import FormData from "../Components/Bugets/FormData";
@@ -38,8 +40,10 @@ interface IRecord {}
 const List = () => {
   const { get, create, detail, update, destroy, copy } = useBudgetAction();
   const { get: getMonth } = useMonthAction();
+  const { get: getAccount } = useAccountAction();
   const [budgets, setBudgets] = useState<ResponseGetMBudget>();
   const [months, setMonths] = useState<MMonth[]>();
+  const [accounts, setAccounts] = useState<MAccount[]>();
   const [updated, setUpdated] = useState<boolean>(false);
   const [isOpen, toggleActive] = useHashRouteToggle("#opened-modal");
   const [isFilterOpen, toggleFilterActive] =
@@ -70,6 +74,8 @@ const List = () => {
       status: Boolean(Number(1)),
     });
     setMonths(months.data.data);
+    const accounts = await getAccount({saving: true});
+    setAccounts(accounts.data.data?.data);
     toggleFilterActive(false);
     toggleActive(false);
   };
@@ -303,9 +309,14 @@ const List = () => {
                 )}
               >
                 <CardList
+                  bgColor={String(budget.type) === "2" ? "bg-green-600" : undefined}
                   key={index}
                   title={budget.plan}
-                  icon={<CurrencyDollarIcon className="w-6" />}
+                  icon={
+                      String(budget.type) === "1" ?
+                      <CurrencyDollarIcon className="w-6" /> :
+                      <CreditCardIcon className="w-6"/>
+                  }
                   details={[
                     budget.month,
                     <p
@@ -362,6 +373,7 @@ const List = () => {
           onSubmit={onSubmit}
           onDelete={onDelete}
           months={months ?? []}
+          accounts={accounts ?? []}
         />
       </Modal>
       <Modal

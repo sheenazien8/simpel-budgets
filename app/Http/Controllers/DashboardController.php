@@ -81,7 +81,7 @@ class DashboardController extends Controller
                     'percentage' => $expensePercentage,
                     'isUp' => $expense > $lastExpense
                 ],
-                "saving" => [
+                "remaining" => [
                     'total' => $saving,
                     'percentage' => $savingPercentage,
                     'isUp' => $saving > $lastSaving
