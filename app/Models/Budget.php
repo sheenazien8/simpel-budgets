@@ -22,6 +22,7 @@ class Budget extends Model
         'user_id',
         'type',
         'account_id',
+        'status'
     ];
 
     protected $filter = BudgetFilter::class;
