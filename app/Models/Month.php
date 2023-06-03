@@ -22,6 +22,7 @@ class Month extends Model
     protected $fillable = [
         'name',
         'year',
+        'status',
     ];
 
     protected static function boot()
