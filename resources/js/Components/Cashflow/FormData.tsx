@@ -1,6 +1,7 @@
-import { Formik } from "formik";
-import React, { useState } from "react";
-import { MAccount, MBudget, MCashflow, MMonth, RCashflow } from "../../models";
+import { Formik, useFormikContext } from "formik";
+import React, { useEffect, useState } from "react";
+import { useAccountAction, useBudgetAction, useMonthAction } from "../../actions";
+import { MAccount, MBudget, MCashflow, MMonth, RCashflow, ResponseGetMBudget } from "../../models";
 import Button from "../Button";
 import Price from "../Input/Price";
 import Select from "../Input/Select";
@@ -9,9 +10,6 @@ import Text from "../Input/Text";
 interface IFormData {
   onSubmit: (args: RCashflow) => void;
   errors?: RCashflow;
-  accounts: MAccount[];
-  budgets: MBudget[];
-  months: MMonth[];
   onDelete: () => void;
   initialValues?: MCashflow | RCashflow;
 }
@@ -26,26 +24,59 @@ const FormData = (props: IFormData) => {
     type: defaultType,
   };
 
+  const { get: getBudget } = useBudgetAction();
+  const { get: getMonth } = useMonthAction();
+  const { get: getAccount } = useAccountAction();
+  const [accountData, setAccounts] = useState<MAccount[]>();
+  const [budgetData, setBudgets] = useState<ResponseGetMBudget>();
+  const [monthData, setMonths] = useState<MMonth[]>();
+  const [monthId, setMonthId] = useState<number>();
+  const load = async () => {
+    const budgets = await getBudget({
+        month_id: monthId ?? "",
+    });
+    setBudgets(budgets.data.data);
+    const months = await getMonth();
+    setMonths(months.data.data);
+    const accounts = await getAccount();
+    setAccounts(accounts.data.data?.data);
+  };
+
   const accounts = [{ value: "", label: "Pilih Akun" }].concat(
-    props.accounts.map((account) => ({
+    (accountData ?? []).map((account) => ({
       value: String(account.id),
       label: `${account.name}`,
     })),
   );
 
   const budgets = [{ value: "", label: "Pilih Anggaran" }].concat(
-    props.budgets.map((budget) => ({
+    (budgetData?.data ?? []).map((budget: MBudget) => ({
       value: String(budget.id),
       label: `${budget.plan}`,
     })),
   );
 
   const months = [{ value: "", label: "Pilih Bulan" }].concat(
-    props.months.map((month) => ({
+    (monthData ?? []).map((month) => ({
       value: String(month.id),
       label: `${month.name} - ${month.year}`,
     })),
   );
+
+  useEffect(() => {
+    load();
+  }, [monthId]);
+
+  const FormObserver: React.FC = () => {
+    const { values } = useFormikContext();
+
+    useEffect(() => {
+      setMonthId((values as RCashflow)?.month_id as unknown as number);
+    }, [(values as RCashflow).month_id]);
+
+    return null;
+  };
+
 
   return (
     <Formik initialValues={initialValues} onSubmit={props.onSubmit}>
@@ -55,6 +86,7 @@ const FormData = (props: IFormData) => {
           onSubmit={formik.handleSubmit}
           autoComplete="off"
         >
+          <FormObserver />
           <Price
             label="Nominal"
             formik={formik}

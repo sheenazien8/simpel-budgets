@@ -1,22 +1,85 @@
-import React from "react";
-import { Formik } from "formik";
-import { MAccount, MBudget, MMonth, RCashflow } from "../../models";
+import React, { useEffect, useState } from "react";
+import { Formik, useFormikContext } from "formik";
+import {
+  MAccount,
+  MBudget,
+  MMonth,
+  RCashflow,
+  ResponseGetMBudget,
+} from "../../models";
 import { classNames } from "../../utils/helper";
+import { useAccountAction, useBudgetAction, useMonthAction } from "../../actions";
+import Select from "../Input/Select";
 
 interface IFormFilter {
   onSubmit: (arg: RCashflow) => void;
   initialFilter?: RCashflow;
   onClear: () => void;
-  accounts: MAccount[];
-  budgets: MBudget[];
-  months: MMonth[];
 }
 
 const FormFilter = (props: IFormFilter) => {
+  const { get: getBudget } = useBudgetAction();
+  const { get: getMonth } = useMonthAction();
+  const { get: getAccount } = useAccountAction();
+  const [accountData, setAccounts] = useState<MAccount[]>();
+  const [budgetData, setBudgets] = useState<ResponseGetMBudget>();
+  const [monthData, setMonths] = useState<MMonth[]>();
+  const [monthId, setMonthId] = useState<number>();
+  const load = async () => {
+    const budgets = await getBudget({
+        month_id: monthId ?? "",
+    });
+    setBudgets(budgets.data.data);
+    const months = await getMonth();
+    setMonths(months.data.data);
+    const accounts = await getAccount();
+    setAccounts(accounts.data.data?.data);
+  };
+
+  const accounts = [{ value: "", label: "Pilih Akun" }].concat(
+    (accountData ?? []).map((account) => ({
+      value: String(account.id),
+      label: `${account.name}`,
+    })),
+  );
+
+  const budgets = [{ value: "", label: "Pilih Anggaran" }].concat(
+    (budgetData?.data ?? []).map((budget: MBudget) => ({
+      value: String(budget.id),
+      label: `${budget.plan}`,
+    })),
+  );
+
+  const months = [{ value: "", label: "Pilih Bulan" }].concat(
+    (monthData ?? []).map((month) => ({
+      value: String(month.id),
+      label: `${month.name} - ${month.year}`,
+    })),
+  );
+
+  useEffect(() => {
+    load();
+  }, [monthId]);
+
+  const FormObserver: React.FC = () => {
+    const { values } = useFormikContext();
+
+    useEffect(() => {
+      setMonthId((values as RCashflow)?.month_id as unknown as number);
+    }, [(values as RCashflow).month_id]);
+
+    return null;
+  };
+
   return (
     <Formik initialValues={props.initialFilter ?? {}} onSubmit={props.onSubmit}>
       {(formik) => (
-        <form className="space-y-4" onSubmit={formik.handleSubmit} autoComplete="off">
+        <form
+          className="space-y-4"
+          onSubmit={formik.handleSubmit}
+          autoComplete="off"
+        >
+          <FormObserver />
           <div>
             <label
               htmlFor="plan"
@@ -57,10 +120,10 @@ const FormFilter = (props: IFormFilter) => {
                 aria-invalid="true"
               >
                 <option value="">Pilih Semua</option>
-                {props.accounts?.map(
+                {accounts?.map(
                   (option) =>
                     option != undefined && (
-                      <option value={option.id}>{option.name}</option>
+                      <option value={option.value}>{option.label}</option>
                     ),
                 )}
               </select>
@@ -111,46 +174,26 @@ const FormFilter = (props: IFormFilter) => {
                   aria-invalid="true"
                 >
                   <option value="">Pilih Semua</option>
-                  {props.accounts?.map(
+                  {accounts?.map(
                     (option) =>
                       option != undefined && (
-                        <option value={option.id}>{option.name}</option>
+                        <option value={option.value}>{option.label}</option>
                       ),
                   )}
                 </select>
               </div>
             </div>
           )}
-
           {formik.values.type == 1 && (
-            <div>
-              <label
-                htmlFor="budget_id"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Pilih Budget
-              </label>
-              <div className="relative mt-1 rounded-md shadow-sm">
-                <select
-                  name="budget_id"
-                  id="budget_id"
-                  onChange={formik.handleChange}
-                  value={formik.values.budget_id}
-                  className={classNames(
-                    "block w-full rounded-md border-gray-300",
-                  )}
-                  aria-invalid="true"
-                >
-                  <option value="">Pilih Semua</option>
-                  {props.budgets?.map(
-                    (option) =>
-                      option != undefined && (
-                        <option value={option.id}>{option.plan}</option>
-                      ),
-                  )}
-                </select>
-              </div>
-            </div>
+            <>
+              <Select
+                label="Anggaran"
+                formik={formik}
+                name={"budget_id"}
+                value={String(formik.values?.budget_id ?? "")}
+                options={budgets}
+              />
+            </>
           )}
           <div>
             <label
@@ -171,10 +214,10 @@ const FormFilter = (props: IFormFilter) => {
                 aria-invalid="true"
               >
                 <option value="">Pilih Semua</option>
-                {props.months?.map(
+                {months?.map(
                   (option) =>
                     option != undefined && (
-                      <option value={option.id}>{option.name}</option>
+                      <option value={option.value}>{option.label}</option>
                     ),
                 )}
               </select>

@@ -16,16 +16,12 @@ import {
 } from "../utils/helper";
 import {
   useAccountAction,
-  useBudgetAction,
   useCashflowAction,
-  useMonthAction,
 } from "../actions";
 import {
   MAccount,
   MCashflow,
-  MMonth,
   RCashflow,
-  ResponseGetMBudget,
   ResponseGetMCashflow,
 } from "../models";
 import { EmptyState } from "../Components/EmptyState";
@@ -48,13 +44,8 @@ interface IRecord {}
 const List = () => {
   const { get, create, detail, update, destroy } = useCashflowAction();
   const { get: getAccount } = useAccountAction();
-  const { get: getBudget } = useBudgetAction();
-  const { get: getMonth } = useMonthAction();
   const [cashflows, setCashflows] = useState<ResponseGetMCashflow>();
   const [cashflowsData, setCashflowsData] = useState<MCashflow[]>();
-  const [accounts, setAccounts] = useState<MAccount[]>();
-  const [budgets, setBudgets] = useState<ResponseGetMBudget>();
-  const [months, setMonths] = useState<MMonth[]>();
   const [updated, setUpdated] = useState<boolean>(false);
   const [isOpen, toggleActive] = useHashRouteToggle("#opened-modal");
   const [isOpenFilter, toggleFilterActive] =
@@ -128,12 +119,6 @@ const List = () => {
     const cashflows = await get(filters);
     setCashflows(cashflows.data.data);
     setCashflowsData(cashflows.data.data?.data);
-    const accounts = await getAccount();
-    setAccounts(accounts.data.data?.data);
-    const budgets = await getBudget();
-    setBudgets(budgets.data.data);
-    const months = await getMonth();
-    setMonths(months.data.data);
     toggleFilterActive(false);
     toggleActive(false);
     if (cashflows.data.data?.data.length == (cashflowsData?.length ?? 0)) {
@@ -327,11 +312,8 @@ const List = () => {
         title="Filter"
       >
         <FormFilter
-          accounts={accounts ?? []}
-          budgets={budgets?.data ?? []}
           onSubmit={onFilter}
           onClear={onClearFilter}
-          months={months ?? []}
           initialFilter={filter}
         />
       </Modal>
@@ -344,9 +326,6 @@ const List = () => {
           initialValues={editData ?? filter}
           onSubmit={onSubmit}
           errors={errors}
-          accounts={accounts ?? []}
-          budgets={budgets?.data ?? []}
-          months={months ?? []}
           onDelete={onDelete}
         />
       </Modal>
