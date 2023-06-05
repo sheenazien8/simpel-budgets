@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\BudgetType;
+use App\Enums\TransactionType;
 use App\Models\Account;
 use App\Models\Budget;
 use App\Models\Transaction;
@@ -54,9 +56,29 @@ class UpdateTransactionRequest extends FormRequest
                         $fail("Budget tidak ada di database");
                     }
                     return;
+                    if ($this->route("transaction")->budget_id != $value) {
+                        $budgetSaving = function (Budget $budget, float $nominal): void {
+
+                        };
+                        match ($this->route("transaction")->budget->type) {
+                            BudgetType::Saving->value => $budgetSaving($this->route("transaction")->budget, $this->request->get("nominal")),
+                            BudgetType::Expense->value => null
+                        };
+                    }
                 }
              ],
-            "nominal" => [ "required", "numeric" ],
+            "nominal" => [ "required", "numeric", function ($attr, $value, $fail) {
+                $expenseValidation = function () use ($value, $fail) {
+                    $account = Account::find($this->request->get("account_id"));
+                    if ($account->total < $value) {
+                        $fail("nominal harus kurang dari total saldo di account $account->name");
+                    }
+                };
+                match ($this->request->get("type")) {
+                    TransactionType::Expense->value => $expenseValidation(),
+                    default => null
+                };
+            }],
             "type" => [
                 "required", "numeric", Rule::in([1, 2, 3]),
                 function($attr, $value, $fail) {
@@ -92,31 +114,24 @@ class UpdateTransactionRequest extends FormRequest
             ]);
         }
         $this->account = Account::find($this->request->get("account_id"));
-        switch ($this->request->get("type")) {
-            case 1:
-                $this->expenseAccount();
-                break;
-            case 2:
-                $this->incomeAccount();
-                break;
-            case 3:
-                $this->transferAccount();
-                break;
-            default:
-                throw new ValidationException("Invalid Type");
-                break;
-        }
+        match ($this->request->get("type")) {
+            TransactionType::Expense->value => $this->expenseAccount(),
+            TransactionType::Income->value => $this->incomeAccount(),
+            TransactionType::Transfer->value => $this->transferAccount(),
+            default => throw new ValidationException("Invalid Type")
+        };
         $this->transaction->update($this->request->all());
         DB::commit();
     }
 
     private function expenseAccount(): void
     {
+        $nominal = $this->request->get("nominal");
         if ($this->transaction->account_id != $this->request->get("account_id")) {
             $this->transaction->account->total += $this->transaction->nominal;
             $this->transaction->account->save();
 
-            $this->account->total -= $this->request->get("nominal");
+            $this->account->total -= $nominal;
             $this->account->save();
         }
 
@@ -124,9 +139,18 @@ class UpdateTransactionRequest extends FormRequest
             $previousTotal = $this->account->total + $this->transaction->nominal;
 
             $this->account->update([
-                'total' => $previousTotal - $this->request->get("nominal")
+                'total' => $previousTotal - $nominal
             ]);
         }
+
+        match (Budget::find($this->request->get("budget_id"))->type) {
+            BudgetType::Saving->value => function () use ($nominal) {
+                if ($this->transaction->budget_id != $this->request->get("budget_id")) {
+                    $this->account->total -= $nominal;
+                }
+            },
+            BudgetType::Expense->value => null
+        };
     }
 
     private function incomeAccount(): void

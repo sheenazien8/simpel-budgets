@@ -2,10 +2,13 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\BudgetType;
+use App\Enums\TransactionType;
 use App\Models\Account;
 use App\Models\Budget;
 use App\Models\Transaction;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -53,7 +56,18 @@ class StoreTransactionRequest extends FormRequest
                     return;
                 }
              ],
-            "nominal" => [ "required", "numeric" ],
+            "nominal" => [ "required", "numeric", function ($attr, $value, $fail) {
+                $expenseValidation = function () use ($value, $fail) {
+                    $account = Account::find($this->request->get("account_id"));
+                    if ($account->total < $value) {
+                        $fail("nominal harus kurang dari total saldo di account $account->name");
+                    }
+                };
+                match ($this->request->get("type")) {
+                    TransactionType::Expense->value => $expenseValidation(),
+                    default => null
+                };
+            }],
             "type" => [ "required", "numeric", Rule::in([1, 2, 3]) ],
             "date" => [
                 function($attr, $value, $fail) {
@@ -72,34 +86,40 @@ class StoreTransactionRequest extends FormRequest
 
     public function created(): void
     {
+        DB::beginTransaction();
         if (!$this->request->get("date")) {
             $this->request->add([
                 "date" => now()->format("Y-m-d")
             ]);
         }
         $this->account = Account::find($this->request->get("account_id"));
-        switch ($this->request->get("type")) {
-            case 1:
-                $this->expenseAccount();
-                break;
-            case 2:
-                $this->incomeAccount();
-                break;
-            case 3:
-                $this->transferAccount();
-                break;
-            default:
-                throw new ValidationException("Invalid Type");
-                break;
-        }
+        match ($this->request->get("type")) {
+            TransactionType::Expense->value => $this->expenseAccount(),
+            TransactionType::Income->value => $this->incomeAccount(),
+            TransactionType::Transfer->value => $this->transferAccount(),
+            default => throw new ValidationException("Invalid Type")
+        };
         Transaction::create($this->request->all());
+        DB::commit();
     }
 
     private function expenseAccount(): void
     {
+        $nominal = $this->request->get("nominal");
         $this->account->update([
-            'total' => $this->account->total - $this->request->get("nominal")
+            'total' => $this->account->total - $nominal
         ]);
+
+        $budget = Budget::find($this->request->get("budget_id"));
+        $budgetSaving = function (Budget $budget, float $nominal): void {
+            $budget->account()->update([
+                'total' => $budget->account->total + $nominal
+            ]);
+        };
+        match ($budget->type) {
+            BudgetType::Saving->value => $budgetSaving($budget, $nominal),
+            BudgetType::Expense->value => null
+        };
     }
 
     private function incomeAccount(): void
