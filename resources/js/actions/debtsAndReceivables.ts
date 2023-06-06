@@ -1,0 +1,5 @@
+const useDebtsAndReceivablesAction = () => {
+}
+
+export { useDebtsAndReceivablesAction };
+
