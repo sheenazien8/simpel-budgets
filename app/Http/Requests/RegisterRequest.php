@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Budget;
+use App\Models\Month;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
@@ -85,15 +86,16 @@ class RegisterRequest extends FormRequest
             ];
             $year = now()->format("Y");
             foreach ($months as $month) {
-                $user->months()->create([
+                $monthCreated = Month::create([
                     "name" => $month,
                     "year" => $year,
                     "status" => 1
                 ]);
+                $user->months()->save($monthCreated);
             }
+            DB::commit();
 
             event(new Registered($user));
-            DB::commit();
         } catch (Throwable $th) {
             DB::rollBack();
             throw $th;
