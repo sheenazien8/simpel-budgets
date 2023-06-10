@@ -2,7 +2,6 @@
 
 use App\Models\Goal;
 use App\Models\User;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -24,8 +23,8 @@ Route::get("artisan/{command}", function ($command, Request $request) {
 
 Route::get('/email/verify/{id}/{hash}', function (string $id, string $hash) {
     $user = User::find($id);
+    $user->markEmailAsVerified();
     if ($user->hasVerifiedEmail()) {
-        $user->markEmailAsVerified();
         return redirect("/login?verified=true");
     }
 
@@ -46,6 +45,7 @@ Route::group([], function() {
     Route::inertia('/cashflow', "Cashflow");
     Route::inertia('/goals', "Goal");
     Route::inertia('/profiles', "Profile");
+    Route::inertia('/hutang-piutang', "DebtsAndReceivables");
     Route::inertia('/notifications', "Notification");
     Route::get('/goals/{goal}/details', function(Goal $goal) {
         return Inertia::render("GoalDetail", ["goal" => $goal->toArray()]);
