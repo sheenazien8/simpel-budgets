@@ -117,16 +117,18 @@ export const Layout = (props: ILayout) => {
                   <div className="flex h-16 justify-between">
                     <div className="flex">
                       <div className="flex flex-shrink-0 items-center">
-                        <img
-                          className="block h-8 w-auto lg:hidden"
-                          src="/images/logo-square.png"
-                          alt="Your Company"
-                        />
-                        <img
-                          className="hidden h-8 w-auto lg:block"
-                          src="/images/logo-square.png"
-                          alt="Your Company"
-                        />
+                        <Link href="/dashboard">
+                          <img
+                            className="block h-8 w-auto lg:hidden"
+                            src="/images/logo-square.png"
+                            alt="Your Company"
+                          />
+                          <img
+                            className="hidden h-8 w-auto lg:block"
+                            src="/images/logo-square.png"
+                            alt="Your Company"
+                          />
+                        </Link>
                       </div>
                     </div>
                     <div className="-mr-2 flex items-center gap-x-1">
