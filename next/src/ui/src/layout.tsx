@@ -101,6 +101,7 @@ export const Layout = (props: ILayout) => {
       component: "DebtsAndReceivables",
     },
   ];
+
   useLayoutEffect(() => {
     load();
   }, []);
@@ -186,7 +187,7 @@ export const Layout = (props: ILayout) => {
                     <div
                       className="p-3 shadow-transparent hover:shadow-none text-black flex justify-start w-full cursor-pointer gap-x-2 hover:bg-gray-100"
                       onClick={() => {
-                          toastProgress(logout(), 'logout')
+                        toastProgress(logout(), "logout");
                       }}
                     >
                       <PowerIcon className="h-6 w-6 text-gray-500" />

@@ -25,6 +25,7 @@
     "eslint-config-next": "13.4.4",
     "formik": "^2.4.1",
     "next": "13.4.4",
+    "numify": "^1.0.3",
     "postcss": "8.4.24",
     "react": "18.2.0",
     "react-dom": "18.2.0",

@@ -15,6 +15,7 @@
     "jsx": "preserve",
     "incremental": true,
     "paths": {
+      "@/styles/*": ["./styles/*"],
       "@/ui": ["./src/ui/index"],
       "@/actions": ["./src/actions/index"],
       "@/models": ["./src/models/index"],
