@@ -32,3 +32,5 @@ export * from "./budget";
 export * from "./cashflow";
 export * from "./auth";
 export * from "./goal";
+export * from "./goal";
+export * from "./debtsAndReceivables";

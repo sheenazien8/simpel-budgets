@@ -2,3 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+.d-h-container {
+  height: calc(
+    100% - 44.5px - 44.5px
+  ); /* height = (page height - header-height - footer-height)   */
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+:root {
+    font-family: 'Poppins', sans-serif;
+}

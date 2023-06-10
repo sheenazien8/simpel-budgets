@@ -2,21 +2,19 @@ import React, { useLayoutEffect, useState } from "react";
 import {
   Bars3Icon,
   BellIcon,
-  PlusCircleIcon,
   ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline";
 import { Disclosure } from "@headlessui/react";
 import { Link, usePage } from "@inertiajs/inertia-react";
 import { useAuthAction } from "../actions/auth";
 import ToasterCustom from "./ToasterCustom";
-import { classNames, useHashRouteToggle } from "../utils/helper";
+import { classNames } from "../utils/helper";
 import { Inertia } from "@inertiajs/inertia";
 import { MInfo } from "../models";
 import { useInfoAction } from "../actions/info";
 import {
   BanknotesIcon,
   BuildingLibraryIcon,
-  CalendarIcon,
   CurrencyDollarIcon,
   DocumentIcon,
   HomeIcon,
@@ -36,7 +34,6 @@ interface ILayout {
 const Layout = (props: ILayout) => {
   const { get } = useInfoAction();
   const [info, setInfo] = useState<MInfo>();
-  const [isOpen, toggleActive] = useHashRouteToggle("#opened-sidebar");
   const load = async () => {
     const data = await get();
     setInfo(data.data.data);
@@ -94,6 +91,12 @@ const Layout = (props: ILayout) => {
       icon: <UserIcon className="h-6 w-6 text-gray-500" />,
       toolbar: false,
       component: "Profile",
+    },
+    {
+      name: "Hutang Piutang",
+      href: "/hutang-piutang",
+      toolbar: false,
+      component: "DebtsAndReceivables",
     },
   ];
   useLayoutEffect(() => {

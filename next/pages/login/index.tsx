@@ -1,7 +1,7 @@
-import { useAuthAction } from "@/App/actions";
-import { RLogin } from "@/App/models";
-import { Button, LayoutGuest, Text } from "@/App/ui";
-import { classNames, resolveQueryParameter, toastProgress } from "@/App/utils/helper";
+import { useAuthAction } from "@/actions";
+import { RLogin } from "@/models";
+import { Button, LayoutGuest, Text } from "@/ui";
+import { classNames, toastProgress } from "@/utils/helper";
 import {
   ExclamationCircleIcon,
   EyeIcon,
@@ -15,7 +15,7 @@ import { toast } from "react-hot-toast";
 
 export default function Login() {
   const router = useRouter();
-  const { verified } = router?.query
+  const { verified } = router?.query;
   const { login } = useAuthAction();
   const [errors, setErrors] = useState<RLogin>();
   const [showPassword, setShowpassword] = useState<boolean>(false);
@@ -184,7 +184,7 @@ export default function Login() {
                     className="hover:bg-indigo-50 border border-indigo-300 text-indigo-500"
                   >
                     <span className="sr-only">Register!</span>
-                    <p>Register!</p>
+                    <p className="text-indigo-500">Register!</p>
                   </Button>
                 </div>
               </div>
@@ -195,4 +195,3 @@ export default function Login() {
     </LayoutGuest>
   );
 }
-

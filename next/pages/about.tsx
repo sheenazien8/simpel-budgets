@@ -1,4 +1,4 @@
-import { Layout } from "../ui";
+import { Layout } from "@/ui";
 
 export default function About() {
   return (
