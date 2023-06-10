@@ -23,7 +23,6 @@ const GoalDetail = (props: IGoalDetail) => {
   const { get, create, destroy } = useGoalDetailAction();
   const { destroy: destroyGoal, update: updateGoal } = useGoalAction();
   const [goalDetails, setGoalDetails] = useState<MGoal>();
-  const [updated, setUpdated] = useState<boolean>(false);
   const [errors, setErrors] = useState<RGoalDetail>();
   const [errorsGoal, setErrorsGoal] = useState<RGoal>();
   const [isOpen, toggleActive] = useHashRouteToggle("#opened-modal");
@@ -45,7 +44,7 @@ const GoalDetail = (props: IGoalDetail) => {
       `Penambahan nominal target berhasil`,
       () => {
         toggleActive(false);
-        setUpdated(!updated);
+        load();
         setLoadingSubmit(false);
       },
       () => setLoadingSubmit(false),
@@ -58,7 +57,7 @@ const GoalDetail = (props: IGoalDetail) => {
       "Menghapus nominal",
       () => {
         toggleActive(false);
-        setUpdated(!updated);
+        load();
       },
     );
   };
@@ -70,7 +69,7 @@ const GoalDetail = (props: IGoalDetail) => {
       "Menghapus target",
       () => {
         toggleActive(false);
-        setUpdated(!updated);
+        load();
         setLoadingDeleteGoal(false);
         router.push("/goals");
       },
@@ -92,7 +91,7 @@ const GoalDetail = (props: IGoalDetail) => {
 
   useEffect(() => {
     load();
-  }, [updated, id]);
+  }, [id]);
 
   return (
     <Layout
@@ -274,11 +273,11 @@ const GoalDetail = (props: IGoalDetail) => {
             onSubmit={(values: RGoal) => {
               setLoadingSubmit(true);
               toastProgress(
-                updateGoal(props.goal.id, values, setErrorsGoal),
+                updateGoal(id as unknown as number, values, setErrorsGoal),
                 `Perubahan target ${values.title}`,
                 () => {
                   toggleOpenFormEdit(false);
-                  setUpdated(!updated);
+                  load();
                   setLoadingSubmit(false);
                 },
                 () => setLoadingSubmit(false),

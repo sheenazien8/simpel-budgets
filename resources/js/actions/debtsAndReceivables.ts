@@ -1,5 +1,0 @@
-const useDebtsAndReceivablesAction = () => {
-}
-
-export { useDebtsAndReceivablesAction };
-
