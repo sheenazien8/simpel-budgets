@@ -33,7 +33,7 @@ interface RCashflow {
   month?: string;
   month_id?: string;
   reccuring?: boolean | string;
-  type?: number;
+  type?: number | string;
   offset?: number | string;
   page?: number | string;
 }

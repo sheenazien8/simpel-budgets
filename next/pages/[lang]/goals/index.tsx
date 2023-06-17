@@ -92,7 +92,7 @@ const List = () => {
           }
           details={[
             goal.description ?? "-",
-            <p className="italic">
+            <p key={index} className="italic">
               <span>{goal.start_date}</span> s/d{" "}
               <span
                 className={classNames(

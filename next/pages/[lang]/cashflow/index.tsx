@@ -233,9 +233,9 @@ const List = ({ dict, locale }: any) => {
               )
             }
             details={[
-              <span className="font-semibold">{cashflow.budget_name}</span>,
+              <span key={1} className="font-semibold">{cashflow.budget_name}</span>,
               cashflow.date,
-              <span className="flex">
+              <span key={2} className="flex">
                 {cashflow.account_name}{" "}
                 {cashflow.type == 3 ? (
                   <>
@@ -247,7 +247,7 @@ const List = ({ dict, locale }: any) => {
                   ""
                 )}
               </span>,
-              <span className="italic break-words">{cashflow.notes}</span>,
+              <span key={3} className="italic break-words">{cashflow.notes}</span>,
             ]}
             onClick={async () => {
               router?.push(`/${locale}/cashflow/${cashflow.id}`);

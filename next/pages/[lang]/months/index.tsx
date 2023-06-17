@@ -144,7 +144,7 @@ const List = () => {
           icon={<CalendarIcon className="w-6" />}
           details={[
             month.year,
-            <span className="italic">
+            <span key={index} className="italic">
               {Number(month.status) ? "Aktif" : "Nonaktif"}
             </span>,
           ]}

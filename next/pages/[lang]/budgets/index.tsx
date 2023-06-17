@@ -284,6 +284,7 @@ const List = () => {
                   details={[
                     budget.month,
                     <p
+                      key={index}
                       className={classNames(
                         Number(budget.transactions_sum_nominal) >
                           Number(budget.nominal) && "text-yellow-600",

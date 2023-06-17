@@ -184,8 +184,8 @@ const GoalDetail = (props: IGoalDetail) => {
               <p className="text-gray-500 text-sm">Tambah nominal</p>
             </div>
             <ol className="border-l border-gray-300 space-y-6 h-[550px] overflow-x-scroll">
-              {goalDetails?.goal_details.map((goalDetail) => (
-                <li>
+              {goalDetails?.goal_details.map((goalDetail, index) => (
+                <li key={index}>
                   <div className="flex flex-start items-center pt-3">
                     <div className="bg-gray-300 w-2 h-2 -ml-1 mr-3 rotate-45 rounded-full"></div>
                     <p className="text-gray-500 text-sm">{goalDetail.date}</p>

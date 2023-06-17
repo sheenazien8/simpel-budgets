@@ -54,7 +54,7 @@ export const useCashflowAction = () => {
             nominal: errorResponse?.nominal ? errorResponse?.nominal[0] : "",
             notes: errorResponse?.notes ? errorResponse?.notes[0] : "",
             date: errorResponse?.date ? errorResponse?.date[0] : "",
-            type: errorResponse?.type ? errorResponse?.type[0] : "",
+            type: errorResponse?.type ? errorResponse?.type[0] : undefined,
           });
         }
       }

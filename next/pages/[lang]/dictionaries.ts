@@ -12,3 +12,6 @@ export const translate = (lang: string, args: any) => {
     });
     return result;
 };
+
+export default function useTranslation() {
+}
