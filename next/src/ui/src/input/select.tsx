@@ -27,7 +27,7 @@ export const Select = (props: ISelect) => {
           {props.label}
         </label>
       )}
-      <div className="relative mt-1 rounded-md shadow-sm">
+      <div className="mt-1 rounded-md shadow-sm">
         <select
           name={props.name}
           id={`${props.name}-id`}
@@ -41,8 +41,8 @@ export const Select = (props: ISelect) => {
           )}
           aria-invalid="true"
         >
-          {props.options.map((option: IOption) => (
-            <option value={option.value}>{option.label}</option>
+          {props.options.map((option: IOption, index) => (
+            <option key={index} value={option.value}>{option.label}</option>
           ))}
         </select>
         {props.errors && (

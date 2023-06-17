@@ -10,8 +10,30 @@ import {
 import { Formik } from "formik";
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
+import { getDictionary } from "../dictionaries";
+import Image from "next/image";
 
-export default function Register() {
+export async function getStaticProps(props: any) {
+  const dict = await getDictionary(props.params.lang);
+  return {
+    props: {
+      lang: dict.register,
+      locale: props.params.lang,
+    },
+  };
+}
+
+export function getStaticPaths() {
+  return {
+    paths: [
+      { params: { lang: "id", verified: "true" } },
+      { params: { lang: "en", verified: "true" } },
+    ],
+    fallback: false,
+  };
+}
+
+export default function Register({ lang, locale }: any) {
   const { register } = useAuthAction();
   const [errors, setErrors] = useState<RRegister>();
   const [showPassword, setShowpassword] = useState<boolean>(false);
@@ -22,20 +44,16 @@ export default function Register() {
       <>
         <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
           <div className="sm:mx-auto sm:w-full sm:max-w-md">
-            <img
-              className="mx-auto h-12 w-auto"
+            <Image
+              height={80}
+              width={100}
+              className="mx-auto"
               src="/images/logo-square.png"
               alt="Your Company"
             />
             <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-              Daftar dan rasakan keajaibannya.
+              {lang.welcome}
             </h2>
-            {/* <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
-            <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
-              start your 14-day free trial
-            </a>
-          </p> */}
           </div>
 
           <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -68,7 +86,7 @@ export default function Register() {
                   <form className="space-y-6" onSubmit={formik.handleSubmit}>
                     <Text
                       name="name"
-                      label="Username"
+                      label={lang.username}
                       type="text"
                       formik={formik}
                       value={formik.values.name}
@@ -80,7 +98,7 @@ export default function Register() {
                         htmlFor="year"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        Email
+                        {lang.email}
                       </label>
                       <div className="relative mt-1 rounded-md shadow-sm">
                         <input
@@ -121,7 +139,7 @@ export default function Register() {
                         htmlFor="year"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        Password
+                        {lang.password}
                       </label>
                       <div className="relative mt-1 rounded-md shadow-sm">
                         <input
@@ -179,7 +197,7 @@ export default function Register() {
                         htmlFor="year"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        Konfirmasi Password
+                        {lang.passwordConfirmation}
                       </label>
                       <div className="relative mt-1 rounded-md shadow-sm">
                         <input
@@ -217,7 +235,7 @@ export default function Register() {
 
                     <div>
                       <Button type="submit" block loading={loading}>
-                        Daftar
+                        {lang.register}
                       </Button>
                     </div>
                   </form>
@@ -227,11 +245,12 @@ export default function Register() {
                 <div>
                   <Button
                     color="plain"
-                    href="login"
+                    href="/login"
+                    locale={locale}
                     className="hover:bg-indigo-50 border border-indigo-300 text-indigo-500"
                   >
-                    <span className="sr-only">Daftar!</span>
-                    <p className="text-indigo-500">Login</p>
+                    <span className="sr-only">{lang.signin}</span>
+                    <p className="text-indigo-500">{lang.signin}</p>
                   </Button>
                 </div>
               </div>
@@ -242,4 +261,3 @@ export default function Register() {
     </LayoutGuest>
   );
 }
-

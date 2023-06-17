@@ -8,12 +8,34 @@ import {
   EyeSlashIcon,
 } from "@heroicons/react/20/solid";
 import { Formik } from "formik";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+import { getDictionary } from "./../dictionaries";
 
-export default function Login() {
+export async function getStaticProps(props: any) {
+  const dict = await getDictionary(props.params.lang);
+  return {
+    props: {
+      lang: dict.login,
+      locale: props.params.lang,
+    },
+  };
+}
+
+export function getStaticPaths() {
+  return {
+    paths: [
+      { params: { lang: "id", verified: "true" } },
+      { params: { lang: "en", verified: "true" } },
+    ],
+    fallback: false,
+  };
+}
+
+export default function Login({ lang, locale }: any) {
   const router = useRouter();
   const { verified } = router?.query;
   const { login } = useAuthAction();
@@ -24,7 +46,7 @@ export default function Login() {
   useEffect(() => {
     if (verified === "true") {
       toast.success("Email berhasil diverifikasi, silahkan login!");
-      router?.push("login");
+      router?.push("/login");
     }
   }, [verified]);
 
@@ -32,13 +54,15 @@ export default function Login() {
     <LayoutGuest>
       <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <img
+          <Image
+            height={80}
+            width={100}
             className="mx-auto h-20 w-auto"
             src="/images/logo-square.png"
             alt="Your Company"
           />
           <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-            Masuk ke rencana keuangan anda!
+            {lang.welcome}
           </h2>
         </div>
 
@@ -67,7 +91,7 @@ export default function Login() {
                 >
                   <Text
                     name="username"
-                    label="Username"
+                    label={lang.username}
                     type="text"
                     formik={formik}
                     value={formik.values.username}
@@ -78,7 +102,7 @@ export default function Login() {
                       htmlFor="year"
                       className="block text-sm font-medium text-gray-700"
                     >
-                      Password
+                      {lang.password}
                     </label>
                     <div className="relative mt-1 rounded-md shadow-sm">
                       <input
@@ -128,36 +152,21 @@ export default function Login() {
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      {/* <input
-                        id="remember-me"
-                        name="remember-me"
-                        type="checkbox"
-                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                      />
-                      <label
-                        htmlFor="remember-me"
-                        className="ml-2 block text-sm text-gray-900"
-                      >
-                        Remember me
-                      </label> */}
-                    </div>
-
+                  <div className="flex items-center justify-between flex-row-reverse">
                     <div className="text-sm">
                       <Link
                         href="/reset-password"
                         as="a"
                         className="font-medium text-indigo-600 hover:text-indigo-500"
                       >
-                        Forgot your password?
+                        {lang.forgot}
                       </Link>
                     </div>
                   </div>
 
                   <div>
                     <Button type="submit" block size="md" loading={loading}>
-                      Sign in
+                      {lang.signin}
                     </Button>
                   </div>
                 </form>
@@ -171,7 +180,7 @@ export default function Login() {
                 </div>
                 <div className="relative flex justify-center text-sm">
                   <span className="bg-white px-2 text-gray-500">
-                    Atau jika belum punya akun silahkan mendaftarkan diri.
+                    {lang.textRegister}
                   </span>
                 </div>
               </div>
@@ -181,10 +190,11 @@ export default function Login() {
                   <Button
                     color="plain"
                     href="/register"
+                    locale={locale}
                     className="hover:bg-indigo-50 border border-indigo-300 text-indigo-500"
                   >
-                    <span className="sr-only">Register!</span>
-                    <p className="text-indigo-500">Register!</p>
+                    <span className="sr-only">{lang.register}</span>
+                    <p className="text-indigo-500">{lang.register}!</p>
                   </Button>
                 </div>
               </div>

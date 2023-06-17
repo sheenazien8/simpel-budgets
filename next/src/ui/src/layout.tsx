@@ -117,7 +117,7 @@ export const Layout = (props: ILayout) => {
                   <div className="flex h-16 justify-between">
                     <div className="flex">
                       <div className="flex flex-shrink-0 items-center">
-                        <Link href="/dashboard">
+                        <Link href={`/${router?.query?.lang}/dashboard`}>
                           <img
                             className="block h-8 w-auto lg:hidden"
                             src="/images/logo-square.png"
@@ -133,7 +133,8 @@ export const Layout = (props: ILayout) => {
                     </div>
                     <div className="-mr-2 flex items-center gap-x-1">
                       <Button
-                        href="/notifications"
+                        href={`/notifications`}
+                        locale={router.query?.lang as string}
                         size="sm"
                         color="plain"
                         className={classNames(
@@ -167,10 +168,10 @@ export const Layout = (props: ILayout) => {
 
                 <Disclosure.Panel className="z-50">
                   <div className="space-y-1 pt-2 pb-3 z-50">
-                    {navigation.map((item) => (
+                    {navigation.map((item, index) => (
                       <Link
-                        href={item.href != "" ? item.href : "#"}
-                        key={item.name}
+                        href={item.href != "" ? `/${router.query?.lang}${item.href}` : "#"}
+                        key={index}
                         className={classNames(
                           router?.pathname?.includes(item.href)
                             ? "bg-indigo-50 border-indigo-500 text-indigo-700"
@@ -273,16 +274,17 @@ export const Layout = (props: ILayout) => {
             className="bg-white fixed w-full bottom-0 h-14 border border-gray-300 shadow-2xl flex"
           >
             {navigation.map(
-              (item) =>
+              (item, index) =>
                 item.toolbar && (
                   <Link
+                  key={index}
                     className={classNames(
                       "flex-1 flex items-center justify-center cursor-pointer",
                       router?.pathname?.includes(item.href)
                         ? "bg-gray-200 border-r"
                         : "",
                     )}
-                    href={item.href != "" ? item.href : "#"}
+                    href={item.href != "" ? `/${router.query?.lang}${item.href}` : "#"}
                   >
                     {item.icon}
                   </Link>

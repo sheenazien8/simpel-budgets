@@ -114,7 +114,7 @@ class UpdateTransactionRequest extends FormRequest
             ]);
         }
         $this->account = Account::find($this->request->get("account_id"));
-        match ($this->request->get("type")) {
+        match ((int) $this->request->get("type")) {
             TransactionType::Expense->value => $this->expenseAccount(),
             TransactionType::Income->value => $this->incomeAccount(),
             TransactionType::Transfer->value => $this->transferAccount(),

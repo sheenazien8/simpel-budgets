@@ -8,14 +8,8 @@ import {
   ExclamationTriangleIcon,
   CreditCardIcon,
 } from "@heroicons/react/24/solid";
-import { useBudgetAction, useMonthAction } from "@/actions";
-import {
-  FBudget,
-  MBudget,
-  MMonth,
-  RBudget,
-  ResponseGetMBudget,
-} from "@/models";
+import { useBudgetAction } from "@/actions";
+import { FBudget, MBudget, RBudget, ResponseGetMBudget } from "@/models";
 import {
   classNames,
   encodeQuery,
@@ -153,7 +147,7 @@ const List = () => {
 
   useEffect(() => {
     setHeight(document?.documentElement?.offsetHeight - 310);
-  }, [])
+  }, []);
 
   return (
     <>
@@ -247,7 +241,7 @@ const List = () => {
             />
           )}
           {budgets?.data?.map((budget, index) => (
-            <div className="flex w-full">
+            <div className="flex w-full" key={index}>
               {isMarkCheckboxOpen && (
                 <div className="w-1/12 flex items-center">
                   <input
@@ -279,7 +273,6 @@ const List = () => {
                   bgColor={
                     String(budget.type) === "2" ? "bg-green-600" : undefined
                   }
-                  key={index}
                   title={budget.plan}
                   icon={
                     String(budget.type) === "1" ? (

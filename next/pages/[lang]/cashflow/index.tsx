@@ -15,10 +15,8 @@ import {
 import { useCashflowAction } from "@/actions";
 import { MCashflow, RCashflow, ResponseGetMCashflow } from "@/models";
 import {
-  encodeQuery,
   formatMoney,
   resolveQueryParameter,
-  toastProgress,
   useHashRouteToggle,
 } from "@/utils/helper";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -26,71 +24,38 @@ import { Button, CardList, EmptyState, Layout, Modal } from "@/ui";
 import FormData from "@/components/cashflow/form-data";
 import FormFilter from "@/components/cashflow/form-filter";
 import { useRouter } from "next/router";
+import { getDictionary } from "../dictionaries";
 
 interface IRecord {}
 
-const List = () => {
-  const { get, create, detail, update, destroy } = useCashflowAction();
+export async function getStaticProps(props: any) {
+  const dict = await getDictionary(props.params.lang);
+  return {
+    props: {
+      dict: dict,
+      locale: props.params.lang,
+    },
+  };
+}
+
+export function getStaticPaths() {
+  return {
+    paths: [{ params: { lang: "id" } }, { params: { lang: "en" } }],
+    fallback: false,
+  };
+}
+
+const List = ({ dict, locale }: any) => {
+  const { get } = useCashflowAction();
   const [cashflows, setCashflows] = useState<ResponseGetMCashflow>();
   const [cashflowsData, setCashflowsData] = useState<MCashflow[]>();
-  const [isOpen, toggleActive] = useHashRouteToggle("#opened-modal");
   const [isOpenFilter, toggleFilterActive] =
-    useHashRouteToggle("#opened-filter");
+    useState<boolean>(false);
   const [filter, setFilter] = useState<RCashflow>();
-  const [editData, setEditData] = useState<MCashflow>();
-  const [errors, setErrors] = useState<RCashflow>();
   const [scroll, setScroll] = useState<number>(0);
   const [hasMore, setHasMore] = useState(true);
   const [height, setHeight] = useState(0);
   const router = useRouter();
-  const onSubmit = async (values: RCashflow) => {
-    values.budget_id = ![2, 3].includes(Number(values.type))
-      ? values.budget_id
-      : undefined;
-    let progess: any;
-    if (!editData?.id) {
-      progess = create(values, setErrors);
-    } else {
-      progess = update(editData.id, values, setErrors);
-    }
-    toastProgress(
-      progess,
-      `${!editData?.id ? "Pembuatan" : "Perubahan"} cashflow`,
-      () => {
-        toggleActive(false);
-        setEditData(undefined);
-        load();
-      },
-    );
-  };
-
-  const onDelete = async () => {
-    if (editData?.id != undefined) {
-      toastProgress(destroy(editData?.id), `Menghapus anggaran`, () => {
-        toggleActive(false);
-        setEditData(undefined);
-        load();
-      });
-    }
-  };
-
-  const onFilter = async (values: RCashflow) => {
-    values.budget_id = ![2, 3].includes(Number(values.type))
-      ? values.budget_id
-      : "";
-    setFilter(values);
-    const budgetss = await get(values);
-    setCashflows(budgetss.data.data);
-    setCashflowsData(budgetss.data.data?.data);
-    toggleFilterActive(false);
-    router.replace(`?${encodeQuery(values)}`);
-  };
-
-  const onClearFilter = async () => {
-    setFilter(undefined);
-    toggleFilterActive(false);
-    router.push(``);
-  };
 
   const load = async () => {
     const params = resolveQueryParameter(location.search);
@@ -100,7 +65,7 @@ const List = () => {
       budget_id: params.get("budget_id") ?? "",
       notes: params.get("notes") ?? "",
       date: params.get("date") ?? "",
-      type: params.get("type") ?? "",
+      type: Number(params.get("type")) ?? "",
       month_id: params.get("month_id") ?? "",
     };
     setFilter(filters);
@@ -108,7 +73,6 @@ const List = () => {
     setCashflows(cashflows.data.data);
     setCashflowsData(cashflows.data.data?.data);
     toggleFilterActive(false);
-    toggleActive(false);
     if (cashflows.data.data?.data.length == (cashflowsData?.length ?? 0)) {
       setHasMore(false);
     }
@@ -120,7 +84,7 @@ const List = () => {
 
   useEffect(() => {
     setHeight(document?.documentElement?.offsetHeight - 310);
-  }, [])
+  }, []);
 
   return (
     <>
@@ -130,7 +94,9 @@ const List = () => {
             <div className="mx-auto text-center">
               <p className="flex items-center justify-center gap-x-1">
                 <ArrowDownIcon className="inline-block w-4 h-4 text-green-500" />
-                <span className="text-sm font-light">Income</span>
+                <span className="text-sm font-light">
+                  {dict.cashflow.income}
+                </span>
               </p>
               <span className="font-semibold text-sm text-green-500">
                 {formatMoney(cashflows?.transaction_sum_nominal_income, false)}
@@ -139,7 +105,9 @@ const List = () => {
             <div className="mx-auto text-center">
               <p className="flex items-center justify-center gap-x-1">
                 <ArrowUpIcon className="inline-block w-4 h-4 text-red-500" />
-                <span className="text-sm font-light">Expense</span>
+                <span className="text-sm font-light">
+                  {dict.cashflow.expense}
+                </span>
               </p>
               <span className="font-semibold text-sm text-red-500">
                 {formatMoney(cashflows?.transaction_sum_nominal_expense, false)}
@@ -148,7 +116,9 @@ const List = () => {
             <div className="mx-auto text-center">
               <p className="flex items-center justify-center gap-x-1">
                 <CurrencyDollarIcon className="inline-block w-4 h-4 text-indigo-500" />
-                <span className="text-sm font-light">Budget</span>
+                <span className="text-sm font-light">
+                  {dict.cashflow.budget}
+                </span>
               </p>
               <span className="font-semibold text-sm text-indigo-500">
                 {formatMoney(cashflows?.total_plan, false)}
@@ -164,22 +134,17 @@ const List = () => {
               value="Filter"
               onClick={() => {
                 toggleFilterActive(true);
-                setEditData(undefined);
               }}
             >
               <AdjustmentsHorizontalIcon className="h-5" />
             </button>
-            <button
-              type="button"
+            <Button
+              href="/cashflow/create"
+              locale={locale}
               className="inline-flex items-center rounded-lg border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-              value="Tambah"
-              onClick={() => {
-                toggleActive(true);
-                setEditData(undefined);
-              }}
             >
               <PlusIcon className="h-5" />
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -214,28 +179,26 @@ const List = () => {
         dataLength={cashflowsData?.length ?? 0}
         loader={
           <h4 className="text-center lg:col-span-4 sm:col-span-2">
-            Loading...
+            {dict.common.loading}
           </h4>
         }
         endMessage={
           (cashflowsData?.length ?? 0) > 0 ? (
             <p className="text-center lg:col-span-4 sm:col-span-2">
-              <b className="text-gray-600">Data sudah tampil semua</b>
+              <b className="text-gray-600">{dict.common.allDataLoaded}</b>
             </p>
           ) : (
             <EmptyState
-              title="Arus keuangan anda kosong"
-              description="Catat semua pengeluaran anda, better cash flow better life"
+              title={dict.cashflow.empty.title}
+              description={dict.cashflow.empty.description}
               button={
                 <div className="flex justify-center">
                   <Button
                     type="button"
                     onClick={() => {
-                      toggleActive(true);
-                      setEditData(undefined);
                     }}
                   >
-                    <PlusIcon className="h-5" /> Catat arus kas keuangan anda
+                    <PlusIcon className="h-5" /> {dict.cashflow.input.add}
                   </Button>
                 </div>
               }
@@ -248,8 +211,7 @@ const List = () => {
             key={index}
             bgColor={Number(cashflow.type) == 1 ? "bg-red-600" : "bg-green-600"}
             title={
-              <div className="flex justify-between">
-                <p>{cashflow.budget_name}</p>
+              <div className="flex justify-between flex-row-reverse">
                 {cashflow.type == 1 ? (
                   <p className="text-red-600">
                     -{formatMoney(cashflow.nominal)}
@@ -271,6 +233,7 @@ const List = () => {
               )
             }
             details={[
+              <span className="font-semibold">{cashflow.budget_name}</span>,
               cashflow.date,
               <span className="flex">
                 {cashflow.account_name}{" "}
@@ -287,10 +250,7 @@ const List = () => {
               <span className="italic break-words">{cashflow.notes}</span>,
             ]}
             onClick={async () => {
-              const cashflowData = await detail(cashflow.id);
-              toggleActive(true);
-              setEditData(cashflowData.data.data);
-              setErrors(undefined);
+              router?.push(`/${locale}/cashflow/${cashflow.id}`);
             }}
           />
         ))}
@@ -299,25 +259,9 @@ const List = () => {
       <Modal
         open={isOpenFilter}
         setOpen={(status) => toggleFilterActive(status)}
-        title="Filter"
+        title={dict.cashflow.filter.title}
       >
-        <FormFilter
-          onSubmit={onFilter}
-          onClear={onClearFilter}
-          initialFilter={filter}
-        />
-      </Modal>
-      <Modal
-        open={isOpen}
-        setOpen={(status) => toggleActive(status)}
-        title={editData ? "Perbaharui arus kas anda" : "Catat arus kas anda"}
-      >
-        <FormData
-          initialValues={editData ?? filter}
-          onSubmit={onSubmit}
-          errors={errors}
-          onDelete={onDelete}
-        />
+        <FormFilter initialFilter={filter} dict={dict} />
       </Modal>
     </>
   );

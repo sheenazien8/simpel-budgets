@@ -24,7 +24,7 @@ export const useAuthAction = () => {
       );
       if (data.status == 200) {
         localStorage.setItem("token", data.data.data?.access_token ?? "");
-        router?.push('/dashboard');
+        router?.push(`/${router.query.lang}/dashboard`);
         return;
       }
       throw data;
@@ -160,8 +160,8 @@ export const useAuthAction = () => {
       const data = await instance.post<ResponseData>("/api/auth/logout");
       if (data.status == 200) {
         localStorage.removeItem("token");
-        router?.push("/login");
-        return
+        router?.push(`/${router.query.lang}/login`);
+        return;
       }
       throw data;
     } catch (error) {
@@ -169,5 +169,13 @@ export const useAuthAction = () => {
     }
   };
 
-  return { login, register, logout, resetToken, resetPassword, getProfile };
+  const me = async (): Promise<boolean> => {
+    const data = await instance.get<ResponseData>("/api/auth/me");
+    if (data.status != 200) {
+      return false;
+    }
+    return true;
+  };
+
+  return { login, register, logout, resetToken, resetPassword, getProfile, me };
 };

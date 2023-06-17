@@ -1,0 +1,82 @@
+{
+  "login": {
+    "title": "Login",
+    "username": "Nama Pengguna",
+    "password": "Kata Sandi",
+    "signin": "Masuk",
+    "register": "Daftar",
+    "forgot": "Lupa Kata Sandi",
+    "welcome": "Masuk ke rencana keuangan anda!",
+    "textRegister": "Belum punya akun? Daftar sekarang!"
+  },
+  "register": {
+    "title": "Daftar",
+    "email": "Email",
+    "username": "Nama Pengguna",
+    "password": "Kata Sandi",
+    "passwordConfirmation": "Konfirmasi Kata Sandi",
+    "signin": "Masuk",
+    "register": "Daftar",
+    "welcome": "Daftar dan rasakan keajaibannya."
+  },
+  "dashboard": {
+    "financialRecord": "Catatan Keuangan",
+    "greetings": "Halo, {username}",
+    "totalIncome": "Total Pemasukan",
+    "totalExpense": "Total Pengeluaran",
+    "remainingSaldo": "Sisa Saldo",
+    "greetingTime": "Selamat {time}!",
+    "greetingTimeMorning": "Pagi",
+    "greetingTimeAfternoon": "Siang",
+    "greetingTimeEvening": "Sore",
+    "greetingTimeNight": "Malam"
+  },
+  "cashflow": {
+    "income": "Pemasukan",
+    "expense": "Pengeluaran",
+    "budget": "Anggaran",
+    "createYourCashflow": "Catat arus kas anda",
+    "updateYourCashflow": "Perbrui arus kas anda",
+    "empty": {
+      "title": "Kamu belum memiliki catatan keuangan",
+      "description": "Catatan keuangan akan membantu kamu mengelola keuangan kamu dengan lebih baik. Mulai catat arus kas kamu sekarang!"
+    },
+    "message": {
+      "createSuccess": "Berhasil menambahkan catatan keuangan",
+      "updateSuccess": "Berhasil memperbarui catatan keuangan",
+      "deleteSuccess": "Berhasil menghapus catatan keuangan"
+    },
+    "filter": {
+      "title": "Cari berdasarkan",
+      "clearFilter": "Hapus filter"
+    },
+    "input": {
+      "nominal": "Nominal",
+      "note": "Catatan",
+      "account": "Akun",
+      "type": "Tipe",
+      "accountTarget": "Akun Tujuan",
+      "budget": "Anggaran",
+      "date": "Tanggal",
+      "budgetFilter": "Filter anggaran",
+      "save": "Simpan",
+      "cancel": "Batal",
+      "delete": "Hapus",
+      "edit": "Ubah",
+      "add": "Tambah arus kas anda",
+      "selectAccount": "Pilih akun",
+      "selectBudget": "Pilih anggaran",
+      "selectMonth": "Pilih bulan"
+    },
+    "optionType": {
+      "selectAll": "Pilih semua",
+      "income": "Pemasukan",
+      "expense": "Pengeluaran",
+      "transfer": "Transfer"
+    }
+  },
+  "common": {
+    "loading": "Memuat...",
+    "allDataLoaded": "Semua data telah dimuat"
+  }
+}

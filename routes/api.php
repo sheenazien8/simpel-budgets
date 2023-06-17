@@ -33,7 +33,8 @@ Route::group([
     ], function() {
         Route::post("/logout", [AuthController::class, 'logout']);
         Route::post("/reset-password", [AuthController::class, 'resetPassword']);
-        Route::resource("profiles", ProfileController::class);
+        Route::resource("/profiles", ProfileController::class);
+        Route::get("/me", [AuthController::class, 'me']);
     });
     Route::resource("months", MonthController::class);
     Route::get("info", function() {

@@ -1,0 +1,82 @@
+{
+  "login": {
+    "title": "Login",
+    "username": "Username",
+    "password": "Password",
+    "signin": "Sign In",
+    "register": "Register",
+    "forgot": "Forgot Password",
+    "welcome": "Let's get into your budget!",
+    "textRegister": "Don't have an account?"
+  },
+  "register": {
+    "title": "Register",
+    "email": "Email",
+    "username": "Username",
+    "password": "Password",
+    "passwordConfirmation": "Password Confirmation",
+    "signin": "Sign In",
+    "register": "Register",
+    "welcome": "Register and feel the magic!"
+  },
+  "dashboard": {
+    "financialRecord": "Financial Record",
+    "greetings": "Hi, {username}!",
+    "totalIncome": "Total Income",
+    "totalExpense": "Total Expense",
+    "remainingSaldo": "Remaining Saldo",
+    "greetingTime": "Good {time}!",
+    "greetingTimeMorning": "Morning",
+    "greetingTimeAfternoon": "Afternoon",
+    "greetingTimeEvening": "Evening",
+    "greetingTimeNight": "Night"
+  },
+  "cashflow": {
+    "income": "Income",
+    "expense": "Expense",
+    "budget": "Budget",
+    "createYourCashflow": "Create Your Cashflow",
+    "updateYourCashflow": "Update Your Cashflow",
+    "empty": {
+        "title": "You don't have any cashflow yet",
+        "description": "Create all your money transaction here, better cash flow better life"
+    },
+    "message": {
+      "createSuccess": "Successfully created a new cashflow",
+      "updateSuccess": "Successfully updated a cashflow",
+      "deleteSuccess": "Successfully deleted a cashflow"
+    },
+    "filter": {
+      "title": "Filter",
+      "clearFilter": "Clear Filter"
+    },
+    "input": {
+      "nominal": "Nominal",
+      "note": "Note",
+      "account": "Account",
+      "type": "Type",
+      "accountTarget": "Account Target",
+      "budget": "Budget",
+      "date": "Date",
+      "budgetFilter": "Budget Filter",
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "add": "Add your cashflow",
+      "selectAccount": "Select Account",
+      "selectBudget": "Select Budget",
+      "selectMonth": "Select Month"
+    },
+    "optionType": {
+      "selectAll": "Select All",
+      "income": "Income",
+      "expense": "Expense",
+      "transfer": "Transfer"
+    }
+  },
+  "common": {
+      "loading": "Loading...",
+      "allDataLoaded": "All data loaded"
+  }
+}

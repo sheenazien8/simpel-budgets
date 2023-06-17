@@ -9,8 +9,26 @@ import { useAuthAction, useDashboardAction } from "@/actions";
 import { IOption, Layout, Select } from "@/ui";
 import { IProfile, SummaryFinancialRecord } from "@/models";
 import { formatMoney } from "@/utils/helper";
+import { getDictionary, translate } from "../dictionaries";
 
-const Home = () => {
+export async function getStaticProps(props: any) {
+  const dict = await getDictionary(props.params.lang);
+  return {
+    props: {
+      lang: dict.dashboard,
+      locale: props.params.lang,
+    },
+  };
+}
+
+export function getStaticPaths() {
+  return {
+    paths: [{ params: { lang: "id" } }, { params: { lang: "en" } }],
+    fallback: false,
+  };
+}
+
+const Home = ({ lang }: any) => {
   const { getProfile } = useAuthAction();
   const { financialRecord } = useDashboardAction();
   const [financialRecordOption, setFinancialRecordOption] = useState<IOption>({
@@ -25,11 +43,11 @@ const Home = () => {
     const date = new Date();
     const hour = date.getHours();
     if (hour < 12) {
-      setGreetingWord("Selamat Pagi");
+      setGreetingWord(translate(lang.greetingTime, { time: lang.greetingTimeMorning }));
     } else if (hour < 18) {
-      setGreetingWord("Selamat Siang");
+      setGreetingWord(translate(lang.greetingTime, { time: lang.greetingTimeAfternoon }));
     } else {
-      setGreetingWord("Selamat Malam");
+      setGreetingWord(translate(lang.greetingTime, { time: lang.greetingTimeNight }));
     }
   };
 
@@ -55,15 +73,15 @@ const Home = () => {
             <UserIcon className="w-10 h-10 text-gray-400" />
             <div>
               <p className="text-lg font-semibold text-gray-600">
-                Hai, {profile?.name}
+                {translate(lang.greetings, { username: profile?.name })}
               </p>
               <span className="text-gray-400">{greetingWord}</span>
             </div>
           </div>
         </Link>
         <div className="pl-4">
-          <div className="pr-4 flex gap-x-4 justify-between items-center">
-            <p className="text-lg">Financial Record</p>
+          <div className="pr-4 flex gap-x-4 justify-between items-center z-0">
+            <p className="text-lg">{lang.financialRecord}</p>
             <Select
               name={"fincancial_record"}
               options={[
@@ -84,7 +102,7 @@ const Home = () => {
           <div className="overflow-x-scroll">
             <div className="grid grid-cols-[200px_200px_200px] gap-x-3 my-4">
               <div className="px-3 py-4 border border-gray-300 rounded-lg shadow-gray-300 shadow">
-                <p className="font-light text-sm">Total Income</p>
+                <p className="font-light text-sm">{lang.totalIncome}</p>
                 <p className="font-semibold text-base">
                   {formatMoney(financialRecordData?.income?.total)}
                 </p>
@@ -98,7 +116,7 @@ const Home = () => {
                 </p>
               </div>
               <div className="px-3 py-4 border border-gray-300 rounded-lg shadow-gray-300 shadow">
-                <p className="font-light text-sm">Total Expense</p>
+                <p className="font-light text-sm">{lang.totalExpense}</p>
                 <p className="font-semibold text-base">
                   {formatMoney(financialRecordData?.expense?.total)}
                 </p>
@@ -112,7 +130,7 @@ const Home = () => {
                 </p>
               </div>
               <div className="px-3 py-4 border border-gray-300 rounded-lg shadow-gray-300 shadow">
-                <p className="font-light text-sm">Sisa saldo</p>
+                <p className="font-light text-sm">{lang.remainingSaldo} </p>
                 <p className="font-semibold text-base">
                   {formatMoney(financialRecordData?.remaining?.total)}
                 </p>
@@ -135,4 +153,3 @@ const Home = () => {
 };
 
 export default Home;
-

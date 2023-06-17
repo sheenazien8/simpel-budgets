@@ -37,7 +37,7 @@ const List = () => {
 
 
   useEffect(() => {
-    setHeight(document?.documentElement?.offsetHeight - 270);
+    setHeight(document?.documentElement?.offsetHeight - 247);
   }, [])
 
   return (

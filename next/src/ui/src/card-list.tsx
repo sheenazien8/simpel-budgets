@@ -5,7 +5,6 @@ interface CardList {
   title?: string | JSX.Element;
   details?: any[];
   bgColor?: string;
-  key: string | number;
   icon?: JSX.Element;
   href?: string;
   onClick?: React.MouseEventHandler<HTMLLIElement> | undefined;
@@ -13,37 +12,36 @@ interface CardList {
 }
 export const CardList = (props: CardList): JSX.Element => {
   return (
-    <>
-      <li
-        key={props.key}
+    <li
+      className={classNames(
+        "col-span-1 flex rounded-md shadow-sm cursor-pointer h-fit break-words",
+        props.className,
+      )}
+      onClick={props.onClick}
+    >
+      <div
         className={classNames(
-          "col-span-1 flex rounded-md shadow-sm cursor-pointer h-fit break-words",
-          props.className,
+          props.bgColor ?? "bg-pink-600",
+          "flex-shrink-0 flex items-center justify-center w-16 text-white text-sm font-medium rounded-l-md",
         )}
-        onClick={props.onClick}
       >
-        <div
-          className={classNames(
-            props.bgColor ?? "bg-pink-600",
-            "flex-shrink-0 flex items-center justify-center w-16 text-white text-sm font-medium rounded-l-md",
-          )}
-        >
-          {props.icon}
+        {props.icon}
+      </div>
+      <div className="flex flex-1 items-center justify-between truncate rounded-r-md border-t border-r border-b border-gray-200 bg-white">
+        <div className="flex-1 truncate px-4 py-2 text-sm break-words">
+          <a
+            href={props.href}
+            className="font-medium text-gray-900 hover:text-gray-600 block break-words"
+          >
+            {props.title}
+          </a>
+          {props.details?.map((detail, index) => (
+            <div key={index} className="text-gray-500 break-words">
+              {detail}
+            </div>
+          ))}
         </div>
-        <div className="flex flex-1 items-center justify-between truncate rounded-r-md border-t border-r border-b border-gray-200 bg-white">
-          <div className="flex-1 truncate px-4 py-2 text-sm break-words">
-            <a
-              href={props.href}
-              className="font-medium text-gray-900 hover:text-gray-600 block break-words"
-            >
-              {props.title}
-            </a>
-            {props.details?.map((detail) => (
-              <p className="text-gray-500 break-words">{detail}</p>
-            ))}
-          </div>
-        </div>
-      </li>
-    </>
+      </div>
+    </li>
   );
 };

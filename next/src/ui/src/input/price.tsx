@@ -36,12 +36,16 @@ export const Price = (props: IPrice) => {
           )}
           value={formatMoney(props.value, false)}
           onChange={(e) => {
-              let plain = e.target.value.replace(/[^0-9]/g, "");
-              let value = Number(e.target.value.replace(/[^0-9]/g, ''));
-              e.target.value = formatMoney(value, false);
-              //e.target.value = formatMoney(Number(e.target.value), false);
-              props.formik.setFieldValue(props.name, plain);
+            let plain = e.target.value.replace(/[^0-9]/g, "");
+            let value = Number(e.target.value.replace(/[^0-9]/g, ""));
+            e.target.value = formatMoney(value, false);
+            //e.target.value = formatMoney(Number(e.target.value), false);
+            props.formik.setFieldValue(props.name, plain);
           }}
+          onClick={(e: any) => {
+
+          }}
+          inputMode="numeric"
           placeholder="0.00"
           aria-describedby="price-currency"
         />

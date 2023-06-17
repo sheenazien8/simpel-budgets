@@ -15,6 +15,7 @@ interface IButton {
   type?: "button" | "submit" | "reset";
   block?: boolean;
   href?: string;
+  locale?: string;
 }
 
 export const Button = (props: IButton) => {
@@ -50,6 +51,7 @@ export const Button = (props: IButton) => {
   );
 
   let disabled = props.loading ? true : props.disabled;
+  const href = `/${props.locale}/${props.href?.indexOf('/') == 0 ? props.href.substring(1) : props.href}`
 
   return !props.href ? (
     <button
@@ -64,7 +66,7 @@ export const Button = (props: IButton) => {
       {props.children}
     </button>
   ) : (
-    <Link href={props.href} className={classes}>
+    <Link href={href} className={classes} locale={props.locale}>
       {props.children}
     </Link>
   );

@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Formik, useFormikContext } from "formik";
 import { MAccount, MBudget, MMonth, RCashflow, ResponseGetMBudget } from "@/models";
 import { useAccountAction, useBudgetAction, useMonthAction } from "@/actions";
-import { classNames } from "@/utils/helper";
-import { Select } from "@/ui";
+import { classNames, encodeQuery } from "@/utils/helper";
+import { Select, Text } from "@/ui";
+import { useRouter } from "next/router";
 
 interface IFormFilter {
-  onSubmit: (arg: RCashflow) => void;
   initialFilter?: RCashflow;
-  onClear: () => void;
+  dict: any;
 }
 
 const FormFilter = (props: IFormFilter) => {
@@ -19,6 +19,7 @@ const FormFilter = (props: IFormFilter) => {
   const [budgetData, setBudgets] = useState<ResponseGetMBudget>();
   const [monthData, setMonths] = useState<MMonth[]>();
   const [monthId, setMonthId] = useState<number>();
+  const router = useRouter();
   const load = async () => {
     const budgets = await getBudget({
         month_id: monthId ?? "",
@@ -30,21 +31,21 @@ const FormFilter = (props: IFormFilter) => {
     setAccounts(accounts.data.data?.data);
   };
 
-  const accounts = [{ value: "", label: "Pilih Akun" }].concat(
+  const accounts = [{ value: "", label: props.dict.cashflow.input.selectAccount }].concat(
     (accountData ?? []).map((account) => ({
       value: String(account.id),
       label: `${account.name}`,
     })),
   );
 
-  const budgets = [{ value: "", label: "Pilih Anggaran" }].concat(
+  const budgets = [{ value: "", label: props.dict.cashflow.input.selectBudget }].concat(
     (budgetData?.data ?? []).map((budget: MBudget) => ({
       value: String(budget.id),
       label: `${budget.plan}`,
     })),
   );
 
-  const months = [{ value: "", label: "Pilih Bulan" }].concat(
+  const months = [{ value: "", label: props.dict.cashflow.input.selectMonth }].concat(
     (monthData ?? []).map((month) => ({
       value: String(month.id),
       label: `${month.name} - ${month.year}`,
@@ -65,8 +66,19 @@ const FormFilter = (props: IFormFilter) => {
     return null;
   };
 
+  const onFilter = async (values: RCashflow) => {
+    values.budget_id = ![2, 3].includes(Number(values.type))
+      ? values.budget_id
+      : "";
+    router.push(`/${router.query.lang}/cashflow?${encodeQuery(values)}`);
+  };
+
+  const onClearFilter = async () => {
+    router.push(`/${router.query.lang}/cashflow`);
+  };
+
   return (
-    <Formik initialValues={props.initialFilter ?? {}} onSubmit={props.onSubmit}>
+    <Formik initialValues={props.initialFilter ?? {}} onSubmit={onFilter}>
       {(formik) => (
         <form
           className="space-y-4"
@@ -74,112 +86,44 @@ const FormFilter = (props: IFormFilter) => {
           autoComplete="off"
         >
           <FormObserver />
-          <div>
-            <label
-              htmlFor="plan"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Notes
-            </label>
-            <div className="relative mt-1 rounded-md shadow-sm">
-              <input
-                type="text"
-                name="plan"
-                id="plan"
-                onChange={formik.handleChange}
-                value={formik.values.notes}
-                className={classNames(
-                  "block w-full rounded-md border-gray-300",
-                )}
-                aria-invalid="true"
-              />
-            </div>
-          </div>
-          <div>
-            <label
-              htmlFor="account_id"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Pilih Akun
-            </label>
-            <div className="relative mt-1 rounded-md shadow-sm">
-              <select
-                name="account_id"
-                id="account_id"
-                onChange={formik.handleChange}
-                value={formik.values.account_id}
-                className={classNames(
-                  "block w-full rounded-md border-gray-300",
-                )}
-                aria-invalid="true"
-              >
-                {accounts?.map(
-                  (option) =>
-                    option != undefined && (
-                      <option value={option.value}>{option.label}</option>
-                    ),
-                )}
-              </select>
-            </div>
-          </div>
-          <div>
-            <label
-              htmlFor="account_id"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Type
-            </label>
-            <div className="relative mt-1 rounded-md shadow-sm">
-              <select
-                name="type"
-                id="type"
-                className={classNames(
-                  "block w-full rounded-md border-gray-300",
-                )}
-                onChange={formik.handleChange}
-                value={formik.values.type}
-                aria-invalid="true"
-              >
-                <option value="">Pilih Semua</option>
-                <option value="1">Pengeluaran</option>
-                <option value="2">Pemasukan</option>
-                <option value="3">Transfer</option>
-              </select>
-            </div>
-          </div>
+          <Text
+            label={props.dict.cashflow.input.note}
+            formik={formik}
+            name={"notes"}
+            value={formik.values?.notes}
+          />
+          <Select
+            label={props.dict.cashflow.input.selectAccount}
+            formik={formik}
+            name={"account_id"}
+            value={String(formik.values?.account_id ?? "")}
+            options={accounts}
+          />
+          <Select
+            label={props.dict.cashflow.input.type}
+            formik={formik}
+            name={"type"}
+            value={String(formik.values?.type ?? "")}
+            options={[
+              { value: "", label: props.dict.cashflow.optionType.selectAll },
+              { value: 1, label: props.dict.cashflow.optionType.expense },
+              { value: 2, label: props.dict.cashflow.optionType.income },
+              { value: 3, label: props.dict.cashflow.optionType.transfer },
+            ]}
+          />
           {formik.values.type == 3 && (
-            <div>
-              <label
-                htmlFor="account_target"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Pilih Akun Target
-              </label>
-              <div className="relative mt-1 rounded-md shadow-sm">
-                <select
-                  name="account_target"
-                  id="account_target"
-                  onChange={formik.handleChange}
-                  value={formik.values.account_target}
-                  className={classNames(
-                    "block w-full rounded-md border-gray-300",
-                  )}
-                  aria-invalid="true"
-                >
-                  {accounts?.map(
-                    (option) =>
-                      option != undefined && (
-                        <option value={option.value}>{option.label}</option>
-                      ),
-                  )}
-                </select>
-              </div>
-            </div>
+            <Select
+              label={props.dict.cashflow.input.accountTarget}
+              formik={formik}
+              name={"account_target"}
+              value={String(formik.values?.account_target ?? "")}
+              options={accounts}
+            />
           )}
           {formik.values.type == 1 && (
             <>
               <Select
-                label="Anggaran"
+                label={props.dict.cashflow.input.selectBudget}
                 formik={formik}
                 name={"budget_id"}
                 value={String(formik.values?.budget_id ?? "")}
@@ -188,7 +132,7 @@ const FormFilter = (props: IFormFilter) => {
             </>
           )}
           <Select
-            label="Nama Bulan"
+            label={props.dict.cashflow.input.selectMonth}
             formik={formik}
             name={"month_id"}
             value={String(formik.values?.month_id ?? "")}
@@ -199,14 +143,14 @@ const FormFilter = (props: IFormFilter) => {
               type="submit"
               className="mt-2 inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm"
             >
-              Simpan
+              {props.dict.cashflow.input.save}
             </button>
             <button
               type="button"
               className="mt-2 inline-flex w-full justify-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 sm:text-sm"
-              onClick={props.onClear}
+              onClick={onClearFilter}
             >
-              Clear Filter
+              {props.dict.cashflow.filter.clearFilter}
             </button>
           </div>
         </form>

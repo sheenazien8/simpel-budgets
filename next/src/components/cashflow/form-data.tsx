@@ -1,26 +1,40 @@
-import { useAccountAction, useBudgetAction, useMonthAction } from "@/actions";
-import { MAccount, MBudget, MCashflow, MMonth, RCashflow, ResponseGetMBudget } from "@/models";
+import {
+  useAccountAction,
+  useBudgetAction,
+  useCashflowAction,
+  useMonthAction,
+} from "@/actions";
+import {
+  MAccount,
+  MBudget,
+  MCashflow,
+  MMonth,
+  RCashflow,
+  ResponseGetMBudget,
+} from "@/models";
 import { Button, Price, Select, Text } from "@/ui";
+import { toastProgress } from "@/utils/helper";
 import { Formik, useFormikContext } from "formik";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 interface IFormData {
-  onSubmit: (args: RCashflow) => void;
-  errors?: RCashflow;
-  onDelete: () => void;
   initialValues?: MCashflow | RCashflow;
+  id?: number | undefined;
+  dict: any;
+  locale: any;
 }
 
 const FormData = (props: IFormData) => {
+  const router = useRouter();
   const [showFilterBudget, setShowFilterBudget] = useState(false);
   const type = (props.initialValues as unknown as RCashflow)?.type;
-  const defaultType = type == "" || type == 1 ? 1 : type == 2 ? 2 : 3;
-
-  let initialValues: MCashflow | RCashflow = {
-    ...props.initialValues,
-    type: defaultType,
-  };
-
+  let defaultType = 1;
+  if (type != undefined) {
+      defaultType = type == 0 || type == 1 ? 1 : type == 2 ? 2 : 3;
+  }
+  const { create, update, destroy } = useCashflowAction();
+  const [errors, setErrors] = useState<RCashflow>();
   const { get: getBudget } = useBudgetAction();
   const { get: getMonth } = useMonthAction();
   const { get: getAccount } = useAccountAction();
@@ -28,9 +42,14 @@ const FormData = (props: IFormData) => {
   const [budgetData, setBudgets] = useState<ResponseGetMBudget>();
   const [monthData, setMonths] = useState<MMonth[]>();
   const [monthId, setMonthId] = useState<number>();
+
+  let initialValues: MCashflow | RCashflow = {
+    ...props.initialValues,
+    type: defaultType,
+  };
   const load = async () => {
     const budgets = await getBudget({
-        month_id: monthId ?? "",
+      month_id: monthId ?? "",
     });
     setBudgets(budgets.data.data);
     const months = await getMonth();
@@ -39,21 +58,27 @@ const FormData = (props: IFormData) => {
     setAccounts(accounts.data.data?.data);
   };
 
-  const accounts = [{ value: "", label: "Pilih Akun" }].concat(
+  const accounts = [
+    { value: "", label: props.dict.cashflow.input.selectAccount },
+  ].concat(
     (accountData ?? []).map((account) => ({
       value: String(account.id),
       label: `${account.name}`,
     })),
   );
 
-  const budgets = [{ value: "", label: "Pilih Anggaran" }].concat(
+  const budgets = [
+    { value: "", label: props.dict.cashflow.input.selectBudget },
+  ].concat(
     (budgetData?.data ?? []).map((budget: MBudget) => ({
       value: String(budget.id),
       label: `${budget.plan}`,
     })),
   );
 
-  const months = [{ value: "", label: "Pilih Bulan" }].concat(
+  const months = [
+    { value: "", label: props.dict.cashflow.input.selectMonth },
+  ].concat(
     (monthData ?? []).map((month) => ({
       value: String(month.id),
       label: `${month.name} - ${month.year}`,
@@ -74,9 +99,39 @@ const FormData = (props: IFormData) => {
     return null;
   };
 
+  const onDelete = async () => {
+    if (props.id != undefined) {
+      toastProgress(destroy(props?.id), `Menghapus anggaran`, () => {
+        router.push(`/${router.query?.lang}/cashflow`);
+      });
+    }
+  };
+
+  const onSubmit = async (values: RCashflow) => {
+    values.budget_id = ![2, 3].includes(Number(values.type))
+      ? values.budget_id
+      : undefined;
+    let progess: any;
+    if (props.id == undefined) {
+      progess = create(values, setErrors);
+    } else {
+      progess = update(props.id, values, setErrors);
+    }
+    toastProgress(
+      progess,
+      `${
+        !props?.id
+          ? props.dict.cashflow.message.createSuccess
+          : props.dict.cashflow.message.updateSuccess
+      }`,
+      () => {
+        router.replace(`/${router.query?.lang}/cashflow`);
+      },
+    );
+  };
 
   return (
-    <Formik initialValues={initialValues} onSubmit={props.onSubmit}>
+    <Formik initialValues={initialValues} onSubmit={onSubmit}>
       {(formik) => (
         <form
           className="space-y-4"
@@ -84,40 +139,40 @@ const FormData = (props: IFormData) => {
           autoComplete="off"
         >
           <FormObserver />
+          <Select
+            label={props.dict.cashflow.input.type}
+            formik={formik}
+            name={"type"}
+            errors={String(errors?.type ?? "")}
+            value={String(formik.values?.type ?? "")}
+            options={[
+              { value: 1, label: props.dict.cashflow.optionType.expense },
+              { value: 2, label: props.dict.cashflow.optionType.income },
+              { value: 3, label: props.dict.cashflow.optionType.transfer },
+            ]}
+          />
           <Price
-            label="Nominal"
+            label={props.dict.cashflow.input.nominal}
             formik={formik}
             name={"nominal"}
-            errors={props.errors?.nominal}
+            errors={errors?.nominal}
             value={formik.values?.nominal}
           />
 
           <Select
-            label="Akun"
+            label={props.dict.cashflow.input.account}
             formik={formik}
             name={"account_id"}
-            errors={String(props.errors?.account_id ?? "")}
+            errors={String(errors?.account_id ?? "")}
             value={String(formik.values?.account_id ?? "")}
             options={accounts}
           />
-          <Select
-            label="Type"
-            formik={formik}
-            name={"type"}
-            errors={String(props.errors?.type ?? "")}
-            value={String(formik.values?.type ?? "")}
-            options={[
-              { value: 1, label: "Pengeluaran" },
-              { value: 2, label: "Pemasukan" },
-              { value: 3, label: "Transfer" },
-            ]}
-          />
           {formik.values.type == 3 && (
             <Select
-              label="Akun Target"
+              label={props.dict.cashflow.input.accountTarget}
               formik={formik}
               name={"account_target"}
-              errors={String(props.errors?.account_target ?? "")}
+              errors={String(errors?.account_target ?? "")}
               value={String(formik.values?.account_target ?? "")}
               options={accounts}
             />
@@ -127,12 +182,12 @@ const FormData = (props: IFormData) => {
               <Select
                 label={
                   <p>
-                    Anggaran{" "}
+                    {props.dict.cashflow.input.budget}
                     <span
                       className="cursor-pointer text-indigo-800"
                       onClick={() => setShowFilterBudget(!showFilterBudget)}
                     >
-                      Filter anggaran
+                      {props.dict.cashflow.input.budgetFilter}
                     </span>
                     {showFilterBudget && (
                       <Select
@@ -147,41 +202,45 @@ const FormData = (props: IFormData) => {
                 }
                 formik={formik}
                 name={"budget_id"}
-                errors={String(props.errors?.budget_id ?? "")}
+                errors={String(errors?.budget_id ?? "")}
                 value={String(formik.values?.budget_id ?? "")}
                 options={budgets}
               />
             </>
           )}
           <Text
-            label="Tanggal"
+            label={props.dict.cashflow.input.date}
             formik={formik}
             name={"date"}
             type={"date"}
-            errors={props.errors?.date}
+            errors={errors?.date}
             value={formik.values?.date}
           />
           <Text
-            label="Catatan"
+            label={props.dict.cashflow.input.note}
             formik={formik}
             name={"notes"}
-            errors={props.errors?.notes}
+            errors={errors?.notes}
             value={formik.values?.notes}
           />
           <div className="grid grid-cols-1 gap-y-2">
             <Button type="submit" block>
-              Simpan
+              {props.dict.cashflow.input.save}
             </Button>
             {(props.initialValues as MCashflow)?.id && (
-              <Button
-                type="button"
-                block
-                color="danger"
-                onClick={props.onDelete}
-              >
-                Hapus
+              <Button type="button" block color="danger" onClick={onDelete}>
+                {props.dict.cashflow.input.delete}
               </Button>
             )}
+            <Button
+              type="button"
+              block
+              color="secondary"
+              onClick={() => router.back()}
+              locale={props.locale}
+            >
+              {props.dict.cashflow.input.cancel}
+            </Button>
           </div>
         </form>
       )}
@@ -190,4 +249,3 @@ const FormData = (props: IFormData) => {
 };
 
 export default FormData;
-
