@@ -1,11 +1,19 @@
 import { AxiosError, AxiosResponse } from "axios";
-import { ResponseData, MCashflow, RCashflow, ResponseGetMCashflow } from "@/models";
+import {
+  ResponseData,
+  MCashflow,
+  RCashflow,
+  ResponseGetMCashflow,
+} from "@/models";
 import { encodeQuery, instance } from "@/utils/helper";
 import { useRouter } from "next/router";
 
 export const useCashflowAction = () => {
   const router = useRouter();
-  const get = async (query?: RCashflow): Promise<AxiosResponse<ResponseData<ResponseGetMCashflow>>> => {
+  const { lang } = router.query;
+  const get = async (
+    query?: RCashflow,
+  ): Promise<AxiosResponse<ResponseData<ResponseGetMCashflow>>> => {
     try {
       const response = await instance.get<ResponseData<ResponseGetMCashflow>>(
         `/api/transactions?${encodeQuery(query)}`,
@@ -36,8 +44,7 @@ export const useCashflowAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login")
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       if (error instanceof AxiosError) {
@@ -77,8 +84,7 @@ export const useCashflowAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login")
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       throw error;
@@ -102,8 +108,7 @@ export const useCashflowAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login")
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       if (error instanceof AxiosError) {
@@ -142,8 +147,7 @@ export const useCashflowAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login")
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       throw error;

@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 
 export const useGoalDetailAction = () => {
   const router = useRouter();
+  const { lang } = router.query;
   const get = async (
     detailId: number,
     query?: RGoalDetail,
@@ -22,8 +23,7 @@ export const useGoalDetailAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login");
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       throw error;
@@ -48,8 +48,7 @@ export const useGoalDetailAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login");
-          throw error;
+          router?.push(`/${lang}/login`);
         }
         const errorResponse = (error as AxiosError<ResponseData>).response?.data
           .errors;
@@ -80,8 +79,7 @@ export const useGoalDetailAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login");
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       throw error;
@@ -94,5 +92,3 @@ export const useGoalDetailAction = () => {
     destroy,
   };
 };
-
-

@@ -9,6 +9,7 @@ export interface IQueryDashboard {
 
 export const useDashboardAction = () => {
   const router = useRouter();
+  const { lang } = router.query;
   const financialRecord = async (query: IQueryDashboard): Promise<
     ResponseData<SummaryFinancialRecord>
   > => {
@@ -24,8 +25,7 @@ export const useDashboardAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login");
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       throw error;

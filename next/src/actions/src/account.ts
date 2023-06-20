@@ -9,6 +9,7 @@ export interface QAccount {
 
 export const useAccountAction = () => {
   const router = useRouter();
+  const { lang } = router.query;
   const get = async (query?: QAccount): Promise<AxiosResponse<ResponseData<ResponseGetAccount>>> => {
     try {
       const response = await instance.get<ResponseData<ResponseGetAccount>>(`/api/accounts?${encodeQuery(query)}`);
@@ -20,7 +21,7 @@ export const useAccountAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login")
+          router?.push(`/${lang}/login`);
           throw error;
         }
       }
@@ -42,8 +43,7 @@ export const useAccountAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login")
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       if (error instanceof AxiosError) {
@@ -75,8 +75,7 @@ export const useAccountAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login")
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       throw error;
@@ -100,8 +99,7 @@ export const useAccountAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login")
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       if (error instanceof AxiosError) {
@@ -132,8 +130,7 @@ export const useAccountAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login")
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       throw error;

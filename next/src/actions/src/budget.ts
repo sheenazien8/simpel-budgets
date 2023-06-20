@@ -1,10 +1,17 @@
 import { AxiosError, AxiosResponse } from "axios";
-import { ResponseData, MBudget, RBudget, FBudget, ResponseGetMBudget } from "@/models";
+import {
+  ResponseData,
+  MBudget,
+  RBudget,
+  FBudget,
+  ResponseGetMBudget,
+} from "@/models";
 import { encodeQuery, instance } from "@/utils/helper";
 import { useRouter } from "next/router";
 
 export const useBudgetAction = () => {
   const router = useRouter();
+  const { lang } = router.query;
   const get = async (
     query?: FBudget,
   ): Promise<AxiosResponse<ResponseData<ResponseGetMBudget>>> => {
@@ -20,8 +27,7 @@ export const useBudgetAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login");
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       throw error;
@@ -33,7 +39,10 @@ export const useBudgetAction = () => {
     setError: (arg: RBudget) => void,
   ): Promise<AxiosResponse<ResponseData>> => {
     try {
-      const response = await instance.post<ResponseData>("/api/budgets", values);
+      const response = await instance.post<ResponseData>(
+        "/api/budgets",
+        values,
+      );
       if (response.status != 200) {
         throw response.data;
       }
@@ -42,8 +51,7 @@ export const useBudgetAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login");
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       if (error instanceof AxiosError) {
@@ -54,7 +62,9 @@ export const useBudgetAction = () => {
             plan: errorResponse?.plan ? errorResponse?.plan[0] : "",
             month_id: errorResponse?.month_id ? errorResponse?.month_id[0] : "",
             nominal: errorResponse?.nominal ? errorResponse?.nominal[0] : "",
-            account_id: errorResponse?.account_id ? errorResponse?.account_id[0] : "",
+            account_id: errorResponse?.account_id
+              ? errorResponse?.account_id[0]
+              : "",
           });
         }
       }
@@ -77,8 +87,7 @@ export const useBudgetAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login");
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       throw error;
@@ -102,8 +111,7 @@ export const useBudgetAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login");
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       if (error instanceof AxiosError) {
@@ -114,7 +122,9 @@ export const useBudgetAction = () => {
             plan: errorResponse?.plan ? errorResponse?.plan[0] : "",
             month_id: errorResponse?.month_id ? errorResponse?.month_id[0] : "",
             nominal: errorResponse?.nominal ? errorResponse?.nominal[0] : "",
-            account_id: errorResponse?.account_id ? errorResponse?.account_id[0] : "",
+            account_id: errorResponse?.account_id
+              ? errorResponse?.account_id[0]
+              : "",
           });
         }
       }
@@ -125,7 +135,9 @@ export const useBudgetAction = () => {
     id: string | number,
   ): Promise<AxiosResponse<ResponseData>> => {
     try {
-      const response = await instance.delete<ResponseData>(`/api/budgets/${id}`);
+      const response = await instance.delete<ResponseData>(
+        `/api/budgets/${id}`,
+      );
       if (response.status != 200) {
         throw response.data;
       }
@@ -134,8 +146,7 @@ export const useBudgetAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login");
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       throw error;
@@ -146,7 +157,10 @@ export const useBudgetAction = () => {
     setError: (arg: RBudget) => void,
   ): Promise<AxiosResponse<ResponseData>> => {
     try {
-      const response = await instance.post<ResponseData>(`/api/budgets/copy`, values);
+      const response = await instance.post<ResponseData>(
+        `/api/budgets/copy`,
+        values,
+      );
       if (response.status != 200) {
         throw response.data;
       }
@@ -155,8 +169,7 @@ export const useBudgetAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login");
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       if (error instanceof AxiosError) {
@@ -178,6 +191,6 @@ export const useBudgetAction = () => {
     detail,
     update,
     destroy,
-    copy
+    copy,
   };
 };

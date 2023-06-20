@@ -34,6 +34,7 @@ export const Layout = (props: ILayout) => {
   const router = useRouter();
   const { get } = useInfoAction();
   const [info, setInfo] = useState<MInfo>();
+  const { lang } = router.query;
   const load = async () => {
     const data = await get();
     setInfo(data.data.data);
@@ -41,7 +42,7 @@ export const Layout = (props: ILayout) => {
   const { logout } = useAuthAction();
   if (typeof window !== "undefined") {
     if (!window.localStorage.getItem("token")) {
-      router?.push("login");
+      router?.push(`/${lang}/login`);
     }
   }
   const navigation = [

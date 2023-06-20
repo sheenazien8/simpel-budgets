@@ -5,11 +5,15 @@ import { useRouter } from "next/router";
 
 export const useMonthAction = () => {
   const router = useRouter();
-  const get = async (query?: RMonth): Promise<AxiosResponse<ResponseData<MMonth[]>>> => {
+  const { lang } = router.query;
+  const get = async (
+    query?: RMonth,
+  ): Promise<AxiosResponse<ResponseData<MMonth[]>>> => {
     try {
-      const response = await instance.get<ResponseData<MMonth[]>>(`/api/months?${encodeQuery(query)}`);
+      const response = await instance.get<ResponseData<MMonth[]>>(
+        `/api/months?${encodeQuery(query)}`,
+      );
       if (response.status != 200) {
-        console.log(response);
         throw response.data;
       }
       return response;
@@ -17,8 +21,7 @@ export const useMonthAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login")
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       throw error;
@@ -39,8 +42,7 @@ export const useMonthAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login")
-          throw error;
+          router?.push(`/${lang}/login`);
         }
         const errorResponse = (error as AxiosError<ResponseData>).response?.data
           .errors;
@@ -71,8 +73,7 @@ export const useMonthAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login")
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       throw error;
@@ -96,8 +97,7 @@ export const useMonthAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login")
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       if (error instanceof AxiosError) {
@@ -127,8 +127,7 @@ export const useMonthAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login")
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       throw error;

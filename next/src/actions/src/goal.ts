@@ -5,9 +5,14 @@ import { useRouter } from "next/router";
 
 export const useGoalAction = () => {
   const router = useRouter();
-  const get = async (query?: RGoal): Promise<AxiosResponse<ResponseData<MGoal[]>>> => {
+  const { lang } = router.query;
+  const get = async (
+    query?: RGoal,
+  ): Promise<AxiosResponse<ResponseData<MGoal[]>>> => {
     try {
-      const response = await instance.get<ResponseData<MGoal[]>>(`/api/goals?${encodeQuery(query)}`);
+      const response = await instance.get<ResponseData<MGoal[]>>(
+        `/api/goals?${encodeQuery(query)}`,
+      );
       if (response.status != 200) {
         console.log(response);
         throw response.data;
@@ -17,8 +22,7 @@ export const useGoalAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login")
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       throw error;
@@ -39,17 +43,22 @@ export const useGoalAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login")
-          throw error;
+          router?.push(`/${lang}/login`);
         }
         const errorResponse = (error as AxiosError<ResponseData>).response?.data
           .errors;
         if (errorResponse != undefined) {
           setError({
             title: errorResponse?.title ? errorResponse?.title[0] : "",
-            description: errorResponse?.description ? errorResponse?.description[0] : "",
-            target_date: errorResponse?.target_date ? errorResponse?.target_date[0] : "",
-            nominal_target: errorResponse?.nominal_target ? errorResponse?.nominal_target[0] : "",
+            description: errorResponse?.description
+              ? errorResponse?.description[0]
+              : "",
+            target_date: errorResponse?.target_date
+              ? errorResponse?.target_date[0]
+              : "",
+            nominal_target: errorResponse?.nominal_target
+              ? errorResponse?.nominal_target[0]
+              : "",
           });
         }
       }
@@ -72,8 +81,7 @@ export const useGoalAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login")
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       throw error;
@@ -98,8 +106,7 @@ export const useGoalAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login")
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       if (error instanceof AxiosError) {
@@ -108,9 +115,15 @@ export const useGoalAction = () => {
         if (errorResponse != undefined) {
           setError({
             title: errorResponse?.title ? errorResponse?.title[0] : "",
-            description: errorResponse?.description ? errorResponse?.description[0] : "",
-            target_date: errorResponse?.target_date ? errorResponse?.target_date[0] : "",
-            nominal_target: errorResponse?.nominal_target ? errorResponse?.nominal_target[0] : "",
+            description: errorResponse?.description
+              ? errorResponse?.description[0]
+              : "",
+            target_date: errorResponse?.target_date
+              ? errorResponse?.target_date[0]
+              : "",
+            nominal_target: errorResponse?.nominal_target
+              ? errorResponse?.nominal_target[0]
+              : "",
           });
         }
       }
@@ -131,8 +144,7 @@ export const useGoalAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          router?.push("login")
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       throw error;

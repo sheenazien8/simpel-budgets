@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 
 export const useAuthAction = () => {
   const router = useRouter();
+  const { lang } = router.query;
   const login = async (
     values: RLogin,
     setError: (arg: RLogin) => void,
@@ -148,7 +149,7 @@ export const useAuthAction = () => {
       if (error instanceof AxiosError) {
         if (error.request.status == 401) {
           localStorage.removeItem("token");
-          throw error;
+          router?.push(`/${lang}/login`);
         }
       }
       throw error;
