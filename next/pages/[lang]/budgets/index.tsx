@@ -26,7 +26,7 @@ import { useRouter } from "next/router";
 
 interface IRecord {}
 
-const List = () => {
+export default function Page (props: IRecord) {
   const { get, create, detail, update, destroy, copy } = useBudgetAction();
   const [budgets, setBudgets] = useState<ResponseGetMBudget>();
   const [isOpen, toggleActive] = useHashRouteToggle("#opened-modal");
@@ -150,6 +150,16 @@ const List = () => {
   }, []);
 
   return (
+    <Layout
+      title="Anggaran"
+      description={
+        <div className="flex items-center gap-x-2 bg-yellow-500 text-white p-1 border rounded-md">
+          <ExclamationTriangleIcon className="w-6" />
+          <p>Anggaran yang nampil itu di bulan sekarang jika tidak difilter!</p>
+        </div>
+      }
+      loading={!budgets}
+    >
     <>
       <div>
         <div className="flex justify-between items-center">
@@ -350,23 +360,6 @@ const List = () => {
         />
       </Modal>
     </>
-  );
-};
-
-const Budget = (props: IRecord) => {
-  return (
-    <Layout
-      title="Anggaran"
-      description={
-        <div className="flex items-center gap-x-2 bg-yellow-500 text-white p-1 border rounded-md">
-          <ExclamationTriangleIcon className="w-6" />
-          <p>Anggaran yang nampil itu di bulan sekarang jika tidak difilter!</p>
-        </div>
-      }
-    >
-      <List {...props} />
     </Layout>
   );
 };
-
-export default Budget;

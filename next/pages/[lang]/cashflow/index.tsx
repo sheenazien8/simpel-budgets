@@ -14,19 +14,17 @@ import {
 } from "@heroicons/react/24/solid";
 import { useCashflowAction } from "@/actions";
 import { MCashflow, RCashflow, ResponseGetMCashflow } from "@/models";
-import {
-  formatMoney,
-  resolveQueryParameter,
-  useHashRouteToggle,
-} from "@/utils/helper";
+import { formatMoney, resolveQueryParameter } from "@/utils/helper";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Button, CardList, EmptyState, Layout, Modal } from "@/ui";
-import FormData from "@/components/cashflow/form-data";
 import FormFilter from "@/components/cashflow/form-filter";
 import { useRouter } from "next/router";
 import { getDictionary } from "../dictionaries";
 
-interface IRecord {}
+interface IRecord {
+  dict: any;
+  locale: string;
+}
 
 export async function getStaticProps(props: any) {
   const dict = await getDictionary(props.params.lang);
@@ -45,12 +43,11 @@ export function getStaticPaths() {
   };
 }
 
-const List = ({ dict, locale }: any) => {
+export default function Page({ dict, locale }: IRecord) {
   const { get } = useCashflowAction();
   const [cashflows, setCashflows] = useState<ResponseGetMCashflow>();
   const [cashflowsData, setCashflowsData] = useState<MCashflow[]>();
-  const [isOpenFilter, toggleFilterActive] =
-    useState<boolean>(false);
+  const [isOpenFilter, toggleFilterActive] = useState<boolean>(false);
   const [filter, setFilter] = useState<RCashflow>();
   const [scroll, setScroll] = useState<number>(0);
   const [hasMore, setHasMore] = useState(true);
@@ -87,192 +84,193 @@ const List = ({ dict, locale }: any) => {
   }, []);
 
   return (
-    <>
-      <div>
-        <div className="border border-gray-200 px-2 py-6 rounded-lg my-4">
-          <div className="grid grid-cols-3 break-words">
-            <div className="mx-auto text-center">
-              <p className="flex items-center justify-center gap-x-1">
-                <ArrowDownIcon className="inline-block w-4 h-4 text-green-500" />
-                <span className="text-sm font-light">
-                  {dict.cashflow.income}
+    <Layout loading={!cashflows}>
+      <>
+        <div>
+          <div className="border border-gray-200 px-2 py-6 rounded-lg my-4">
+            <div className="grid grid-cols-3 break-words">
+              <div className="mx-auto text-center">
+                <p className="flex items-center justify-center gap-x-1">
+                  <ArrowDownIcon className="inline-block w-4 h-4 text-green-500" />
+                  <span className="text-sm font-light">
+                    {dict.cashflow.income}
+                  </span>
+                </p>
+                <span className="font-semibold text-sm text-green-500">
+                  {formatMoney(
+                    cashflows?.transaction_sum_nominal_income,
+                    false,
+                  )}
                 </span>
-              </p>
-              <span className="font-semibold text-sm text-green-500">
-                {formatMoney(cashflows?.transaction_sum_nominal_income, false)}
-              </span>
+              </div>
+              <div className="mx-auto text-center">
+                <p className="flex items-center justify-center gap-x-1">
+                  <ArrowUpIcon className="inline-block w-4 h-4 text-red-500" />
+                  <span className="text-sm font-light">
+                    {dict.cashflow.expense}
+                  </span>
+                </p>
+                <span className="font-semibold text-sm text-red-500">
+                  {formatMoney(
+                    cashflows?.transaction_sum_nominal_expense,
+                    false,
+                  )}
+                </span>
+              </div>
+              <div className="mx-auto text-center">
+                <p className="flex items-center justify-center gap-x-1">
+                  <CurrencyDollarIcon className="inline-block w-4 h-4 text-indigo-500" />
+                  <span className="text-sm font-light">
+                    {dict.cashflow.budget}
+                  </span>
+                </p>
+                <span className="font-semibold text-sm text-indigo-500">
+                  {formatMoney(cashflows?.total_plan, false)}
+                </span>
+              </div>
             </div>
-            <div className="mx-auto text-center">
-              <p className="flex items-center justify-center gap-x-1">
-                <ArrowUpIcon className="inline-block w-4 h-4 text-red-500" />
-                <span className="text-sm font-light">
-                  {dict.cashflow.expense}
-                </span>
-              </p>
-              <span className="font-semibold text-sm text-red-500">
-                {formatMoney(cashflows?.transaction_sum_nominal_expense, false)}
-              </span>
-            </div>
-            <div className="mx-auto text-center">
-              <p className="flex items-center justify-center gap-x-1">
-                <CurrencyDollarIcon className="inline-block w-4 h-4 text-indigo-500" />
-                <span className="text-sm font-light">
-                  {dict.cashflow.budget}
-                </span>
-              </p>
-              <span className="font-semibold text-sm text-indigo-500">
-                {formatMoney(cashflows?.total_plan, false)}
-              </span>
+          </div>
+          <div className="flex justify-between items-center flex-row-reverse">
+            <div className="space-x-2 flex">
+              <button
+                type="button"
+                className="inline-flex items-center rounded-lg border border-transparent bg-gray-400 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                value="Filter"
+                onClick={() => {
+                  toggleFilterActive(true);
+                }}
+              >
+                <AdjustmentsHorizontalIcon className="h-5" />
+              </button>
+              <Button
+                href="/cashflow/create"
+                locale={locale}
+                className="inline-flex items-center rounded-lg border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              >
+                <PlusIcon className="h-5" />
+              </Button>
             </div>
           </div>
         </div>
-        <div className="flex justify-between items-center flex-row-reverse">
-          <div className="space-x-2 flex">
-            <button
-              type="button"
-              className="inline-flex items-center rounded-lg border border-transparent bg-gray-400 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-              value="Filter"
-              onClick={() => {
-                toggleFilterActive(true);
-              }}
-            >
-              <AdjustmentsHorizontalIcon className="h-5" />
-            </button>
-            <Button
-              href="/cashflow/create"
-              locale={locale}
-              className="inline-flex items-center rounded-lg border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            >
-              <PlusIcon className="h-5" />
-            </Button>
-          </div>
-        </div>
-      </div>
-      <InfiniteScroll
-        className="mt-3 grid content-start grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4"
-        next={async () => {
-          let updateScroll = scroll + 20;
-          const cashflows = await get({
-            ...filter,
-            offset: updateScroll,
-          });
-          let cashflowMapped: MCashflow[] = [];
-          cashflowMapped.push(
-            ...(cashflowsData ?? []),
-            ...(cashflows.data.data?.data ?? []),
-          );
-          setCashflowsData(cashflowMapped);
-          setScroll(updateScroll);
-          if (
-            cashflowsData?.length != undefined &&
-            cashflows?.data?.data?.total_transactions != undefined
-          ) {
+        <InfiniteScroll
+          className="mt-3 grid content-start grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4"
+          next={async () => {
+            let updateScroll = scroll + 20;
+            const cashflows = await get({
+              ...filter,
+              offset: updateScroll,
+            });
+            let cashflowMapped: MCashflow[] = [];
+            cashflowMapped.push(
+              ...(cashflowsData ?? []),
+              ...(cashflows.data.data?.data ?? []),
+            );
+            setCashflowsData(cashflowMapped);
+            setScroll(updateScroll);
             if (
-              cashflowsData?.length >= cashflows?.data?.data?.total_transactions
+              cashflowsData?.length != undefined &&
+              cashflows?.data?.data?.total_transactions != undefined
             ) {
-              setHasMore(false);
+              if (
+                cashflowsData?.length >=
+                cashflows?.data?.data?.total_transactions
+              ) {
+                setHasMore(false);
+              }
             }
+          }}
+          hasMore={hasMore}
+          height={height + "px"}
+          dataLength={cashflowsData?.length ?? 0}
+          loader={
+            <h4 className="text-center lg:col-span-4 sm:col-span-2">
+              {dict.common.loading}
+            </h4>
           }
-        }}
-        hasMore={hasMore}
-        height={height + "px"}
-        dataLength={cashflowsData?.length ?? 0}
-        loader={
-          <h4 className="text-center lg:col-span-4 sm:col-span-2">
-            {dict.common.loading}
-          </h4>
-        }
-        endMessage={
-          (cashflowsData?.length ?? 0) > 0 ? (
-            <p className="text-center lg:col-span-4 sm:col-span-2">
-              <b className="text-gray-600">{dict.common.allDataLoaded}</b>
-            </p>
-          ) : (
-            <EmptyState
-              title={dict.cashflow.empty.title}
-              description={dict.cashflow.empty.description}
-              button={
-                <div className="flex justify-center">
-                  <Button
-                    type="button"
-                    onClick={() => {
-                    }}
-                  >
-                    <PlusIcon className="h-5" /> {dict.cashflow.input.add}
-                  </Button>
+          endMessage={
+            (cashflowsData?.length ?? 0) > 0 ? (
+              <p className="text-center lg:col-span-4 sm:col-span-2">
+                <b className="text-gray-600">{dict.common.allDataLoaded}</b>
+              </p>
+            ) : (
+              <EmptyState
+                title={dict.cashflow.empty.title}
+                description={dict.cashflow.empty.description}
+                button={
+                  <div className="flex justify-center">
+                    <Button type="button" onClick={() => {}}>
+                      <PlusIcon className="h-5" /> {dict.cashflow.input.add}
+                    </Button>
+                  </div>
+                }
+              />
+            )
+          }
+        >
+          {cashflowsData?.map((cashflow, index) => (
+            <CardList
+              key={index}
+              bgColor={
+                Number(cashflow.type) == 1 ? "bg-red-600" : "bg-green-600"
+              }
+              title={
+                <div className="flex justify-between flex-row-reverse">
+                  {cashflow.type == 1 ? (
+                    <p className="text-red-600">
+                      -{formatMoney(cashflow.nominal)}
+                    </p>
+                  ) : (
+                    <p className="text-green-600">
+                      +{formatMoney(cashflow.nominal)}
+                    </p>
+                  )}
                 </div>
               }
+              icon={
+                Number(cashflow.type) == 1 ? (
+                  <ArrowRightOnRectangleIcon className="w-6" />
+                ) : Number(cashflow.type) == 2 ? (
+                  <ArrowLeftOnRectangleIcon className="w-6" />
+                ) : (
+                  <ArrowsRightLeftIcon className="w-6" />
+                )
+              }
+              details={[
+                <span key={1} className="font-semibold">
+                  {cashflow.budget_name}
+                </span>,
+                cashflow.date,
+                <span key={2} className="flex">
+                  {cashflow.account_name}{" "}
+                  {cashflow.type == 3 ? (
+                    <>
+                      {" "}
+                      <ArrowRightIcon className="h-4 mx-1" />{" "}
+                      {cashflow.account_target_name}
+                    </>
+                  ) : (
+                    ""
+                  )}
+                </span>,
+                <span key={3} className="italic break-words">
+                  {cashflow.notes}
+                </span>,
+              ]}
+              onClick={async () => {
+                router?.push(`/${locale}/cashflow/${cashflow.id}`);
+              }}
             />
-          )
-        }
-      >
-        {cashflowsData?.map((cashflow, index) => (
-          <CardList
-            key={index}
-            bgColor={Number(cashflow.type) == 1 ? "bg-red-600" : "bg-green-600"}
-            title={
-              <div className="flex justify-between flex-row-reverse">
-                {cashflow.type == 1 ? (
-                  <p className="text-red-600">
-                    -{formatMoney(cashflow.nominal)}
-                  </p>
-                ) : (
-                  <p className="text-green-600">
-                    +{formatMoney(cashflow.nominal)}
-                  </p>
-                )}
-              </div>
-            }
-            icon={
-              Number(cashflow.type) == 1 ? (
-                <ArrowRightOnRectangleIcon className="w-6" />
-              ) : Number(cashflow.type) == 2 ? (
-                <ArrowLeftOnRectangleIcon className="w-6" />
-              ) : (
-                <ArrowsRightLeftIcon className="w-6" />
-              )
-            }
-            details={[
-              <span key={1} className="font-semibold">{cashflow.budget_name}</span>,
-              cashflow.date,
-              <span key={2} className="flex">
-                {cashflow.account_name}{" "}
-                {cashflow.type == 3 ? (
-                  <>
-                    {" "}
-                    <ArrowRightIcon className="h-4 mx-1" />{" "}
-                    {cashflow.account_target_name}
-                  </>
-                ) : (
-                  ""
-                )}
-              </span>,
-              <span key={3} className="italic break-words">{cashflow.notes}</span>,
-            ]}
-            onClick={async () => {
-              router?.push(`/${locale}/cashflow/${cashflow.id}`);
-            }}
-          />
-        ))}
-      </InfiniteScroll>
+          ))}
+        </InfiniteScroll>
 
-      <Modal
-        open={isOpenFilter}
-        setOpen={(status) => toggleFilterActive(status)}
-        title={dict.cashflow.filter.title}
-      >
-        <FormFilter initialFilter={filter} dict={dict} />
-      </Modal>
-    </>
-  );
-};
-
-const Cashflow = (props: IRecord) => {
-  return (
-    <Layout>
-      <List {...props} />
+        <Modal
+          open={isOpenFilter}
+          setOpen={(status) => toggleFilterActive(status)}
+          title={dict.cashflow.filter.title}
+        >
+          <FormFilter initialFilter={filter} dict={dict} />
+        </Modal>
+      </>
     </Layout>
   );
-};
-
-export default Cashflow;
+}

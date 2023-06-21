@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   Bars3Icon,
   BellIcon,
@@ -21,6 +21,65 @@ import { useInfoAction } from "@/actions";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Button, ToasterCustom } from "..";
+import { LoaderIcon } from "react-hot-toast";
+
+const navigation = [
+  {
+    name: "Dashboard",
+    href: "/dashboard",
+    icon: <HomeIcon className="h-6 w-6 text-gray-500" />,
+    toolbar: true,
+    component: "Home",
+  },
+  {
+    name: "Cash flow",
+    href: "/cashflow",
+    icon: <BanknotesIcon className="h-6 w-6 text-gray-500" />,
+    toolbar: true,
+    component: "Cashflow",
+  },
+  {
+    name: "Anggaran",
+    href: "/budgets",
+    icon: <CurrencyDollarIcon className="h-6 w-6 text-gray-500" />,
+    toolbar: true,
+    component: "Budget",
+  },
+  {
+    name: "Akun",
+    href: "/accounts",
+    icon: <BuildingLibraryIcon className="h-6 w-6 text-gray-500" />,
+    toolbar: true,
+    component: "Account",
+  },
+  {
+    name: "Bulan",
+    href: "/months",
+    icon: <BuildingLibraryIcon className="h-6 w-6 text-gray-500" />,
+    toolbar: false,
+    component: "Month",
+  },
+  {
+    name: "Tujuan",
+    href: "/goals",
+    icon: <DocumentIcon className="h-6 w-6 text-gray-500" />,
+    toolbar: false,
+    component: "Goal",
+  },
+  {
+    name: "Profil",
+    href: "/profiles",
+    icon: <UserIcon className="h-6 w-6 text-gray-500" />,
+    toolbar: false,
+    component: "Profile",
+  },
+  {
+    name: "Hutang Piutang",
+    href: "/hutang-piutang",
+    toolbar: false,
+    component: "DebtsAndReceivables",
+  },
+];
 
 interface ILayout {
   children: JSX.Element;
@@ -28,12 +87,15 @@ interface ILayout {
   description?: string | JSX.Element;
   noBottomNav?: boolean;
   noPadding?: boolean;
+  loading?: boolean;
 }
 
 export const Layout = (props: ILayout) => {
   const router = useRouter();
   const { get } = useInfoAction();
   const [info, setInfo] = useState<MInfo>();
+  const [width, setWidth] = useState(0);
+  const [height, setHeight] = useState(0);
   const { lang } = router.query;
   const load = async () => {
     const data = await get();
@@ -45,66 +107,14 @@ export const Layout = (props: ILayout) => {
       router?.push(`/${lang}/login`);
     }
   }
-  const navigation = [
-    {
-      name: "Dashboard",
-      href: "/dashboard",
-      icon: <HomeIcon className="h-6 w-6 text-gray-500" />,
-      toolbar: true,
-      component: "Home",
-    },
-    {
-      name: "Cash flow",
-      href: "/cashflow",
-      icon: <BanknotesIcon className="h-6 w-6 text-gray-500" />,
-      toolbar: true,
-      component: "Cashflow",
-    },
-    {
-      name: "Anggaran",
-      href: "/budgets",
-      icon: <CurrencyDollarIcon className="h-6 w-6 text-gray-500" />,
-      toolbar: true,
-      component: "Budget",
-    },
-    {
-      name: "Akun",
-      href: "/accounts",
-      icon: <BuildingLibraryIcon className="h-6 w-6 text-gray-500" />,
-      toolbar: true,
-      component: "Account",
-    },
-    {
-      name: "Bulan",
-      href: "/months",
-      icon: <BuildingLibraryIcon className="h-6 w-6 text-gray-500" />,
-      toolbar: false,
-      component: "Month",
-    },
-    {
-      name: "Tujuan",
-      href: "/goals",
-      icon: <DocumentIcon className="h-6 w-6 text-gray-500" />,
-      toolbar: false,
-      component: "Goal",
-    },
-    {
-      name: "Profil",
-      href: "/profiles",
-      icon: <UserIcon className="h-6 w-6 text-gray-500" />,
-      toolbar: false,
-      component: "Profile",
-    },
-    {
-      name: "Hutang Piutang",
-      href: "/hutang-piutang",
-      toolbar: false,
-      component: "DebtsAndReceivables",
-    },
-  ];
 
   useLayoutEffect(() => {
     load();
+  }, []);
+
+  useEffect(() => {
+    setWidth(document?.documentElement?.offsetWidth);
+    setHeight(document?.documentElement?.offsetHeight - 200);
   }, []);
 
   return (
@@ -171,7 +181,11 @@ export const Layout = (props: ILayout) => {
                   <div className="space-y-1 pt-2 pb-3 z-50">
                     {navigation.map((item, index) => (
                       <Link
-                        href={item.href != "" ? `/${router.query?.lang}${item.href}` : "#"}
+                        href={
+                          item.href != ""
+                            ? `/${router.query?.lang}${item.href}`
+                            : "#"
+                        }
                         key={index}
                         className={classNames(
                           router?.pathname?.includes(item.href)
@@ -264,7 +278,18 @@ export const Layout = (props: ILayout) => {
                   props.title || props.description ? "" : ""
                 } sm:px-0`}
               >
-                {props.children}
+                {props.loading ? (
+                  <div
+                    className={`flex justify-center items-center my-auto z-50 bg-gray-200 h-screen absolute left-0 top-0 bg-opacity-40`}
+                    style={{
+                      width: `${width}px`,
+                    }}
+                  >
+                    <LoaderIcon className="h-20 w-20 text-white animate-spin" />
+                  </div>
+                ) : (
+                  props.children
+                )}
               </div>
             </div>
           </main>
@@ -278,14 +303,18 @@ export const Layout = (props: ILayout) => {
               (item, index) =>
                 item.toolbar && (
                   <Link
-                  key={index}
+                    key={index}
                     className={classNames(
                       "flex-1 flex items-center justify-center cursor-pointer",
                       router?.pathname?.includes(item.href)
                         ? "bg-gray-200 border-r"
                         : "",
                     )}
-                    href={item.href != "" ? `/${router.query?.lang}${item.href}` : "#"}
+                    href={
+                      item.href != ""
+                        ? `/${router.query?.lang}${item.href}`
+                        : "#"
+                    }
                   >
                     {item.icon}
                   </Link>

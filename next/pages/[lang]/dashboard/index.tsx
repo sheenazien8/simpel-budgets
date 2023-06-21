@@ -28,7 +28,7 @@ export function getStaticPaths() {
   };
 }
 
-const Home = ({ lang }: any) => {
+export default function Page ({ lang }: any) {
   const { getProfile } = useAuthAction();
   const { financialRecord } = useDashboardAction();
   const [financialRecordOption, setFinancialRecordOption] = useState<IOption>({
@@ -66,8 +66,8 @@ const Home = ({ lang }: any) => {
   }, [financialRecordOption]);
 
   return (
-    <Layout noPadding>
-      <>
+    <Layout noPadding loading={financialRecordData == undefined}>
+      <div>
         <Link href="/profiles">
           <div className="flex items-center gap-x-2 px-4">
             <UserIcon className="w-10 h-10 text-gray-400" />
@@ -147,9 +147,8 @@ const Home = ({ lang }: any) => {
           </div>
         </div>
         <div className="px-4"></div>
-      </>
+      </div>
     </Layout>
   );
 };
 
-export default Home;
