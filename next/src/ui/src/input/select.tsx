@@ -15,6 +15,7 @@ interface ISelect<t = any> {
   name: string;
   value: any;
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  loading?: boolean;
 }
 export const Select = (props: ISelect) => {
   return (

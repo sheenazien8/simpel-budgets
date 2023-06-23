@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Formik, useFormikContext } from "formik";
-import { MAccount, MBudget, MMonth, RCashflow, ResponseGetMBudget } from "@/models";
+import {
+  MAccount,
+  MBudget,
+  MMonth,
+  RCashflow,
+  ResponseGetMBudget,
+} from "@/models";
 import { useAccountAction, useBudgetAction, useMonthAction } from "@/actions";
-import { classNames, encodeQuery } from "@/utils/helper";
-import { Select, Text } from "@/ui";
+import { encodeQuery } from "@/utils/helper";
+import { Button, CustomSelect, Select, Text } from "@/ui";
 import { useRouter } from "next/router";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 
 interface IFormFilter {
   initialFilter?: RCashflow;
@@ -22,7 +29,7 @@ const FormFilter = (props: IFormFilter) => {
   const router = useRouter();
   const load = async () => {
     const budgets = await getBudget({
-        month_id: monthId ?? "",
+      month_id: monthId ?? "",
     });
     setBudgets(budgets.data.data);
     const months = await getMonth();
@@ -31,21 +38,27 @@ const FormFilter = (props: IFormFilter) => {
     setAccounts(accounts.data.data?.data);
   };
 
-  const accounts = [{ value: "", label: props.dict.cashflow.input.selectAccount }].concat(
+  const accounts = [
+    { value: "", label: props.dict.cashflow.input.selectAccount },
+  ].concat(
     (accountData ?? []).map((account) => ({
       value: String(account.id),
       label: `${account.name}`,
     })),
   );
 
-  const budgets = [{ value: "", label: props.dict.cashflow.input.selectBudget }].concat(
+  const budgets = [
+    { value: "", label: props.dict.cashflow.input.selectBudget },
+  ].concat(
     (budgetData?.data ?? []).map((budget: MBudget) => ({
       value: String(budget.id),
       label: `${budget.plan}`,
     })),
   );
 
-  const months = [{ value: "", label: props.dict.cashflow.input.selectMonth }].concat(
+  const months = [
+    { value: "", label: props.dict.cashflow.input.selectMonth },
+  ].concat(
     (monthData ?? []).map((month) => ({
       value: String(month.id),
       label: `${month.name} - ${month.year}`,
@@ -92,24 +105,12 @@ const FormFilter = (props: IFormFilter) => {
             name={"notes"}
             value={formik.values?.notes}
           />
-          <Select
+          <CustomSelect
             label={props.dict.cashflow.input.selectAccount}
             formik={formik}
             name={"account_id"}
             value={String(formik.values?.account_id ?? "")}
             options={accounts}
-          />
-          <Select
-            label={props.dict.cashflow.input.type}
-            formik={formik}
-            name={"type"}
-            value={String(formik.values?.type ?? "")}
-            options={[
-              { value: "", label: props.dict.cashflow.optionType.selectAll },
-              { value: 1, label: props.dict.cashflow.optionType.expense },
-              { value: 2, label: props.dict.cashflow.optionType.income },
-              { value: 3, label: props.dict.cashflow.optionType.transfer },
-            ]}
           />
           {formik.values.type == 3 && (
             <Select
@@ -131,27 +132,20 @@ const FormFilter = (props: IFormFilter) => {
               />
             </>
           )}
-          <Select
+          <CustomSelect
             label={props.dict.cashflow.input.selectMonth}
             formik={formik}
             name={"month_id"}
             value={String(formik.values?.month_id ?? "")}
             options={months}
           />
-          <div>
-            <button
-              type="submit"
-              className="mt-2 inline-flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm"
-            >
-              {props.dict.cashflow.input.save}
-            </button>
-            <button
-              type="button"
-              className="mt-2 inline-flex w-full justify-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 sm:text-sm"
-              onClick={onClearFilter}
-            >
-              {props.dict.cashflow.filter.clearFilter}
-            </button>
+          <div className="flex justify-between gap-x-2">
+            <Button type="submit" block>
+              {props.dict.common.search}
+            </Button>
+            <Button color="secondary" type="button" onClick={onClearFilter} className="flex items-center">
+              <XMarkIcon className="h-5 w-5 text-white" />
+            </Button>
           </div>
         </form>
       )}
@@ -160,4 +154,3 @@ const FormFilter = (props: IFormFilter) => {
 };
 
 export default FormFilter;
-

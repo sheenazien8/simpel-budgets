@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from "react";
 import {
-  AdjustmentsHorizontalIcon,
-  ArrowRightIcon,
-  PlusIcon,
-} from "@heroicons/react/20/solid";
-import {
   ArrowDownIcon,
   ArrowLeftOnRectangleIcon,
   ArrowRightOnRectangleIcon,
   ArrowsRightLeftIcon,
   ArrowUpIcon,
   CurrencyDollarIcon,
+  ArrowRightIcon,
+  PlusIcon,
+  MagnifyingGlassIcon
 } from "@heroicons/react/24/solid";
 import { useCashflowAction } from "@/actions";
 import { MCashflow, RCashflow, ResponseGetMCashflow } from "@/models";
-import { formatMoney, resolveQueryParameter } from "@/utils/helper";
+import {
+  formatMoney,
+  resolveQueryParameter,
+} from "@/utils/helper";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { Button, CardList, EmptyState, Layout, Modal } from "@/ui";
+import { Button, CardList, EmptyState, Layout, Modal, Tab } from "@/ui";
 import FormFilter from "@/components/cashflow/form-filter";
 import { useRouter } from "next/router";
 import { getDictionary } from "../dictionaries";
@@ -80,7 +81,7 @@ export default function Page({ dict, locale }: IRecord) {
   }, [router]);
 
   useEffect(() => {
-    setHeight(document?.documentElement?.offsetHeight - 310);
+    setHeight(document?.documentElement?.offsetHeight - 370);
   }, []);
 
   return (
@@ -130,18 +131,46 @@ export default function Page({ dict, locale }: IRecord) {
               </div>
             </div>
           </div>
-          <div className="flex justify-between items-center flex-row-reverse">
+          <Tab
+            name={"type"}
+            tabs={[
+              { id: "", name: dict.cashflow.optionType.all },
+              {
+                id: 1,
+                name: dict.cashflow.optionType.expense,
+                bgColor: "bg-red-500",
+                color: "text-white",
+              },
+              {
+                id: 2,
+                name: dict.cashflow.optionType.income,
+                bgColor: "bg-green-500",
+                color: "text-white",
+              },
+              {
+                id: 3,
+                name: dict.cashflow.optionType.transfer,
+                bgColor: "bg-green-500",
+                color: "text-white",
+              },
+            ]}
+            onClick={(value) => {
+              router.push(`/${router.query.lang}/cashflow?type=${value}`);
+            }}
+            value={filter?.type ?? ""}
+          />
+          <div className="flex justify-between items-center flex-row-reverse mt-2">
             <div className="space-x-2 flex">
-              <button
+              <Button
                 type="button"
+                color="secondary"
                 className="inline-flex items-center rounded-lg border border-transparent bg-gray-400 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-                value="Filter"
                 onClick={() => {
                   toggleFilterActive(true);
                 }}
               >
-                <AdjustmentsHorizontalIcon className="h-5" />
-              </button>
+                <MagnifyingGlassIcon className="h-5 mr-1" /> {dict.common.search}
+              </Button>
               <Button
                 href="/cashflow/create"
                 locale={locale}
@@ -153,7 +182,7 @@ export default function Page({ dict, locale }: IRecord) {
           </div>
         </div>
         <InfiniteScroll
-          className="mt-3 grid content-start grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4"
+          className="mt-3 grid content-start grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4"
           next={async () => {
             let updateScroll = scroll + 20;
             const cashflows = await get({
@@ -178,6 +207,8 @@ export default function Page({ dict, locale }: IRecord) {
                 setHasMore(false);
               }
             }
+
+            console.log("OK");
           }}
           hasMore={hasMore}
           height={height + "px"}
@@ -214,7 +245,10 @@ export default function Page({ dict, locale }: IRecord) {
                 Number(cashflow.type) == 1 ? "bg-red-600" : "bg-green-600"
               }
               title={
-                <div className="flex justify-between flex-row-reverse">
+                <div className="flex justify-between">
+                  <span key={1} className="font-semibold">
+                    {cashflow.budget_name}
+                  </span>
                   {cashflow.type == 1 ? (
                     <p className="text-red-600">
                       -{formatMoney(cashflow.nominal)}
@@ -236,16 +270,12 @@ export default function Page({ dict, locale }: IRecord) {
                 )
               }
               details={[
-                <span key={1} className="font-semibold">
-                  {cashflow.budget_name}
-                </span>,
                 cashflow.date,
-                <span key={2} className="flex">
+                <span key={2} className="flex items-center">
                   {cashflow.account_name}{" "}
                   {cashflow.type == 3 ? (
                     <>
-                      {" "}
-                      <ArrowRightIcon className="h-4 mx-1" />{" "}
+                      <ArrowRightIcon className="h-3 mx-1" />
                       {cashflow.account_target_name}
                     </>
                   ) : (

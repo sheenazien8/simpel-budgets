@@ -177,6 +177,7 @@ export default function Page(props: IAccount) {
                   name={"total"}
                   errors={errors?.total}
                   value={formik.values.total}
+                  currency="Rp"
                 />
                 <Toggle
                   formik={formik}

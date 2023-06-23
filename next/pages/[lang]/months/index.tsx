@@ -1,15 +1,37 @@
 import React, { useEffect, useState } from "react";
-import { PlusIcon } from "@heroicons/react/20/solid"; import { CalendarIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/20/solid";
+import { CalendarIcon } from "@heroicons/react/24/outline";
 import { useMonthAction } from "@/actions";
 import { MMonth, RMonth } from "@/models";
 import { formatMoney, toastProgress, useHashRouteToggle } from "@/utils/helper";
 import { Button, CardList, EmptyState, Layout, Modal } from "@/ui";
 import FormData from "@/components/months/form-data";
 import Link from "next/link";
+import { getDictionary } from "../dictionaries";
 
-interface IMonth {}
+interface IMonth {
+  dict: any;
+  locale: string;
+}
 
-const List = () => {
+export async function getStaticProps(props: any) {
+  const dict = await getDictionary(props.params.lang);
+  return {
+    props: {
+      dict: dict,
+      locale: props.params.lang,
+    },
+  };
+}
+
+export function getStaticPaths() {
+  return {
+    paths: [{ params: { lang: "id" } }, { params: { lang: "en" } }],
+    fallback: false,
+  };
+}
+
+export default function Page(props: IMonth) {
   const { get, create, detail, update, destroy } = useMonthAction();
   const [months, setMonths] = useState<MMonth[]>();
   const [editData, setEditData] = useState<MMonth>();
@@ -160,79 +182,69 @@ const List = () => {
   );
 
   return (
-    <>
-      <div>
-        <div className="flex justify-between items-center">
-          <h2 className="text-sm font-medium text-gray-500">Daftar bulan</h2>
-          <button
-            type="button"
-            className="inline-flex items-center rounded-lg border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            value="Tambah"
-            onClick={() => {
-              toggleActive(true);
-              setEditData(undefined);
-            }}
+    <Layout title="Bulan" noBottomNav loading={!months}>
+      <>
+        <div>
+          <div className="flex justify-between items-center">
+            <h2 className="text-sm font-medium text-gray-500">Daftar bulan</h2>
+            <button
+              type="button"
+              className="inline-flex items-center rounded-lg border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              value="Tambah"
+              onClick={() => {
+                toggleActive(true);
+                setEditData(undefined);
+              }}
+            >
+              <PlusIcon className="h-5" />
+            </button>
+          </div>
+          <ul
+            role="list"
+            className="mt-3 grid grid-cols-1 content-start gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4"
           >
-            <PlusIcon className="h-5" />
-          </button>
+            {!loading ? (
+              Results
+            ) : (
+              <h2 className="text-center my-auto">Loading...</h2>
+            )}
+          </ul>
         </div>
-        <ul
-          role="list"
-          className="mt-3 grid grid-cols-1 content-start gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4"
+        <Modal
+          open={isOpen}
+          setOpen={(status) => {
+            toggleActive(status);
+            setEditData(undefined);
+            setErrors(undefined);
+          }}
+          title={
+            editData ? (
+              <div className="flex justify-between">
+                <p>Ubah bulan</p>
+                <Link
+                  className="cursor-pointer underline text-blue-600"
+                  href={`/${props.locale}/budgets?month_id=${editData?.id}`}
+                >
+                  Lihat anggaran bulan ini
+                </Link>
+              </div>
+            ) : (
+              "Tambah Bulan"
+            )
+          }
         >
-          {!loading ? (
-            Results
-          ) : (
-            <h2 className="text-center my-auto">Loading...</h2>
-          )}
-        </ul>
-      </div>
-      <Modal
-        open={isOpen}
-        setOpen={(status) => {
-          toggleActive(status);
-          setEditData(undefined);
-          setErrors(undefined);
-        }}
-        title={
-          editData ? (
-            <div className="flex justify-between">
-              <p>Ubah bulan</p>
-              <Link
-                className="cursor-pointer underline text-blue-600"
-                as="p"
-                href={`/budgets?month_id=${editData?.id}`}
-              >
-                Lihat anggaran bulan ini
-              </Link>
-            </div>
-          ) : (
-            "Tambah Bulan"
-          )
-        }
-      >
-        <FormData
-          onSubmit={onSubmit}
-          onDelete={onDelete}
-          onUpdateStatus={onUpdateStatus}
-          errors={errors}
-          initialValues={editData}
-          loadingSubmit={loadingSubmit}
-          loadingDelete={loadingDelete}
-          loadingActivate={loadingActivate}
-        />
-      </Modal>
-    </>
-  );
-};
-
-const Month = (props: IMonth) => {
-  return (
-    <Layout title="Bulan" noBottomNav>
-      <List {...props} />
+          <FormData
+            onSubmit={onSubmit}
+            onDelete={onDelete}
+            onUpdateStatus={onUpdateStatus}
+            errors={errors}
+            initialValues={editData}
+            loadingSubmit={loadingSubmit}
+            loadingDelete={loadingDelete}
+            loadingActivate={loadingActivate}
+          />
+        </Modal>
+      </>
     </Layout>
   );
-};
-
-export default Month;
-
+}

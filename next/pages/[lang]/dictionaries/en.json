@@ -38,8 +38,8 @@
     "createYourCashflow": "Create Your Cashflow",
     "updateYourCashflow": "Update Your Cashflow",
     "empty": {
-        "title": "You don't have any cashflow yet",
-        "description": "Create all your money transaction here, better cash flow better life"
+      "title": "You don't have any cashflow yet",
+      "description": "Create all your money transaction here, better cash flow better life"
     },
     "message": {
       "createSuccess": "Successfully created a new cashflow",
@@ -70,13 +70,15 @@
     },
     "optionType": {
       "selectAll": "Select All",
+      "all": "All",
       "income": "Income",
       "expense": "Expense",
       "transfer": "Transfer"
     }
   },
   "common": {
-      "loading": "Loading...",
-      "allDataLoaded": "All data loaded"
+    "loading": "Loading...",
+    "allDataLoaded": "All data loaded",
+    "search": "Search"
   }
 }

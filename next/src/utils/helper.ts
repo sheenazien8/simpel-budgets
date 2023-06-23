@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+import { useAuthAction } from "@/actions";
 
 export function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
@@ -49,6 +50,7 @@ instance.interceptors.request.use(
     return config;
   },
   function (error) {
+      console.log("OK");
     return Promise.reject(error);
   },
 );

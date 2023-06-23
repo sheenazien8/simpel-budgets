@@ -9,6 +9,7 @@ interface IPrice<t = any> {
   errors?: string | undefined | number;
   name: string;
   value: any;
+  currency?: string;
 }
 export const Price = (props: IPrice) => {
   const ref = createRef<HTMLInputElement>();
@@ -22,7 +23,7 @@ export const Price = (props: IPrice) => {
       </label>
       <div className="relative mt-1 rounded-md shadow-sm">
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-          <span className="text-gray-500 sm:text-sm">Rp.</span>
+          <span className="text-gray-500 sm:text-sm">{props.currency}.</span>
         </div>
         <input
           type="text"

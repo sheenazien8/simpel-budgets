@@ -40,6 +40,7 @@ const FormData = (props: IFormData) => {
             name="nominal_target"
             value={formik.values.nominal_target}
             errors={props.errors?.nominal_target}
+            currency="Rp"
           />
           <Text
             type="hidden"

@@ -14,7 +14,7 @@ import { useRouter } from "next/router";
 
 interface IGoal {}
 
-const List = () => {
+export default function Page(props: IGoal) {
   const { get, create } = useGoalAction();
   const [goals, setGoals] = useState<MGoal[]>();
   const [errors, setErrors] = useState<RGoal>();
@@ -114,66 +114,58 @@ const List = () => {
   );
 
   return (
-    <>
-      <div>
-        <div className="flex justify-between items-center">
-          <h2 className="text-sm font-medium text-gray-500"></h2>
-          <Button
-            type="button"
-            onClick={() => {
-              toggleActive(true);
-            }}
-          >
-            <PlusIcon className="h-5" />
-          </Button>
-        </div>
-        <ul
-          role="list"
-          className={classNames(
-            "mt-3 grid grid-cols-1 content-start gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 h-[550px] overflow-x-scroll",
-          )}
-        >
-          {!loading ? (
-            Results
-          ) : (
-            <h2 className="text-center my-auto">Loading...</h2>
-          )}
-        </ul>
-      </div>
-      <Modal
-        open={isOpen}
-        setOpen={(status) => {
-          toggleActive(status);
-          setErrors(undefined);
-        }}
-        title="Tambah Tujuan"
-      >
-        <FormData
-          onSubmit={onSubmit}
-          errors={errors}
-          initialValues={{
-            reminder_per: "dayly",
-            reminder_day: "",
-            reminder_time: "2023-03-29 21:00:00",
-          }}
-          loadingSubmit={loadingSubmit}
-        />
-      </Modal>
-    </>
-  );
-};
-
-const Goal = (props: IGoal) => {
-  return (
     <Layout
       title="Tujuan"
       description="Catat tujuanmu di sini untuk memberikan semangat menabungmu"
       noBottomNav
+      loading={loading}
     >
-      <List {...props} />
+      <>
+        <div>
+          <div className="flex justify-between items-center">
+            <h2 className="text-sm font-medium text-gray-500"></h2>
+            <Button
+              type="button"
+              onClick={() => {
+                toggleActive(true);
+              }}
+            >
+              <PlusIcon className="h-5" />
+            </Button>
+          </div>
+          <ul
+            role="list"
+            className={classNames(
+              "mt-3 grid grid-cols-1 content-start gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 h-[550px] overflow-x-scroll",
+            )}
+          >
+            {!loading ? (
+              Results
+            ) : (
+              <h2 className="text-center my-auto">Loading...</h2>
+            )}
+          </ul>
+        </div>
+        <Modal
+          open={isOpen}
+          setOpen={(status) => {
+            toggleActive(status);
+            setErrors(undefined);
+          }}
+          title="Tambah Tujuan"
+        >
+          <FormData
+            onSubmit={onSubmit}
+            errors={errors}
+            initialValues={{
+              reminder_per: "dayly",
+              reminder_day: "",
+              reminder_time: "2023-03-29 21:00:00",
+            }}
+            loadingSubmit={loadingSubmit}
+          />
+        </Modal>
+      </>
     </Layout>
   );
-};
-
-export default Goal;
-
+}

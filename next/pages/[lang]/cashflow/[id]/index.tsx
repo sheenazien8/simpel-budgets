@@ -34,12 +34,8 @@ const Edit = ({ dict, locale, id }: IEdit) => {
     load();
   }, []);
 
-  if (!cashflow) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <Layout>
+    <Layout loading={!cashflow} noBottomNav>
       <FormData
         dict={dict}
         locale={locale}

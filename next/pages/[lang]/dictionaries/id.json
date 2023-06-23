@@ -70,6 +70,7 @@
     },
     "optionType": {
       "selectAll": "Pilih semua",
+      "all": "Semua",
       "income": "Pemasukan",
       "expense": "Pengeluaran",
       "transfer": "Transfer"
@@ -77,6 +78,7 @@
   },
   "common": {
     "loading": "Memuat...",
-    "allDataLoaded": "Semua data telah dimuat"
+    "allDataLoaded": "Semua data telah dimuat",
+    "search": "Cari"
   }
 }

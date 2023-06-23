@@ -10,9 +10,9 @@ export interface IQueryDashboard {
 export const useDashboardAction = () => {
   const router = useRouter();
   const { lang } = router.query;
-  const financialRecord = async (query: IQueryDashboard): Promise<
-    ResponseData<SummaryFinancialRecord>
-  > => {
+  const financialRecord = async (
+    query: IQueryDashboard,
+  ): Promise<ResponseData<SummaryFinancialRecord>> => {
     try {
       const response = await instance.get<ResponseData<SummaryFinancialRecord>>(
         `/api/dashboard/financial-record?${encodeQuery(query)}`,

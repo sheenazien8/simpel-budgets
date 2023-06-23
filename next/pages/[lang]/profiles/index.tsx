@@ -30,7 +30,7 @@ const Profile = () => {
   }, []);
 
   return (
-    <Layout title="Profil">
+    <Layout title="Profil" loading={!profile}>
       <>
         <Modal
           open={showModal}

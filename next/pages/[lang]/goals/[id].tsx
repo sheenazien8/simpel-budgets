@@ -95,6 +95,7 @@ const GoalDetail = (props: IGoalDetail) => {
 
   return (
     <Layout
+      loading={loading}
       noBottomNav
       title={
         <div
@@ -227,6 +228,7 @@ const GoalDetail = (props: IGoalDetail) => {
                   formik={formik}
                   value={formik.values.nominal}
                   errors={errors?.nominal}
+                  currency="Rp"
                 />
                 <Button type="submit" block loading={loadingSubmit}>
                   Simpan

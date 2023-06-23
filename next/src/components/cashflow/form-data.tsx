@@ -12,8 +12,9 @@ import {
   RCashflow,
   ResponseGetMBudget,
 } from "@/models";
-import { Button, Price, Select, Text } from "@/ui";
+import { Button, CustomSelect, Price, Select, Tab, Text } from "@/ui";
 import { toastProgress } from "@/utils/helper";
+import { TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Formik, useFormikContext } from "formik";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -31,7 +32,7 @@ const FormData = (props: IFormData) => {
   const type = (props.initialValues as unknown as RCashflow)?.type;
   let defaultType = 1;
   if (type != undefined) {
-      defaultType = type == 0 || type == 1 ? 1 : type == 2 ? 2 : 3;
+    defaultType = type == 0 || type == 1 ? 1 : type == 2 ? 2 : 3;
   }
   const { create, update, destroy } = useCashflowAction();
   const [errors, setErrors] = useState<RCashflow>();
@@ -58,8 +59,20 @@ const FormData = (props: IFormData) => {
     setAccounts(accounts.data.data?.data);
   };
 
+  const customType = [
+    { id: 1, name: props.dict.cashflow.optionType.expense, href: "#", bgColor: "bg-red-500", color: "text-white" },
+    { id: 2, name: props.dict.cashflow.optionType.income, href: "#", bgColor: "bg-green-500", color: "text-white" },
+    { id: 3, name: props.dict.cashflow.optionType.transfer, href: "#", bgColor: "bg-green-500", color: "text-white" },
+  ];
+
   const accounts = [
-    { value: "", label: props.dict.cashflow.input.selectAccount },
+    {
+      value: "",
+      label:
+        accountData == undefined
+          ? props.dict.common.loading
+          : props.dict.cashflow.input.selectAccount,
+    },
   ].concat(
     (accountData ?? []).map((account) => ({
       value: String(account.id),
@@ -68,7 +81,13 @@ const FormData = (props: IFormData) => {
   );
 
   const budgets = [
-    { value: "", label: props.dict.cashflow.input.selectBudget },
+    {
+      value: "",
+      label:
+        budgetData == undefined
+          ? props.dict.common.loading
+          : props.dict.cashflow.input.selectBudget,
+    },
   ].concat(
     (budgetData?.data ?? []).map((budget: MBudget) => ({
       value: String(budget.id),
@@ -77,7 +96,13 @@ const FormData = (props: IFormData) => {
   );
 
   const months = [
-    { value: "", label: props.dict.cashflow.input.selectMonth },
+    {
+      value: "",
+      label:
+        monthData == undefined
+          ? props.dict.common.loading
+          : props.dict.cashflow.input.selectMonth,
+    },
   ].concat(
     (monthData ?? []).map((month) => ({
       value: String(month.id),
@@ -130,28 +155,32 @@ const FormData = (props: IFormData) => {
     );
   };
 
+
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit}>
       {(formik) => (
         <form
-          className="space-y-4"
+          className="space-y-4 h-fit"
           onSubmit={formik.handleSubmit}
           autoComplete="off"
         >
           <FormObserver />
-          <Select
+          <Tab
+            formik={formik}
+            tabs={customType}
+            value={formik.values?.type ?? defaultType}
+            name={"type"}
+          />
+          {/* <Select
             label={props.dict.cashflow.input.type}
             formik={formik}
             name={"type"}
             errors={String(errors?.type ?? "")}
             value={String(formik.values?.type ?? "")}
-            options={[
-              { value: 1, label: props.dict.cashflow.optionType.expense },
-              { value: 2, label: props.dict.cashflow.optionType.income },
-              { value: 3, label: props.dict.cashflow.optionType.transfer },
-            ]}
-          />
+            options={customType}
+          /> */}
           <Price
+            currency={"Rp"}
             label={props.dict.cashflow.input.nominal}
             formik={formik}
             name={"nominal"}
@@ -159,7 +188,7 @@ const FormData = (props: IFormData) => {
             value={formik.values?.nominal}
           />
 
-          <Select
+          <CustomSelect
             label={props.dict.cashflow.input.account}
             formik={formik}
             name={"account_id"}
@@ -168,7 +197,7 @@ const FormData = (props: IFormData) => {
             options={accounts}
           />
           {formik.values.type == 3 && (
-            <Select
+            <CustomSelect
               label={props.dict.cashflow.input.accountTarget}
               formik={formik}
               name={"account_target"}
@@ -179,7 +208,7 @@ const FormData = (props: IFormData) => {
           )}
           {formik.values.type == 1 && (
             <>
-              <Select
+              <CustomSelect
                 label={
                   <p>
                     {props.dict.cashflow.input.budget}
@@ -223,24 +252,25 @@ const FormData = (props: IFormData) => {
             errors={errors?.notes}
             value={formik.values?.notes}
           />
-          <div className="grid grid-cols-1 gap-y-2">
-            <Button type="submit" block>
-              {props.dict.cashflow.input.save}
-            </Button>
-            {(props.initialValues as MCashflow)?.id && (
-              <Button type="button" block color="danger" onClick={onDelete}>
-                {props.dict.cashflow.input.delete}
+          <div className="absolute bottom-4 left-0 w-full px-4">
+            <div className="flex gap-x-2">
+              <Button type="submit" block className="flex items-center">
+                {props.dict.cashflow.input.save}
               </Button>
-            )}
-            <Button
-              type="button"
-              block
-              color="secondary"
-              onClick={() => router.back()}
-              locale={props.locale}
-            >
-              {props.dict.cashflow.input.cancel}
-            </Button>
+              {(props.initialValues as MCashflow)?.id && (
+                <Button type="button" color="danger" onClick={onDelete}>
+                  <TrashIcon className="w-5 h-5" />
+                </Button>
+              )}
+              <Button
+                type="button"
+                color="secondary"
+                onClick={() => router.back()}
+                locale={props.locale}
+              >
+                <XMarkIcon className="w-5 h-5" />
+              </Button>
+            </div>
           </div>
         </form>
       )}

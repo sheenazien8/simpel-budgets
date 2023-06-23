@@ -1,7 +1,7 @@
 import { MAccount, MBudget, MMonth, RBudget } from "@/models";
 import { Formik } from "formik";
 import React, { useEffect, useState } from "react";
-import { Button, Price, Select, Text } from "@/ui";
+import { Button, Price, Select, CustomSelect, Text } from "@/ui";
 import { useAccountAction, useMonthAction } from "@/actions";
 
 interface IFormData {
@@ -70,8 +70,9 @@ const FormData = (props: IFormData) => {
             name={"nominal"}
             errors={props.errors?.nominal}
             value={formik.values?.nominal}
+            currency="Rp"
           />
-          <Select
+          <CustomSelect
             label="Nama Bulan"
             formik={formik}
             name={"month_id"}
