@@ -20,7 +20,8 @@
       "@/actions": ["./src/actions/index"],
       "@/models": ["./src/models/index"],
       "@/utils/*": ["./src/utils/*"],
-      "@/components/*": ["./src/components/*"]
+      "@/components/*": ["./src/components/*"],
+      "@/packages/*": ["./src/packages/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

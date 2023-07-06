@@ -28,7 +28,7 @@ export function getStaticPaths() {
   };
 }
 
-export default function Page ({ lang }: any) {
+export default function Page ({ lang, locale }: any) {
   const { getProfile } = useAuthAction();
   const { financialRecord } = useDashboardAction();
   const [financialRecordOption, setFinancialRecordOption] = useState<IOption>({
@@ -68,7 +68,7 @@ export default function Page ({ lang }: any) {
   return (
     <Layout noPadding loading={financialRecordData == undefined}>
       <div>
-        <Link href="/profiles">
+        <Link href={`/${locale}/profiles`}>
           <div className="flex items-center gap-x-2 px-4">
             <UserIcon className="w-10 h-10 text-gray-400" />
             <div>

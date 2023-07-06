@@ -1,23 +1,29 @@
 import { MAccount, MBudget, MMonth, RBudget } from "@/models";
 import { Formik } from "formik";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, Price, Select, CustomSelect, Text } from "@/ui";
-import { useAccountAction, useMonthAction } from "@/actions";
+import { useAccountAction, useBudgetAction, useMonthAction } from "@/actions";
+import { TrashIcon } from "@heroicons/react/24/outline";
+import { toastProgress } from "@/utils/helper";
+import { useRouter } from "next/router";
+import { useConfirm } from "../../packages/confirm";
 
 interface IFormData {
-  onSubmit: (args: RBudget) => void;
-  errors?: RBudget;
-  onDelete: () => void;
+  dict: any;
   initialValues?: MBudget | RBudget;
-  loadingSubmit: boolean;
-  loadingDelete: boolean;
 }
 
 const FormData = (props: IFormData) => {
+  const { confirm } = useConfirm();
+  const router = useRouter();
   const { get: getMonth } = useMonthAction();
+  const { create, update, destroy } = useBudgetAction();
   const { get: getAccount } = useAccountAction();
   const [monthData, setMonths] = useState<MMonth[]>();
   const [accountData, setAccounts] = useState<MAccount[]>();
+  const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
+  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+  const [errors, setErrors] = useState<RBudget>();
   const months = [{ value: "", label: "Pilih Bulan" }].concat(
     (monthData ?? []).map((month) => ({
       value: String(month.id),
@@ -40,9 +46,52 @@ const FormData = (props: IFormData) => {
     });
     setMonths(months.data.data);
     const accounts = await getAccount({
-        saving: true,
+      saving: true,
     });
     setAccounts(accounts?.data?.data?.data);
+  };
+
+  const onSubmit = async (values: RBudget) => {
+    setLoadingSubmit(true);
+    let progess: any;
+    if (!(props.initialValues as MBudget)?.id) {
+      progess = create(values, setErrors);
+    } else {
+      progess = update((props.initialValues as MBudget)?.id, values, setErrors);
+    }
+    toastProgress(
+      progess,
+      `${
+        !(props.initialValues as MBudget)?.id ? "Pembuatan" : "Perubahan"
+      } anggaran`,
+      () => {
+        router.push(`/${router.query.lang}/budgets`);
+      },
+      () => setLoadingSubmit(false),
+    );
+  };
+
+  const onDelete = async () => {
+    setLoadingDelete(true);
+    confirm({
+      title: "Hapus Anggaran",
+      description: "Apakah anda yakin ingin menghapus anggaran ini?",
+      yes: async () => {
+        if ((props.initialValues as MBudget)?.id != undefined) {
+          toastProgress(
+            destroy((props.initialValues as MBudget)?.id),
+            `Menghapus anggaran`,
+            () => {
+              router.push(`/${router.query.lang}/budgets?`);
+            },
+            () => setLoadingDelete(false),
+          );
+        }
+      },
+      no: () => {
+        setLoadingDelete(false);
+      },
+    });
   };
 
   useEffect(() => {
@@ -50,7 +99,7 @@ const FormData = (props: IFormData) => {
   }, []);
 
   return (
-    <Formik initialValues={props.initialValues ?? {}} onSubmit={props.onSubmit}>
+    <Formik initialValues={props.initialValues ?? {}} onSubmit={onSubmit}>
       {(formik) => (
         <form
           className="space-y-4"
@@ -61,14 +110,14 @@ const FormData = (props: IFormData) => {
             label="Rencana"
             formik={formik}
             name={"plan"}
-            errors={props.errors?.plan}
+            errors={errors?.plan}
             value={formik.values?.plan}
           />
           <Price
             label="Nominal"
             formik={formik}
             name={"nominal"}
-            errors={props.errors?.nominal}
+            errors={errors?.nominal}
             value={formik.values?.nominal}
             currency="Rp"
           />
@@ -76,7 +125,7 @@ const FormData = (props: IFormData) => {
             label="Nama Bulan"
             formik={formik}
             name={"month_id"}
-            errors={String(props.errors?.month_id ?? "")}
+            errors={String(errors?.month_id ?? "")}
             value={String(formik.values?.month_id ?? "")}
             options={months}
           />
@@ -84,7 +133,7 @@ const FormData = (props: IFormData) => {
             label="Tipe anggaran"
             formik={formik}
             name={"type"}
-            errors={String(props.errors?.type ?? "")}
+            errors={String(errors?.type ?? "")}
             value={String(formik.values?.type ?? "1")}
             options={[
               {
@@ -98,27 +147,27 @@ const FormData = (props: IFormData) => {
             ]}
           />
           {String(formik.values.type) === "2" && (
-          <Select
-            label="Akun"
-            formik={formik}
-            name={"account_id"}
-            errors={String(props.errors?.account_id ?? "")}
-            value={String(formik.values?.account_id ?? "")}
-            options={accounts}
-          />
+            <Select
+              label="Akun"
+              formik={formik}
+              name={"account_id"}
+              errors={String(errors?.account_id ?? "")}
+              value={String(formik.values?.account_id ?? "")}
+              options={accounts}
+            />
           )}
-          <div className="grid grid-cols-1 gap-y-2">
-            <Button loading={props.loadingSubmit} type="submit">
+          <div className="flex gap-x-2">
+            <Button loading={loadingSubmit} type="submit" block>
               Simpan
             </Button>
             {(props.initialValues as MBudget)?.id && (
               <Button
                 type="button"
-                onClick={props.onDelete}
-                loading={props.loadingDelete}
+                onClick={onDelete}
+                loading={loadingDelete}
                 color="danger"
               >
-                Hapus
+                <TrashIcon className="w-5 h-5" />
               </Button>
             )}
           </div>

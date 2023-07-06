@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import Head from "next/head";
+import { ConfirmProvider } from "@/packages/confirm/core/context";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -8,7 +9,9 @@ export default function App({ Component, pageProps }: AppProps) {
       <Head>
         <title>Simpel Budget || Open source made with 🖤</title>
       </Head>
-      <Component {...pageProps} />
+      <ConfirmProvider>
+        <Component {...pageProps} />
+      </ConfirmProvider>
     </div>
   );
 }

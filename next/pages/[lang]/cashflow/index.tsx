@@ -71,6 +71,7 @@ export default function Page({ dict, locale }: IRecord) {
     setCashflows(cashflows.data.data);
     setCashflowsData(cashflows.data.data?.data);
     toggleFilterActive(false);
+    console.log(cashflows.data.data?.data.length, cashflowsData?.length);
     if (cashflows.data.data?.data.length == (cashflowsData?.length ?? 0)) {
       setHasMore(false);
     }
@@ -83,6 +84,8 @@ export default function Page({ dict, locale }: IRecord) {
   useEffect(() => {
     setHeight(document?.documentElement?.offsetHeight - 370);
   }, []);
+
+  console.log(hasMore);
 
   return (
     <Layout loading={!cashflows}>
@@ -207,8 +210,6 @@ export default function Page({ dict, locale }: IRecord) {
                 setHasMore(false);
               }
             }
-
-            console.log("OK");
           }}
           hasMore={hasMore}
           height={height + "px"}

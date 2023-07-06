@@ -32,6 +32,7 @@
     "greetingTimeNight": "Night"
   },
   "cashflow": {
+    "title": "Cashflow",
     "income": "Income",
     "expense": "Expense",
     "budget": "Budget",
@@ -79,6 +80,14 @@
   "common": {
     "loading": "Loading...",
     "allDataLoaded": "All data loaded",
-    "search": "Search"
+    "search": "Search",
+    "yes": "Yes",
+    "no": "No",
+    "confirmDelete": {
+        "title": "Delete {item}",
+        "description": "Are you sure to delete this {item}?",
+        "cancel": "Cancel",
+        "delete": "Yes, Delete it"
+    }
   }
 }

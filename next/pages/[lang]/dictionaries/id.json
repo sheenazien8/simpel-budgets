@@ -32,6 +32,7 @@
     "greetingTimeNight": "Malam"
   },
   "cashflow": {
+    "title": "Transaksi",
     "income": "Pemasukan",
     "expense": "Pengeluaran",
     "budget": "Anggaran",
@@ -79,6 +80,14 @@
   "common": {
     "loading": "Memuat...",
     "allDataLoaded": "Semua data telah dimuat",
-    "search": "Cari"
+    "search": "Cari",
+    "yes": "Ya",
+    "no": "Tidak",
+    "confirmDelete": {
+        "title": "Hapus {item}",
+        "description": "Apakah anda yakin ingin menghapus {item}?",
+        "cancel": "Batal",
+        "delete": "Ya, Hapus"
+    }
   }
 }

@@ -30,7 +30,6 @@ export default function Page(props: IAccount) {
   const [showSaldo, setShowSaldo] = useState<boolean>(false);
   const [loadingSubmit, setLoading] = useState<boolean>(false);
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
-  const [height, setHeight] = useState(0);
 
   const load = async () => {
     const accounts = await get();
@@ -43,12 +42,8 @@ export default function Page(props: IAccount) {
     load();
   }, [updated]);
 
-  useEffect(() => {
-    setHeight(document?.documentElement?.offsetHeight - 247);
-  }, []);
-
   return (
-    <Layout title="Akun" loading={!accounts}>
+    <Layout title="Akun" loading={!accounts} noBottomNav>
       <>
         <div>
           <div className="flex justify-between items-center">
@@ -89,7 +84,6 @@ export default function Page(props: IAccount) {
           <ul
             role="list"
             className="mt-3 grid grid-cols-1 place-content-start gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4 overflow-x-scroll"
-            style={{ height: height }}
           >
             {accounts?.length == 0 && (
               <EmptyState

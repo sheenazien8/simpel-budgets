@@ -11,3 +11,4 @@ export * from './src/modal';
 export * from './src/empty-state';
 export * from './src/card-list';
 export * from './src/tab';
+export * from './src/card';

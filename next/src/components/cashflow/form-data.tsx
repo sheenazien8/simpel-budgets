@@ -18,6 +18,8 @@ import { TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Formik, useFormikContext } from "formik";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { useConfirm } from "@/packages/confirm";
+import { translate } from "../../../pages/[lang]/dictionaries";
 
 interface IFormData {
   initialValues?: MCashflow | RCashflow;
@@ -28,6 +30,7 @@ interface IFormData {
 
 const FormData = (props: IFormData) => {
   const router = useRouter();
+  const { confirm } = useConfirm();
   const [showFilterBudget, setShowFilterBudget] = useState(false);
   const type = (props.initialValues as unknown as RCashflow)?.type;
   let defaultType = 1;
@@ -60,9 +63,27 @@ const FormData = (props: IFormData) => {
   };
 
   const customType = [
-    { id: 1, name: props.dict.cashflow.optionType.expense, href: "#", bgColor: "bg-red-500", color: "text-white" },
-    { id: 2, name: props.dict.cashflow.optionType.income, href: "#", bgColor: "bg-green-500", color: "text-white" },
-    { id: 3, name: props.dict.cashflow.optionType.transfer, href: "#", bgColor: "bg-green-500", color: "text-white" },
+    {
+      id: 1,
+      name: props.dict.cashflow.optionType.expense,
+      href: "#",
+      bgColor: "bg-red-500",
+      color: "text-white",
+    },
+    {
+      id: 2,
+      name: props.dict.cashflow.optionType.income,
+      href: "#",
+      bgColor: "bg-green-500",
+      color: "text-white",
+    },
+    {
+      id: 3,
+      name: props.dict.cashflow.optionType.transfer,
+      href: "#",
+      bgColor: "bg-green-500",
+      color: "text-white",
+    },
   ];
 
   const accounts = [
@@ -125,11 +146,18 @@ const FormData = (props: IFormData) => {
   };
 
   const onDelete = async () => {
-    if (props.id != undefined) {
-      toastProgress(destroy(props?.id), `Menghapus anggaran`, () => {
-        router.push(`/${router.query?.lang}/cashflow`);
-      });
-    }
+    confirm({
+      title: translate(props.dict.common.confirmDelete.title, { item: props.dict.cashflow.title }),
+      description: translate(props.dict.common.confirmDelete.description, { item: props.dict.cashflow.title }),
+      yes: () => {
+        if (props.id != undefined) {
+          toastProgress(destroy(props?.id), `Menghapus anggaran`, () => {
+            router.push(`/${router.query?.lang}/cashflow`);
+          });
+        }
+      },
+      no: () => {},
+    });
   };
 
   const onSubmit = async (values: RCashflow) => {
@@ -154,7 +182,6 @@ const FormData = (props: IFormData) => {
       },
     );
   };
-
 
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit}>

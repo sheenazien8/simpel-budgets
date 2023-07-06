@@ -1,19 +1,21 @@
 import { useMonthAction } from "@/actions";
 import { FBudget, MMonth } from "@/models";
 import { Button, Select, Text } from "@/ui";
+import { encodeQuery } from "@/utils/helper";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 import { Formik } from "formik";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 interface IFormFilter {
-  onSubmit: (arg: FBudget) => void;
   initialFilter?: FBudget;
-  onClear: () => void;
-  loadingSubmit: boolean;
+  dict: any;
 }
 
 const FormFilter = (props: IFormFilter) => {
   const { get: getMonth } = useMonthAction();
   const [monthData, setMonths] = useState<MMonth[]>();
+  const router = useRouter();
   const months = [{ value: "", label: "Pilih Bulan" }].concat(
     (monthData ?? []).map((month) => ({
       value: String(month.id),
@@ -30,12 +32,20 @@ const FormFilter = (props: IFormFilter) => {
     setMonths(months.data.data);
   };
 
+  const onFilter = async (values: FBudget) => {
+    router.push(`/${router.query.lang}/budgets?${encodeQuery(values)}`);
+  };
+
+  const onClearFilter = async () => {
+    router.push(`/${router.query.lang}/budgets`);
+  };
+
   useEffect(() => {
     load();
   }, []);
 
   return (
-    <Formik initialValues={props.initialFilter ?? {}} onSubmit={props.onSubmit}>
+    <Formik initialValues={props.initialFilter ?? {}} onSubmit={onFilter}>
       {(formik) => (
         <form
           className="space-y-4"
@@ -55,16 +65,17 @@ const FormFilter = (props: IFormFilter) => {
             name={"month_id"}
             options={months}
           />
-          <div className="grid grid-cols-1 gap-y-2">
-            <Button block type="submit" loading={props.loadingSubmit}>
+          <div className="flex gap-x-2">
+            <Button block type="submit">
               Simpan
             </Button>
             <Button
               type="button"
               color="secondary"
-              onClick={props.onClear}
+              onClick={onClearFilter}
+              className="flex items-center"
             >
-              Clear Filter
+              <XMarkIcon className="w-5 h-5" />
             </Button>
           </div>
         </form>

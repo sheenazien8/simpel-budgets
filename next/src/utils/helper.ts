@@ -38,7 +38,7 @@ const resolveQueryParameter = (url: string): URLSearchParams => {
 };
 
 const instance = axios.create({
-  baseURL: "http://budgets.deb",
+  baseURL: "https://budgets.deb",
 });
 
 instance.interceptors.request.use(
