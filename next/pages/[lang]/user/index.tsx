@@ -79,7 +79,7 @@ export default function Page(props: IPage) {
                 router.push("/en/user");
             },
             style: {
-              yes: "bg-white text-black ring-1 ring-inset ring-gray-300 hover:bg-gray-50",
+              yes: "bg-white !text-black ring-1 ring-inset ring-gray-300 hover:bg-gray-50",
             },
             yesLabel: "Bahasa Indonesia",
             noLabel: "English",
@@ -156,7 +156,7 @@ export default function Page(props: IPage) {
         </Card>
         <ul>
           {Object.keys(menus).map((key) => (
-            <div className="flex flex-col gap-y-4">
+            <div className="flex flex-col gap-y-4" key={key}>
               <p className="text-lg font-semibold mt-4">{key}</p>
               {menus[key].map((menu: any, index: number) => (
                 <CardList

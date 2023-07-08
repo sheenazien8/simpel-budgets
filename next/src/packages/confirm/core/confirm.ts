@@ -23,7 +23,7 @@ export interface IConfirm {
   option?: IConfirmOptions;
 }
 
-export default function confirmHandler(): IConfirm {
+export default function useConfirmHandler(): IConfirm {
   const [open, setOpen] = useState(false);
 
   const [yes, setClickedYes] = useState(false);

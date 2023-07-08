@@ -1,8 +1,8 @@
 import React from "react";
 import { Formik } from "formik";
 import { MMonth, RMonth } from "@/models";
-import { Button, Select, Text } from "@/ui";
-import { classNames } from "@/utils/helper";
+import { Button, Dropdown, Select, Text } from "@/ui";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
 interface IFormData {
   onSubmit: (args: RMonth) => void;
@@ -41,9 +41,13 @@ const FormData = (props: IFormData) => {
       onSubmit={props.onSubmit}
     >
       {(formik) => (
-        <form className="space-y-4" onSubmit={formik.handleSubmit} autoComplete="off">
+        <form
+          className="space-y-4"
+          onSubmit={formik.handleSubmit}
+          autoComplete="off"
+        >
           <Select
-          value={formik.values.name}
+            value={formik.values.name}
             options={months}
             label={"Bulan"}
             formik={formik}
@@ -51,18 +55,14 @@ const FormData = (props: IFormData) => {
             name={"name"}
           />
           <Text
-          value={formik.values.year}
+            value={formik.values.year}
             name={"year"}
             label={"Tahun"}
             formik={formik}
             errors={props.errors?.year ?? ""}
           />
-          <div className="grid grid-cols-1 gap-y-2">
-            <Button
-              type="submit"
-              block
-              loading={props.loadingSubmit}
-            >
+          <div className="flex gap-x-2">
+            <Button type="submit" block loading={props.loadingSubmit}>
               Simpan
             </Button>
             {props.initialValues?.id && (
@@ -72,11 +72,10 @@ const FormData = (props: IFormData) => {
                   color="danger"
                   loading={props.loadingDelete}
                   onClick={props.onDelete}
-                  block
                 >
-                  Hapus
+                  <TrashIcon className="w-5 h-5" />
                 </Button>
-                <Button
+                {/* <Button
                   type="button"
                   loading={props.loadingActivate}
                   className={classNames(
@@ -89,7 +88,7 @@ const FormData = (props: IFormData) => {
                   {!(Number(props.initialValues?.status) == 0)
                     ? "Deactivate"
                     : "Activate"}
-                </Button>
+                </Button> */}
               </>
             )}
           </div>
@@ -100,4 +99,3 @@ const FormData = (props: IFormData) => {
 };
 
 export default FormData;
-

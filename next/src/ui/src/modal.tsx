@@ -2,17 +2,19 @@ import React from "react";
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import XMarkIcon from "@heroicons/react/24/solid/XMarkIcon";
+import { Dropdown, IDropdownOption } from "@/ui";
 
 interface IModal {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   title?: string | JSX.Element;
   children?: string | number | JSX.Element;
+  actions?: IDropdownOption[];
 }
 
-export const Modal = ({ open, setOpen, title, children }: IModal) => {
+export const Modal = (props: IModal) => {
   return (
-    <Transition.Root show={open} as={Fragment}>
+    <Transition.Root show={props.open} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={() => {}}>
         <Transition.Child
           as={Fragment}
@@ -39,11 +41,14 @@ export const Modal = ({ open, setOpen, title, children }: IModal) => {
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-1/2 w-full sm:p-6">
                 <div>
-                  <div className="absolute top-0 right-0 pt-4 pr-4">
+                  <div className="absolute top-0 right-0 pt-4 pr-4 space-x-2 flex items-center">
+                    {props.actions && props.actions.length > 0 && (
+                      <Dropdown options={props.actions} />
+                    )}
                     <button
                       type="button"
                       className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                      onClick={() => setOpen(false)}
+                      onClick={() => props.setOpen(false)}
                     >
                       <span className="sr-only">Close</span>
                       <XMarkIcon className="h-6 w-6" aria-hidden="true" />
@@ -54,9 +59,9 @@ export const Modal = ({ open, setOpen, title, children }: IModal) => {
                       as="h3"
                       className="text-lg mb-2 font-medium leading-6 text-gray-900"
                     >
-                      {title}
+                      {props.title}
                     </Dialog.Title>
-                    {children}
+                    {props.children}
                   </div>
                 </div>
               </Dialog.Panel>

@@ -6,8 +6,8 @@ import { MMonth, RMonth } from "@/models";
 import { formatMoney, toastProgress, useHashRouteToggle } from "@/utils/helper";
 import { Button, CardList, EmptyState, Layout, Modal } from "@/ui";
 import FormData from "@/components/months/form-data";
-import Link from "next/link";
 import { getDictionary } from "../dictionaries";
+import { useRouter } from "next/router";
 
 interface IMonth {
   dict: any;
@@ -41,6 +41,7 @@ export default function Page(props: IMonth) {
   const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
   const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
   const [loadingActivate, setLoadingActivate] = useState<boolean>(false);
+  const router = useRouter();
 
   const onSubmit = async (values: RMonth) => {
     setLoadingSubmit(true);
@@ -217,20 +218,16 @@ export default function Page(props: IMonth) {
             setEditData(undefined);
             setErrors(undefined);
           }}
-          title={
-            editData ? (
-              <div className="flex justify-between">
-                <p>Ubah bulan</p>
-                <Link
-                  className="cursor-pointer underline text-blue-600"
-                  href={`/${props.locale}/budgets?month_id=${editData?.id}`}
-                >
-                  Lihat anggaran bulan ini
-                </Link>
-              </div>
-            ) : (
-              "Tambah Bulan"
-            )
+          title="Tambah Bulan"
+          actions={
+            editData
+              ? [
+                  {
+                    label: "Lihat anggaran bulan ini",
+                    onClick: () => router.push(`/${props.locale}/budgets?month_id=${editData?.id}`),
+                  },
+                ]
+              : []
           }
         >
           <FormData

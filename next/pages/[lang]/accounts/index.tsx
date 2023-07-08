@@ -16,8 +16,30 @@ import {
   Text,
   Toggle,
 } from "@/ui";
+import { getDictionary } from "../dictionaries";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
-interface IAccount {}
+interface IAccount {
+  dict: any;
+  locale: string;
+}
+
+export async function getStaticProps(props: any) {
+  const dict = await getDictionary(props.params.lang);
+  return {
+    props: {
+      dict: dict,
+      locale: props.params.lang,
+    },
+  };
+}
+
+export function getStaticPaths() {
+  return {
+    paths: [{ params: { lang: "id" } }, { params: { lang: "en" } }],
+    fallback: false,
+  };
+}
 
 export default function Page(props: IAccount) {
   const { get, create, detail, update, destroy } = useAccountAction();
@@ -187,7 +209,7 @@ export default function Page(props: IAccount) {
                   checked={editData?.saving ?? false}
                   label="Jadikan akun tabungan"
                 />
-                <div className="grid grid-cols-1 gap-y-2">
+                <div className="flex gap-x-2">
                   <Button loading={loadingSubmit} type="submit" block>
                     Simpan
                   </Button>
@@ -195,7 +217,6 @@ export default function Page(props: IAccount) {
                     <Button
                       loading={loadingDelete}
                       type="button"
-                      block
                       color="danger"
                       onClick={async () => {
                         setLoadingDelete(true);
@@ -213,7 +234,7 @@ export default function Page(props: IAccount) {
                         }
                       }}
                     >
-                      Hapus
+                      <TrashIcon className="w-5 h-5" />
                     </Button>
                   )}
                 </div>

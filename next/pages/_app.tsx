@@ -7,6 +7,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <div>
       <Head>
+        <link rel="manifest" href="/manifest.json" />
         <title>Simpel Budget || Open source made with 🖤</title>
       </Head>
       <ConfirmProvider>
