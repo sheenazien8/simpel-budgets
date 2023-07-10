@@ -1,7 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { useAuthAction } from "@/actions";
+// import next config
+import getConfig from "next/config";
 
 export function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
@@ -37,8 +38,10 @@ const resolveQueryParameter = (url: string): URLSearchParams => {
   return params;
 };
 
+const { publicRuntimeConfig } = getConfig();
+
 const instance = axios.create({
-  baseURL: "https://budgets.deb",
+  baseURL: publicRuntimeConfig.API_URL,
 });
 
 instance.interceptors.request.use(
