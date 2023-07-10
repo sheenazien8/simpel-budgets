@@ -11,7 +11,7 @@ function getLocale(request: NextRequest) {
 export function middleware(request: NextRequest) {
   // Check if there is any supported locale in the pathname
   const pathname = request.nextUrl.pathname;
-  if (pathname.includes("images") || pathname.includes("favicon")) {
+  if (pathname.includes("images") || pathname.includes("favicon") || pathname.includes("manifest") || pathname.includes("robots") || pathname.includes("sitemap") || pathname.includes("service-worker") || pathname.includes("sw")) {
     return NextResponse.next();
   }
   const pathnameIsMissingLocale = locales.every(

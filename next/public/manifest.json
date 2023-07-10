@@ -1,7 +1,7 @@
 {
   "short_name": "Simple Budget",
   "name": "Catat keuangan anda disini!",
-  "start_url": "/dashboard",
+  "start_url": "/en/dashboard",
   "display": "standalone",
   "icons": [
     {
@@ -15,14 +15,14 @@
       "name": "Daftar total anggaran per bulan",
       "short_name": "anggaran",
       "description": "Lihat daftar anggaran perbulan",
-      "url": "/months",
-      "icons": [{ "src": "/images/shortcuts/calendar.svg", "sizes": "150x150" }]
+      "url": "/en/months",
+      "icons": [{ "src": "/en/images/shortcuts/calendar.svg", "sizes": "150x150" }]
     },
     {
       "name": "Catat keuangan anda",
       "short_name": "budget",
       "description": "Catat keuangan anda",
-      "url": "/cashflow/create",
+      "url": "/en/cashflow/create",
       "icons": [{ "src": "/images/shortcuts/calendar.svg", "sizes": "150x150" }]
     }
   ]

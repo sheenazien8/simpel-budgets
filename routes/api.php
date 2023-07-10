@@ -5,6 +5,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GoalController;
+use App\Http\Controllers\DebtController;
+use App\Http\Controllers\DebtPaymentController;
 use App\Http\Controllers\GoalDetailController;
 use App\Http\Controllers\MonthController;
 use App\Http\Controllers\SettingFilterController;
@@ -57,6 +59,12 @@ Route::group([
     Route::resource("transactions", TransactionController::class);
     Route::resource("filters", SettingFilterController::class);
     Route::resource("goals", GoalController::class);
+    Route::resource("debts", DebtController::class)->only(["index", "store", "destroy"]);
+    Route::group([
+        'prefix' => 'debts/{debt}',
+    ], function() {
+        Route::resource("payments", DebtPaymentController::class)->only(["index", "store", "destroy"]);
+    });
     Route::group([
         'prefix' => '/dashboard',
     ], function() {

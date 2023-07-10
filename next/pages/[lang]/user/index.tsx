@@ -9,6 +9,7 @@ import {
   LockClosedIcon,
   QuestionMarkCircleIcon,
   UserIcon,
+  TableCellsIcon,
 } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 import { getDictionary } from "../dictionaries";
@@ -58,13 +59,6 @@ export default function Page(props: IPage) {
         href: `/${props.locale}/accounts`,
       },
       {
-        name: "Goals",
-        description: "Manage your Goals",
-        icon: <FlagIcon className="h-6 w-6 text-white" />,
-        bgColor: "bg-indigo-600",
-        href: `/${props.locale}/goals`,
-      },
-      {
         name: <div className="py-2.5">Set language</div>,
         icon: <GlobeAltIcon className="h-6 w-6 text-white" />,
         bgColor: "bg-yellow-600",
@@ -73,10 +67,10 @@ export default function Page(props: IPage) {
             title: "Change language",
             description: "Are you sure to change language?",
             yes: () => {
-                router.push("/id/user");
+              router.push("/id/user");
             },
             no: () => {
-                router.push("/en/user");
+              router.push("/en/user");
             },
             style: {
               yes: "bg-white !text-black ring-1 ring-inset ring-gray-300 hover:bg-gray-50",
@@ -86,6 +80,22 @@ export default function Page(props: IPage) {
             icon: <GlobeAltIcon className="h-6 w-6 text-gray-400" />,
           });
         },
+      },
+    ],
+    menu: [
+      {
+        name: "Goals",
+        description: "Manage your Goals",
+        icon: <FlagIcon className="h-6 w-6 text-white" />,
+        bgColor: "bg-indigo-600",
+        href: `/${props.locale}/goals`,
+      },
+      {
+        name: "Debt",
+        description: "Manage your Debt",
+        icon: <TableCellsIcon className="h-6 w-6 text-white" />,
+        bgColor: "bg-indigo-600",
+        href: `/${props.locale}/debt`,
       },
     ],
     security: [

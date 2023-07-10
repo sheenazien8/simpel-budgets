@@ -104,7 +104,7 @@ class TransactionController extends Controller
         $budgets = Budget::query()
             ->selectRaw("SUM(nominal) as total_plan")
             ->byCurrentUser()
-            ->where("month_id", $month->id)
+            ->where("month_id", $month?->id)
             ->first();
 
         return response()->json([
