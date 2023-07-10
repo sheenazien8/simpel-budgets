@@ -4,7 +4,8 @@
 /public/hot
 /public/css/*
 /public/js/*
-/public/storage
+/public/storage/*
+/storage/*
 /storage/*.key
 /public/index_server.php
 /vendor
