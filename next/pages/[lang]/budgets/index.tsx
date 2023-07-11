@@ -9,7 +9,7 @@ import {
   CreditCardIcon,
 } from "@heroicons/react/24/solid";
 import { useBudgetAction } from "@/actions";
-import { FBudget, MBudget, RBudget, ResponseGetMBudget } from "@/models";
+import { FBudget, MBudget, ResponseGetMBudget } from "@/models";
 import {
   classNames,
   formatMoney,

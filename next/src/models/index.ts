@@ -35,3 +35,4 @@ export * from "./src/goal";
 export * from "./src/goal";
 export * from "./src/debtsAndReceivables";
 export * from "./src/dashboard";
+export * from "./src/debt";

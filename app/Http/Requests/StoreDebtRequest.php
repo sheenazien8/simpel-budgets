@@ -22,7 +22,13 @@ class StoreDebtRequest extends FormRequest
             "name" => ["required", "string"],
             "description" => ["nullable", "string"],
             "amount" => ["required", "integer", function ($attribute, $value, $fail) {
+                if ($this->account_id == null) {
+                    return;
+                }
                 $account = Account::find($this->account_id);
+                if ($account == null) {
+                    return;
+                }
                 if ($account->total <= $value) {
                     $fail("$attribute must be less than or equal to account total balance");
                 }
@@ -38,7 +44,7 @@ class StoreDebtRequest extends FormRequest
         try {
             DB::beginTransaction();
             $account = Account::find($this->account_id);
-            match ($this->type) {
+            match ((int) $this->type) {
                 DebtType::debt->value => $account->total += $this->amount,
                 DebtType::receivable->value => $account->total -= $this->amount,
             };

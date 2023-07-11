@@ -11,10 +11,13 @@ class DebtController extends Controller
 {
     public function index(Request $request)
     {
-        $debts = Debt::byCurrentUser()
+        $debts = Debt::
+            select("debts.*")
+            ->selectSub("SELECT SUM(amount) FROM debt_payments WHERE debt_id = debts.id", "paid")
+            ->byCurrentUser()
             ->orderBy("created_at", "desc")
-            ->limit($request->input("limit") ?? 20)
-            ->offset($request->input("offset") ?? 0)
+            /* ->limit($request->input("limit") ?? 20) */
+            /* ->offset($request->input("offset") ?? 0) */
             ->get();
 
         return response()->json([
