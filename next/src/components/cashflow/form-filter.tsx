@@ -9,7 +9,7 @@ import {
 } from "@/models";
 import { useAccountAction, useBudgetAction, useMonthAction } from "@/actions";
 import { encodeQuery } from "@/utils/helper";
-import { Button, CustomSelect, Select, Text } from "@/ui";
+import { Button, Select, Text } from "@/ui";
 import { useRouter } from "next/router";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 
@@ -105,7 +105,7 @@ const FormFilter = (props: IFormFilter) => {
             name={"notes"}
             value={formik.values?.notes}
           />
-          <CustomSelect
+          <Select
             label={props.dict.cashflow.input.selectAccount}
             formik={formik}
             name={"account_id"}
@@ -132,7 +132,7 @@ const FormFilter = (props: IFormFilter) => {
               />
             </>
           )}
-          <CustomSelect
+          <Select
             label={props.dict.cashflow.input.selectMonth}
             formik={formik}
             name={"month_id"}

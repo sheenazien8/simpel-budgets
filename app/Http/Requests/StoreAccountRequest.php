@@ -23,8 +23,8 @@ class StoreAccountRequest extends FormRequest
     public function created(): void
     {
         $this->request->add([
-            "hide" => $this->hide,
-            "saving" => $this->saving,
+            "hide" => $this->hide ?? false,
+            "saving" => $this->saving ?? false,
         ]);
         Account::create($this->request->all());
     }

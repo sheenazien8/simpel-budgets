@@ -69,7 +69,7 @@ export const useDebtActions = () => {
   ): Promise<AxiosResponse<ResponseData<MDebt>>> => {
     try {
       const response = await instance.get<ResponseData<MDebt>>(
-        `/api/debts/${id}`,
+        `/api/debts/${id}/payments`,
       );
       if (response.status != 200) {
         console.log(response);
@@ -86,44 +86,7 @@ export const useDebtActions = () => {
       throw error;
     }
   };
-  const update = async (
-    id: string | number,
-    values: RDebt,
-    setError: (arg: RDebt) => void,
-  ): Promise<AxiosResponse<ResponseData>> => {
-    try {
-      const response = await instance.put<ResponseData>(
-        `/api/debts/${id}`,
-        values,
-      );
-      if (response.status != 200) {
-        throw response.data;
-      }
-      return response;
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        if (error.request.status == 401) {
-          localStorage.removeItem("token");
-          router?.push(`/${lang}/login`);
-        }
-      }
-      if (error instanceof AxiosError) {
-        const errorResponse = (error as AxiosError<ResponseData>).response?.data
-          .errors;
-        if (errorResponse != undefined) {
-          setError({
-            plan: errorResponse?.plan ? errorResponse?.plan[0] : "",
-            month_id: errorResponse?.month_id ? errorResponse?.month_id[0] : "",
-            nominal: errorResponse?.nominal ? errorResponse?.nominal[0] : "",
-            account_id: errorResponse?.account_id
-              ? errorResponse?.account_id[0]
-              : "",
-          });
-        }
-      }
-      throw error;
-    }
-  };
+
   const destroy = async (
     id: string | number,
   ): Promise<AxiosResponse<ResponseData>> => {
@@ -150,7 +113,6 @@ export const useDebtActions = () => {
     get,
     create,
     detail,
-    update,
     destroy,
   };
 }

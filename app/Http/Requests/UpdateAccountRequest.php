@@ -23,8 +23,8 @@ class UpdateAccountRequest extends FormRequest
     public function updated(Account $account): void
     {
         $this->request->add([
-            "hide" => $this->hide,
-            "saving" => $this->saving,
+            "hide" => $this->hide ?? false,
+            "saving" => $this->saving ?? false,
         ]);
         $account->update($this->request->all());
     }

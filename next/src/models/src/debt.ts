@@ -11,21 +11,23 @@ interface MDebt {
   paid: number;
   created_at: string;
   updated_at: string;
-  payment: {
-    id: number;
-    debt_id: number;
-    amount: number;
-    date: string;
-  }
+  payments: MDebtPayment[];
+}
+
+interface MDebtPayment {
+  id: number;
+  debt_id: number;
+  amount: number;
+  date: string;
 }
 
 interface RDebt {
-    name?: string;
-    description?: string;
-    amount?: number | string;
-    date?: string;
-    account_id?: number | string;
-    type?: number | string;
+  name?: string;
+  description?: string;
+  amount?: number | string;
+  date?: string;
+  account_id?: number | string;
+  type?: number | string;
 }
 
 interface FDebt {}

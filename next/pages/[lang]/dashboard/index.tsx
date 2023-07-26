@@ -80,9 +80,9 @@ export default function Page ({ lang, locale }: any) {
           </div>
         </Link>
         <div className="pl-4">
-          <div className="pr-4 flex gap-x-4 justify-between items-center z-0">
-            <p className="text-lg">{lang.financialRecord}</p>
+          <div className="pr-4 flex gap-x-4 items-center z-0">
             <Select
+              block
               name={"fincancial_record"}
               options={[
                 { label: "7 hari terakhir", value: "7 days" },

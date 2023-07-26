@@ -16,10 +16,11 @@ interface ISelect<t = any> {
   value: any;
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   loading?: boolean;
+  block?: boolean;
 }
 export const Select = (props: ISelect) => {
   return (
-    <div>
+    <div className={classNames(props.block ? "w-full" : "")}>
       {props.label && (
         <label
           htmlFor={`${props.name}-id`}

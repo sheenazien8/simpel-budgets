@@ -173,11 +173,17 @@ class TransactionController extends Controller
 
     private function expenseAccount(): void
     {
+        DB::beginTransaction();
         $previousTotal = $this->transaction->account->total + $this->transaction->nominal;
 
         $this->transaction->account->update([
             'total' => $previousTotal
         ]);
+        $previousTotal = $this->transaction->budget->account->total - $this->transaction->nominal;
+        $this->transaction->budget->account->update([
+            'total' => $previousTotal
+        ]);
+        DB::commit();
     }
 
     private function incomeAccount(): void

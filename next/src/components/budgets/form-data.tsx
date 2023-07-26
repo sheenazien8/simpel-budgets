@@ -1,7 +1,7 @@
 import { MAccount, MBudget, MMonth, RBudget } from "@/models";
 import { Formik } from "formik";
 import React, { useContext, useEffect, useState } from "react";
-import { Button, Price, Select, CustomSelect, Text } from "@/ui";
+import { Button, Price, Select, Text } from "@/ui";
 import { useAccountAction, useBudgetAction, useMonthAction } from "@/actions";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { toastProgress } from "@/utils/helper";
@@ -121,7 +121,7 @@ const FormData = (props: IFormData) => {
             value={formik.values?.nominal}
             currency="Rp"
           />
-          <CustomSelect
+          <Select
             label="Nama Bulan"
             formik={formik}
             name={"month_id"}

@@ -111,15 +111,17 @@ class StoreTransactionRequest extends FormRequest
         ]);
 
         $budget = Budget::find($this->request->get("budget_id"));
-        $budgetSaving = function (Budget $budget, float $nominal): void {
-            $budget->account()->update([
-                'total' => $budget->account->total + $nominal
-            ]);
-        };
         match ($budget->type) {
-            BudgetType::Saving->value => $budgetSaving($budget, $nominal),
+            BudgetType::Saving->value => $this->handleBudgetIsSavingType($budget, $nominal),
             BudgetType::Expense->value => null
         };
+    }
+
+    private function handleBudgetIsSavingType(Budget $budget, float $nominal)
+    {
+        $budget->account()->update([
+            'total' => $budget->account->total + $nominal
+        ]);
     }
 
     private function incomeAccount(): void

@@ -48,6 +48,11 @@ class UpdateTransactionRequest extends FormRequest
                     return $this->request->get("type") == 1;
                 }),
                 function($attr, $value, $fail) {
+                    $budget = Budget::find($value);
+                    if ($budget->type == 2) {
+                        $fail("Budget yang digunakan di transaksi ini adalah budget tabungan, silahkan hapus saja!");
+                        return;
+                    }
                     if (in_array($this->request->get("type"), [2, 3]) && $value) {
                         $fail("Budget harus kosong");
                         return;
@@ -58,8 +63,9 @@ class UpdateTransactionRequest extends FormRequest
                     return;
                     if ($this->route("transaction")->budget_id != $value) {
                         $budgetSaving = function (Budget $budget, float $nominal): void {
-
+                            dd($budget);
                         };
+
                         match ($this->route("transaction")->budget->type) {
                             BudgetType::Saving->value => $budgetSaving($this->route("transaction")->budget, $this->request->get("nominal")),
                             BudgetType::Expense->value => null
@@ -143,14 +149,6 @@ class UpdateTransactionRequest extends FormRequest
             ]);
         }
 
-        match (Budget::find($this->request->get("budget_id"))->type) {
-            BudgetType::Saving->value => function () use ($nominal) {
-                if ($this->transaction->budget_id != $this->request->get("budget_id")) {
-                    $this->account->total -= $nominal;
-                }
-            },
-            BudgetType::Expense->value => null
-        };
     }
 
     private function incomeAccount(): void

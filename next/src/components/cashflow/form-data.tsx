@@ -12,7 +12,7 @@ import {
   RCashflow,
   ResponseGetMBudget,
 } from "@/models";
-import { Button, CustomSelect, Price, Select, Tab, Text } from "@/ui";
+import { Button, Price, Select, Tab, Text } from "@/ui";
 import { toastProgress } from "@/utils/helper";
 import { TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Formik, useFormikContext } from "formik";
@@ -215,7 +215,7 @@ const FormData = (props: IFormData) => {
             value={formik.values?.nominal}
           />
 
-          <CustomSelect
+          <Select
             label={props.dict.cashflow.input.account}
             formik={formik}
             name={"account_id"}
@@ -224,7 +224,7 @@ const FormData = (props: IFormData) => {
             options={accounts}
           />
           {formik.values.type == 3 && (
-            <CustomSelect
+            <Select
               label={props.dict.cashflow.input.accountTarget}
               formik={formik}
               name={"account_target"}
@@ -235,7 +235,7 @@ const FormData = (props: IFormData) => {
           )}
           {formik.values.type == 1 && (
             <>
-              <CustomSelect
+              <Select
                 label={
                   <p>
                     {props.dict.cashflow.input.budget}
