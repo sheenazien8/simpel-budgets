@@ -146,7 +146,7 @@ export default function Page(props: IPage) {
               }
               details={[
                 debt?.description,
-                <div className="flex italic justify-between">
+                <div className="flex italic justify-between" key={index}>
                   <div className="italic">Paid</div>
                   {formatMoney(debt?.paid, false) +
                     "/" +
