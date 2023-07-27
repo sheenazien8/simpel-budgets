@@ -157,7 +157,7 @@ export default function Page(props: IPage) {
               title={formatMoney(debtPayment?.amount)}
               details={[
                 "Tanggal: " + debtPayment?.date,
-                <div>
+                <div key={index}>
                   <div className="bg-gray-100 h-1 rounded-md my-2" />
                   <div className="flex gap-x-2 flex-row-reverse">
                     <Button
