@@ -30,6 +30,12 @@ interface RDebt {
   type?: number | string;
 }
 
+interface RDebtPayment {
+  amount: number | string;
+  date: string;
+  account_id: number | string;
+}
+
 interface FDebt {}
 
-export type { MDebt, RDebt, FDebt };
+export type { MDebt, RDebt, FDebt, RDebtPayment, MDebtPayment };

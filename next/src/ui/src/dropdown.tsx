@@ -4,7 +4,7 @@ import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 import { classNames } from "@/utils/helper";
 
 export interface IDropdownOption {
-  label: string;
+  label: string | JSX.Element;
   onClick: () => void;
 }
 
