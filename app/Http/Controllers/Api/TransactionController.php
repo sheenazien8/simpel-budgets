@@ -96,6 +96,7 @@ class TransactionController extends Controller
                 ->when($request->filled("start_date") && $request->filled("end_date"), function ($query) use ($request) {
                     $query->whereBetween("date", [$request->start_date, $request->end_date]);
                 })
+                ->orderBy("date", "desc")
                 ->orderBy("created_at", "desc")
                 ->limit(20)
                 ->offset($request->input("offset") ?? 0)
@@ -179,10 +180,12 @@ class TransactionController extends Controller
         $this->transaction->account->update([
             'total' => $previousTotal
         ]);
-        $previousTotal = $this->transaction->budget->account->total - $this->transaction->nominal;
-        $this->transaction->budget->account->update([
-            'total' => $previousTotal
-        ]);
+        if ($this->transaction->budget->type == 2) {
+            $previousTotal = $this->transaction->budget->account->total - $this->transaction->nominal;
+            $this->transaction->budget->account->update([
+                'total' => $previousTotal
+            ]);
+        }
         DB::commit();
     }
 
