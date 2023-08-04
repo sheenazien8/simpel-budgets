@@ -6,6 +6,7 @@ use App\Enums\DebtType;
 use App\Models\Account;
 use App\Models\Debt;
 use App\Models\DebtPayment;
+use App\Models\Transaction;
 use Exception;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\DB;
@@ -54,6 +55,18 @@ class StoreDebtPaymentRequest extends FormRequest
                 $debt->status = 1;
                 $debt->save();
             }
+            $transaction = Transaction::create([
+                'user_id' => $debtPayment->user_id,
+                'account_id' => $debtPayment->debt->account_id,
+                'account_target' => $debtPayment->account_id,
+                'date' => $debtPayment->date,
+                'nominal' => $debtPayment->amount,
+                'notes' => ($debtPayment->debt->type == 1 ? 'Pembayaran hutang ke' : 'Penerimaan piutang dari') . " " . $debtPayment->debt->name,
+                'user_id' => $debtPayment->user_id,
+            ]);
+
+            $debtPayment->transaction()->associate($transaction);
+            $debtPayment->save();
             DB::commit();
         } catch (Exception $error) {
             DB::rollBack();
