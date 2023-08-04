@@ -69,6 +69,7 @@ class DebtPaymentController extends Controller
         $debt->status = 2;
         $debt->save();
         $account->save();
+        $payment->transaction->delete();
         $payment->delete();
 
         return response()->json([
