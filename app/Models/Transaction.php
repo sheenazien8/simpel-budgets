@@ -24,6 +24,7 @@ class Transaction extends Model
         'type',
         'notes',
         'account_target',
+        'user_id',
     ];
 
     public function account(): BelongsTo

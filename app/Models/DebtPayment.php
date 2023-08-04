@@ -25,4 +25,9 @@ class DebtPayment extends Model
     {
         return $this->belongsTo(Account::class);
     }
+
+    public function transaction()
+    {
+        return $this->belongsTo(Transaction::class);
+    }
 }

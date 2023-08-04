@@ -11,9 +11,11 @@ trait AssignToAuth
     {
         parent::boot();
 
-        static::creating(function ($model) {
-            $model->user_id = auth()->id();
-        });
+        if (auth()->id()) {
+            static::creating(function ($model) {
+                $model->user_id = auth()->id();
+            });
+        }
     }
 
     public function user(): BelongsTo
