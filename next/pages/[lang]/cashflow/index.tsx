@@ -8,14 +8,12 @@ import {
   CurrencyDollarIcon,
   ArrowRightIcon,
   PlusIcon,
-  MagnifyingGlassIcon
+  MagnifyingGlassIcon,
+  ArrowsUpDownIcon,
 } from "@heroicons/react/24/solid";
 import { useCashflowAction } from "@/actions";
 import { MCashflow, RCashflow, ResponseGetMCashflow } from "@/models";
-import {
-  formatMoney,
-  resolveQueryParameter,
-} from "@/utils/helper";
+import { formatMoney, resolveQueryParameter } from "@/utils/helper";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Button, CardList, EmptyState, Layout, Modal, Tab } from "@/ui";
 import FormFilter from "@/components/cashflow/form-filter";
@@ -49,6 +47,7 @@ export default function Page({ dict, locale }: IRecord) {
   const [cashflows, setCashflows] = useState<ResponseGetMCashflow>();
   const [cashflowsData, setCashflowsData] = useState<MCashflow[]>();
   const [isOpenFilter, toggleFilterActive] = useState<boolean>(false);
+  const [isOpenShortby, toggleShortbyActive] = useState<boolean>(false);
   const [filter, setFilter] = useState<RCashflow>();
   const [scroll, setScroll] = useState<number>(0);
   const [hasMore, setHasMore] = useState(true);
@@ -164,6 +163,16 @@ export default function Page({ dict, locale }: IRecord) {
           />
           <div className="flex justify-between items-center flex-row-reverse mt-2">
             <div className="space-x-2 flex">
+              {/* <Button
+                type="button"
+                color="secondary"
+                className="inline-flex items-center rounded-lg border border-transparent bg-gray-400 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                onClick={() => {
+                  toggleShortbyActive(true);
+                }}
+              >
+                <ArrowsUpDownIcon className="h-5 mr-1" />
+              </Button> */}
               <Button
                 type="button"
                 color="secondary"
@@ -172,7 +181,8 @@ export default function Page({ dict, locale }: IRecord) {
                   toggleFilterActive(true);
                 }}
               >
-                <MagnifyingGlassIcon className="h-5 mr-1" /> {dict.common.search}
+                <MagnifyingGlassIcon className="h-5 mr-1" />{" "}
+                {dict.common.search}
               </Button>
               <Button
                 href="/cashflow/create"
@@ -243,7 +253,10 @@ export default function Page({ dict, locale }: IRecord) {
             <CardList
               key={index}
               bgColor={
-                Number(cashflow.type) == 1 ? "bg-red-600" : "bg-green-600"
+                Number(cashflow.type) == 1 ||
+                (cashflow.debt_payment?.debt?.type as unknown as string) == "1"
+                  ? "bg-red-600"
+                  : "bg-green-600"
               }
               title={
                 <div className="flex justify-between">
@@ -262,9 +275,13 @@ export default function Page({ dict, locale }: IRecord) {
                 </div>
               }
               icon={
-                Number(cashflow.type) == 1 ? (
+                Number(cashflow.type) == 1 ||
+                (cashflow.debt_payment?.debt?.type as unknown as string) ==
+                  "1" ? (
                   <ArrowRightOnRectangleIcon className="w-6" />
-                ) : Number(cashflow.type) == 2 ? (
+                ) : Number(cashflow.type) == 2 ||
+                  (cashflow.debt_payment?.debt?.type as unknown as string) ==
+                    "2" ? (
                   <ArrowLeftOnRectangleIcon className="w-6" />
                 ) : (
                   <ArrowsRightLeftIcon className="w-6" />
@@ -288,7 +305,13 @@ export default function Page({ dict, locale }: IRecord) {
                 </span>,
               ]}
               onClick={async () => {
-                router?.push(`/${locale}/cashflow/${cashflow.id}`);
+                if (cashflow?.debt_payment?.debt?.id != undefined) {
+                  router?.push(
+                    `/${locale}/debt/${cashflow?.debt_payment?.debt_id}`,
+                  );
+                } else {
+                  router?.push(`/${locale}/cashflow/${cashflow.id}`);
+                }
               }}
             />
           ))}

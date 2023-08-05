@@ -19,6 +19,7 @@ interface MDebtPayment {
   debt_id: number;
   amount: number;
   date: string;
+  debt?: MDebt;
 }
 
 interface RDebt {

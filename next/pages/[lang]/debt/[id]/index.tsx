@@ -61,6 +61,7 @@ export default function Page(props: IPage) {
     try {
       await addDebtPayment(props.id, values, setErrors);
       router.push(`/${router.query?.lang}/debt/${props.id}`);
+      setLoadingSubmit(false);
     } catch (error) {
       console.log(error);
       setLoadingSubmit(false);

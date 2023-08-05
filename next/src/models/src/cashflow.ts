@@ -1,3 +1,5 @@
+import { MDebtPayment } from "./debt";
+
 interface ResponseGetMCashflow {
     data: MCashflow[],
     transaction_sum_nominal_expense: number;
@@ -21,7 +23,9 @@ interface MCashflow {
   type: number;
   created_at: string;
   updated_at: string;
+  debt_payment: MDebtPayment;
 }
+
 
 interface RCashflow {
   account_id?: number | string;
