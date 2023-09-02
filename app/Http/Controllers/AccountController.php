@@ -37,7 +37,12 @@ class AccountController extends Controller
     public function show(Account $account)
     {
         return response()->json([
-            'data' => $account,
+            'data' => $account->load([
+                "transactions:id,account_id,account_target,type,budget_id",
+                "transactions.budget:id,plan",
+                "transactions.account:id,name",
+                "transactions.account_target_data:id,name",
+            ]),
         ]);
     }
 
