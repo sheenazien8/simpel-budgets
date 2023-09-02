@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\BudgetType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
@@ -21,10 +22,9 @@ class TransactionController extends Controller
         return [!$request->filled("date") &&
             !($request->filled("start_date") && $request->filled("end_date")) &&
             !$request->filled("month_id"), function ($query) use ($month) {
-                $query->whereMonth("date", now()->format("m"))
-                      ->whereYear("date", $month?->year);
-            }];
-
+            $query->whereMonth("date", now()->format("m"))
+                ->whereYear("date", $month?->year);
+        }];
     }
 
     public function index(Request $request): JsonResponse
@@ -49,7 +49,10 @@ class TransactionController extends Controller
                     ->when($request->filled("start_date") && $request->filled("end_date"), function ($query) use ($request) {
                         $query->whereBetween("date", [$request->start_date, $request->end_date]);
                     })
-                    ->where('type', 1),
+                    ->where('type', 1)
+                    ->whereHas('budget', function ($query) {
+                        $query->where('type', BudgetType::Expense);
+                    }),
                 "sum_income_month" => Transaction::query()
                     ->filter($request)
                     ->selectRaw("sum(nominal)")
@@ -80,27 +83,27 @@ class TransactionController extends Controller
             ->first();
 
         $transactions = Transaction::query()
-                ->selectRaw(DB::raw("IF(type = 1, nominal, 0) as expense"))
-                ->addSelect([
-                    "transactions.*",
-                    "budget_name" => Budget::select("plan")->whereColumn("budget_id", "budgets.id"),
-                    "account_name" => Account::select("name")->whereColumn("account_id", "accounts.id"),
-                    "account_target_name" => Account::select("name")->whereColumn("account_target", "accounts.id"),
-                    "total_nominal" => Transaction::selectRaw("SUM(nominal)")->whereColumn("id", "transactions.id"),
-                ])
-                ->filter($request)
-                ->byCurrentUser()
-                ->when($request->filled("date"), function ($query) use ($request) {
-                    $query->where("date", $request->date);
-                })
-                ->when($request->filled("start_date") && $request->filled("end_date"), function ($query) use ($request) {
-                    $query->whereBetween("date", [$request->start_date, $request->end_date]);
-                })
-                ->orderBy("date", "desc")
-                ->orderBy("created_at", "desc")
-                ->limit(20)
-                ->offset($request->input("offset") ?? 0)
-                ->get();
+            ->selectRaw(DB::raw("IF(type = 1, nominal, 0) as expense"))
+            ->addSelect([
+                "transactions.*",
+                "budget_name" => Budget::select("plan")->whereColumn("budget_id", "budgets.id"),
+                "account_name" => Account::select("name")->whereColumn("account_id", "accounts.id"),
+                "account_target_name" => Account::select("name")->whereColumn("account_target", "accounts.id"),
+                "total_nominal" => Transaction::selectRaw("SUM(nominal)")->whereColumn("id", "transactions.id"),
+            ])
+            ->filter($request)
+            ->byCurrentUser()
+            ->when($request->filled("date"), function ($query) use ($request) {
+                $query->where("date", $request->date);
+            })
+            ->when($request->filled("start_date") && $request->filled("end_date"), function ($query) use ($request) {
+                $query->whereBetween("date", [$request->start_date, $request->end_date]);
+            })
+            ->orderBy("date", "desc")
+            ->orderBy("created_at", "desc")
+            ->limit(20)
+            ->offset($request->input("offset") ?? 0)
+            ->get();
 
         $budgets = Budget::query()
             ->selectRaw("SUM(nominal) as total_plan")
@@ -151,18 +154,18 @@ class TransactionController extends Controller
     {
         $this->transaction = $transaction;
         switch ($transaction->type) {
-        case 1:
-            $this->expenseAccount();
-            break;
-        case 2:
-            $this->incomeAccount();
-            break;
-        case 3:
-            $this->transferAccount();
-            break;
-        default:
-            throw new ValidationException("Invalid Type");
-            break;
+            case 1:
+                $this->expenseAccount();
+                break;
+            case 2:
+                $this->incomeAccount();
+                break;
+            case 3:
+                $this->transferAccount();
+                break;
+            default:
+                throw new ValidationException("Invalid Type");
+                break;
         }
         $transaction->delete();
 
