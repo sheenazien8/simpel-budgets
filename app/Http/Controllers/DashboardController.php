@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\BudgetType;
 use App\Enums\RecapBy;
 use App\Enums\TransactionType;
 use App\Models\Transaction;
@@ -36,6 +37,9 @@ class DashboardController extends Controller
         $expense = Transaction::query()
             ->selectRaw("sum(nominal) as nominal")
             ->byCurrentUser()
+            ->whereHas('budget', function ($query) {
+                $query->where('type', BudgetType::Expense);
+            })
             ->where('type', TransactionType::Expense)
             ->where('date', '>=', $date)
             ->first()->nominal ?? 0;
@@ -48,8 +52,18 @@ class DashboardController extends Controller
             ->where('date', '<', $date)
             ->first()->nominal ?? 0;
 
-        $saving = $income ? $income - $expense : '0';
-        $lastSaving = $lastIncome ? $lastIncome - $lastExpense : '0';
+        $saving = Transaction::query()
+            ->selectRaw("sum(nominal) as nominal")
+            ->byCurrentUser()
+            ->whereHas('budget', function ($query) {
+                $query->where('type', BudgetType::Saving);
+            })
+            ->where('type', TransactionType::Expense)
+            ->where('date', '>=', $date)
+            ->first()->nominal ?? 0;
+
+        $remaining = $income ? $income - $expense - $saving : '0';
+        $lastRemaining = $lastIncome ? $lastIncome - $lastExpense : '0';
 
         if ($income > $lastIncome) {
             $incomePercentage = ($lastIncome != 0 ? round((($income - $lastIncome) / $lastIncome) * 100) : 100) . "% dari {$label}";
@@ -63,28 +77,37 @@ class DashboardController extends Controller
             $expensePercentage = ($lastExpense != 0 ? round((($lastExpense - $expense) / $lastExpense) * 100) : 100) . "% dari {$label}";
         }
 
-        if ($saving > $lastSaving) {
-            $savingPercentage = ($lastSaving != 0 ? round((($saving - $lastSaving) / $lastSaving) * 100) : 100) . "% dari {$label}";
+        if ($remaining > $lastRemaining) {
+            $savingPercentage = ($lastRemaining != 0 ? round((($remaining - $lastRemaining) / $lastRemaining) * 100) : 100) . "% dari {$label}";
         } else {
-            $savingPercentage = ($lastSaving != 0 ? round((($lastSaving - $saving) / $lastSaving) * 100) : 100) . "% dari {$label}";
+            $savingPercentage = ($lastRemaining != 0 ? round((($lastRemaining - $remaining) / $lastRemaining) * 100) : 100) . "% dari {$label}";
         }
 
         return response()->json([
             "data" => [
-                "income" => [
-                    'total' => $income ,
+                [
+                    "label" => "Income",
+                    'total' => $income,
                     'percentage' => $incomePercentage,
                     'isUp' => $income > $lastIncome
                 ],
-                "expense" => [
+                [
+                    "label" => "Expense",
                     'total' => $expense,
                     'percentage' => $expensePercentage,
                     'isUp' => $expense > $lastExpense
                 ],
-                "remaining" => [
+                [
+                    "label" => "Saving",
                     'total' => $saving,
                     'percentage' => $savingPercentage,
-                    'isUp' => $saving > $lastSaving
+                    'isUp' => false
+                ],
+                [
+                    "label" => "Remaining",
+                    'total' => $remaining,
+                    'percentage' => $savingPercentage,
+                    'isUp' => $remaining > $lastRemaining
                 ],
             ],
         ]);

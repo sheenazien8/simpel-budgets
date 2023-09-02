@@ -8,6 +8,10 @@ indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
 
+[*.{tsx,ts,js,jsx,css,scss,html,json,md}]
+indent_size = 2
+indent_style = space
+
 [*.md]
 trim_trailing_whitespace = false
 

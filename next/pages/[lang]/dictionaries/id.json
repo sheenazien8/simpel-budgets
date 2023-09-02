@@ -29,7 +29,8 @@
     "greetingTimeMorning": "Pagi",
     "greetingTimeAfternoon": "Siang",
     "greetingTimeEvening": "Sore",
-    "greetingTimeNight": "Malam"
+    "greetingTimeNight": "Malam",
+    "label": "Total {label}"
   },
   "cashflow": {
     "title": "Transaksi",

@@ -10,7 +10,6 @@ import {
   DocumentIcon,
   HomeIcon,
   UserIcon,
-  Bars3Icon,
 } from "@heroicons/react/24/solid";
 import { MInfo } from "@/models";
 import { useAuthAction } from "@/actions";

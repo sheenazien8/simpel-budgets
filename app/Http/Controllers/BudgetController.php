@@ -9,6 +9,7 @@ use App\Models\Budget;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BudgetController extends Controller
 {
@@ -27,16 +28,17 @@ class BudgetController extends Controller
                 }
                 return false;
             })
-            ->addSelect("budgets.*")
+            ->addSelect("budgets.*", DB::raw("IF (budgets.type = 2, budgets.nominal, 0) as expense_nominal"))
             ->withSum("transactions", "nominal")
             ->orderBy("month", "desc")
             ->byCurrentUser()
             ->get();
 
+
         return response()->json([
             "data" => [
                 "data" => $budgets,
-                "total_nominal_budgets" => $budgets->sum("nominal"),
+                "total_nominal_budgets" => $budgets->sum("expense_nominal"),
             ],
         ]);
     }

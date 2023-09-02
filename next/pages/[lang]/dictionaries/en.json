@@ -29,7 +29,8 @@
     "greetingTimeMorning": "Morning",
     "greetingTimeAfternoon": "Afternoon",
     "greetingTimeEvening": "Evening",
-    "greetingTimeNight": "Night"
+    "greetingTimeNight": "Night",
+    "label": "Total {label}"
   },
   "cashflow": {
     "title": "Cashflow",

@@ -156,7 +156,7 @@ const FormData = (props: IFormData) => {
           });
         }
       },
-      no: () => {},
+      no: () => { },
     });
   };
 
@@ -172,10 +172,9 @@ const FormData = (props: IFormData) => {
     }
     toastProgress(
       progess,
-      `${
-        !props?.id
-          ? props.dict.cashflow.message.createSuccess
-          : props.dict.cashflow.message.updateSuccess
+      `${!props?.id
+        ? props.dict.cashflow.message.createSuccess
+        : props.dict.cashflow.message.updateSuccess
       }`,
       () => {
         router.replace(`/${router.query?.lang}/cashflow`);

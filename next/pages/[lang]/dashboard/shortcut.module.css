@@ -1,0 +1,21 @@
+@keyframes shake {
+  0% {
+    transform: rotate(3deg);
+  }
+  20% {
+    transform: rotate(-3deg);
+  }
+  40% {
+    transform: rotate(3deg);
+  }
+  80% {
+    transform: rotate(-3deg);
+  }
+  100% {
+    transform: rotate(3deg);
+  }
+}
+
+.shake {
+  animation: shake 0.9s ease-in-out infinite;
+}

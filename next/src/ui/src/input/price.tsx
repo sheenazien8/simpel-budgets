@@ -43,7 +43,7 @@ export const Price = (props: IPrice) => {
             //e.target.value = formatMoney(Number(e.target.value), false);
             props.formik.setFieldValue(props.name, plain);
           }}
-          onClick={(e: any) => {
+          onClick={() => {
 
           }}
           inputMode="numeric"

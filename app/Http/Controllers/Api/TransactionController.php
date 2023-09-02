@@ -110,7 +110,7 @@ class TransactionController extends Controller
 
         return response()->json([
             'data' => [
-                'data' => $transactions,
+                'data' => $transactions->load("debtPayment.debt"),
                 'transaction_sum_nominal_expense' => $transactionAttrbite->sum_expense_month,
                 'transaction_sum_nominal_income' => $transactionAttrbite->sum_income_month,
                 'total_transactions' => $total_transactions,

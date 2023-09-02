@@ -1,19 +1,21 @@
 interface SummaryFinancialRecord {
-  income: {
-    total: number;
-    percentage: string;
-    isUp: boolean;
-  };
-  expense: {
-    total: number;
-    percentage: string;
-    isUp: boolean;
-  };
-  remaining: {
-    total: number;
-    percentage: string;
-    isUp: boolean;
-  };
+  label: string;
+  total: number;
+  isUp: boolean;
+  percentage: string;
 }
 
-export type { SummaryFinancialRecord };
+interface Shortcuts {
+  id: number;
+  name: string;
+  url: string;
+  icon: string;
+  iconJsx?: React.ForwardRefExoticComponent<
+    Omit<React.SVGProps<SVGSVGElement>, "ref"> & {
+      title?: string | undefined;
+      titleId?: string | undefined;
+    } & React.RefAttributes<SVGSVGElement>
+  >;
+}
+
+export type { SummaryFinancialRecord, Shortcuts };

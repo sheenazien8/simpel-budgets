@@ -12,6 +12,7 @@ use App\Http\Controllers\MonthController;
 use App\Http\Controllers\SettingFilterController;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ShortcutController;
 use App\Models\Account;
 use App\Models\Budget;
 use App\Models\Month;
@@ -69,6 +70,7 @@ Route::group([
         'prefix' => '/dashboard',
     ], function() {
         Route::get("/financial-record", [DashboardController::class, 'financialRecord']);
+        Route::get("shortcuts", ShortcutController::class);
     });
     Route::group([
         'prefix' => 'goals/{goal}',
