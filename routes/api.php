@@ -24,7 +24,7 @@ Route::get("test", function () {
     return response()->json(["status" => "connected"]);
 });
 
-Route::post("/auth/login", [AuthController::class, 'login']);
+Route::post("/auth/login", [AuthController::class, 'login'])->name("login"); // tested
 Route::post("/auth/register", [AuthController::class, 'register']);
 Route::post("/auth/reset-token", [AuthController::class, 'resetToken']);
 
