@@ -28,7 +28,7 @@ class BudgetController extends Controller
                 }
                 return false;
             })
-            ->addSelect("budgets.*", DB::raw("IF (budgets.type = 2, budgets.nominal, 0) as expense_nominal"))
+            ->addSelect("budgets.*", DB::raw("IF (budgets.type = 1, budgets.nominal, 0) as expense_nominal"))
             ->withSum("transactions", "nominal")
             ->orderBy("month", "desc")
             ->byCurrentUser()

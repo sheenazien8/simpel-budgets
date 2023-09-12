@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Month;
+use App\Rules\ExistMonthInYear;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreMonthRequest extends FormRequest
@@ -15,24 +16,8 @@ class StoreMonthRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => [
-                "required",
-                function($attr, $value, $fail) {
-                    $exists = in_array($value, Month::query()
-                        ->byCurrentUser()
-                        ->where("year", $this->year)
-                        ->get()
-                        ->pluck("name")
-                        ->toArray());
-
-                    if ($exists) {
-                        $fail("Bulan ditahun ini sudah ada");
-                        return;
-                    }
-                    return;
-                }
-            ],
-            "year" => "required|integer|min:1900|max:2100"
+            "name" => ["required", new ExistMonthInYear($this->year)],
+            "year" => ["required", "integer", "min:1900", "max:2100"]
         ];
     }
 
