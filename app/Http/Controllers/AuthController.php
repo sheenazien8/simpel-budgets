@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\ResetPasswordRequest;
+use Auth;
 
 class AuthController extends Controller
 {
@@ -17,7 +18,7 @@ class AuthController extends Controller
             "data" => [
                 'access_token' => $token,
                 'token_type' => 'bearer',
-                'expires_in' => optional(auth())->factory()->getTTL()
+                'expires_in' => Auth::user()->factory()->getTTL() * 525600
             ]
         ]);
     }
@@ -34,12 +35,12 @@ class AuthController extends Controller
 
     public function me()
     {
-        return response()->json(auth()->user());
+        return response()->json(Auth::user());
     }
 
     public function logout()
     {
-        auth()->logout();
+        Auth::logout();
 
         return response()->json(['message' => 'Successfully logged out']);
     }
