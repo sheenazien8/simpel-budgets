@@ -18,19 +18,16 @@ class ExistMonthInYear implements Rule
     {
         $exists = in_array($value, Month::query()
             ->byCurrentUser()
-            ->where("year", $this->year)
+            ->where('year', $this->year)
             ->get()
-            ->pluck("name")
+            ->pluck('name')
             ->toArray());
 
-        if ($exists) {
-            return false;
-        }
-        return;
+        return ! $exists;
     }
 
     public function message()
     {
-        return "Bulan ditahun ini sudah ada";
+        return 'Bulan ditahun ini sudah ada';
     }
 }
