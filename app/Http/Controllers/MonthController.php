@@ -15,23 +15,23 @@ class MonthController extends Controller
     {
         $data = Month::query()
             ->filter(request())
-            ->withSum(['budgets' => function ($query){
+            ->withSum(['budgets' => function ($query) {
                 $query->where('type', 1);
             }], 'nominal')
-            ->withSum(["transactions" => function ($query) {
-                $query->whereHas("budget", function ($query) {
-                    $query->where("type", 1);
+            ->withSum(['transactions' => function ($query) {
+                $query->whereHas('budget', function ($query) {
+                    $query->where('type', 1);
                 });
-            }], "nominal")
+            }], 'nominal')
             ->selectSub(
                 "select if(transactions_sum_nominal > budgets_sum_nominal, 'melebihi', 'aman')",
-                "over_budget_desc"
+                'over_budget_desc'
             )
             ->selectSub(
-                "select if(transactions_sum_nominal > budgets_sum_nominal, true, false)",
-                "over_budget"
+                'select if(transactions_sum_nominal > budgets_sum_nominal, true, false)',
+                'over_budget'
             )
-            ->addSelect(["months.*"])
+            ->addSelect(['months.*'])
             ->byCurrentUser()
             ->get();
 
@@ -41,37 +41,39 @@ class MonthController extends Controller
     public function store(StoreMonthRequest $request): JsonResponse
     {
         $request->created();
+
         return response()->json([
-            "data" => [],
-            "message" => "month has been created",
+            'data' => [],
+            'message' => 'month has been created',
         ]);
     }
 
     public function show(Month $month)
     {
         return response()->json([
-            "data" => $month,
+            'data' => $month,
         ]);
     }
 
     public function update(UpdateMonthRequest $request, Month $month)
     {
         $request->updated($month);
+
         return response()->json([
-            "data" => [],
-            "message" => "month has been updated",
+            'data' => [],
+            'message' => 'month has been updated',
         ]);
     }
 
     public function destroy(Month $month)
     {
-        $month->budgets->count() > 0 ? throw new Exception("Bulan ini mempunyai anggaran") : "";
-        $month->transactions->count() > 0 ? throw new Exception("Bulan ini mempunyai transaksi") : "";
+        $month->budgets->count() > 0 ? throw new Exception('Bulan ini mempunyai anggaran') : '';
+        $month->transactions->count() > 0 ? throw new Exception('Bulan ini mempunyai transaksi') : '';
         $month->delete();
 
         return response()->json([
-            "data" => [],
-            "message" => "month has been deleted",
+            'data' => [],
+            'message' => 'month has been deleted',
         ]);
     }
 }

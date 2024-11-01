@@ -14,6 +14,18 @@ class MonthResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'year' => $this->year,
+            'status' => $this->status,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'user_id' => $this->user_id,
+            'budgets_sum_nominal' => $this->budgets_sum_nominal,
+            'transactions_sum_nominal' => $this->transactions_sum_nominal,
+            'over_budget_desc' => $this->over_budget_desc,
+            'over_budget' => $this->over_budget,
+        ];
     }
 }

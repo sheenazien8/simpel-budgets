@@ -6,6 +6,7 @@ use App\Models\Budget;
 use App\Models\Month;
 use App\Models\Transaction;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\DB;
@@ -31,9 +32,9 @@ class RegisterRequest extends FormRequest
     public function rules()
     {
         return [
-            "email" => ["required", "email", "unique:users,email"],
-            "name" => ["min:5", "unique:users,name", "regex:/\w*$/"],
-            "password" => ["min:5", "confirmed"],
+            'email' => ['required', 'email', 'unique:users,email'],
+            'name' => ['min:5', 'unique:users,name', "regex:/\w*$/"],
+            'password' => ['min:5', 'confirmed'],
         ];
     }
 
@@ -53,43 +54,45 @@ class RegisterRequest extends FormRequest
                     'keys' => 'budgets',
                     'model' => Budget::class,
                     'default' => [
-                        "show_current_month" => true,
-                        "show_current_and_next_month" => false,
-                        "show_active_month" => true,
-                    ]
+                        'show_current_month' => true,
+                        'show_current_and_next_month' => false,
+                        'show_active_month' => true,
+                    ],
                 ],
                 [
                     'keys' => 'transactions',
                     'model' => Transaction::class,
                     'default' => [
-                        "show_current_month" => true,
-                        "show_current_and_next_month" => false,
-                        "show_active_month" => true,
-                    ]
-                ]
+                        'show_current_month' => true,
+                        'show_current_and_next_month' => false,
+                        'show_active_month' => true,
+                    ],
+                ],
             ];
 
             foreach ($keys as $key) {
-                $filter = $user->filters()->where("key", $key["keys"])->first();
-                if (!$filter) {
+                $filter = $user->filters()->where('key', $key['keys'])->first();
+                if (! $filter) {
                     $user->filters()->create([
-                        "key" => $key["keys"],
-                        "model" => $key["model"],
-                        "default" => $key["default"],
+                        'key' => $key['keys'],
+                        'model' => $key['model'],
+                        'default' => $key['default'],
                     ]);
                 }
             }
 
-            $months = [
-                "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-                "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-            ];
-            $year = now()->format("Y");
+            $months = [];
+            for ($i = 1; $i <= 12; $i++) {
+                $months[] = Carbon::create()->locale(config('app.locale'))->month($i)->format('M');
+            }
+
+            $year = now()->format('Y');
+
             foreach ($months as $month) {
                 $monthCreated = Month::create([
-                    "name" => $month,
-                    "year" => $year,
-                    "status" => 1
+                    'name' => $month,
+                    'year' => $year,
+                    'status' => 1,
                 ]);
                 $user->months()->save($monthCreated);
             }

@@ -28,7 +28,7 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         ResetPassword::createUrlUsing(function ($user, string $token) {
-            return 'https://example.com/reset-password?token='.$token;
+            return config('app.url').'/reset-password?token='.$token;
         });
     }
 }

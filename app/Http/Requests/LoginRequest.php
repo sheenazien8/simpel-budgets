@@ -18,24 +18,23 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
-            "username" => ["required", function($attr, $val, $fail) {
-                $user = User::where("name", $val)->orWhere("email", $val)->first();
-                if (!$user) {
+            'username' => ['required', function ($attr, $val, $fail) {
+                $user = User::where('name', $val)->orWhere('email', $val)->first();
+                if (! $user) {
                     $fail("User doesn't exist in database");
+
                     return false;
                 }
-                if (!$user->email_verified_at) {
-                    $fail("User is not verified");
-                    return false;
-                }
-                if (!Hash::check($this->request->get("password"), $user->password)) {
-                    $fail("Password or username is invalid");
+                if (! Hash::check($this->request->get('password'), $user->password)) {
+                    $fail('Password or username is invalid');
+
                     return false;
                 }
                 $this->auth = $user;
+
                 return true;
             }],
-            "password" => ["required"]
+            'password' => ['required'],
         ];
     }
 
@@ -47,5 +46,4 @@ class LoginRequest extends FormRequest
 
         return $token;
     }
-
 }
