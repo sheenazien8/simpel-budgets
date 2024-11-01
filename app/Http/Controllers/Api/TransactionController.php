@@ -19,17 +19,17 @@ class TransactionController extends Controller
 {
     private function getThisMonth(Request $request, Month $month = null)
     {
-        return [!$request->filled("date") &&
-            !($request->filled("start_date") && $request->filled("end_date")) &&
-            !$request->filled("month_id"), function ($query) use ($month) {
-            $query->whereMonth("date", now()->format("m"))
-                ->whereYear("date", $month?->year);
-        }];
+        return [! $request->filled('date') &&
+            ! ($request->filled('start_date') && $request->filled('end_date')) &&
+            ! $request->filled('month_id'), function ($query) use ($month) {
+                $query->whereMonth('date', now()->format('m'))
+                    ->whereYear('date', $month?->year);
+            }];
     }
 
     public function index(Request $request): JsonResponse
     {
-        $currentMonth = __('month.' . now()->format('F'));
+        $currentMonth = __('month.'.now()->format('F'));
         $currentYear = now()->format('Y');
         $month = Month::whereIn('name', [$currentMonth])
             ->byCurrentUser()
@@ -37,32 +37,32 @@ class TransactionController extends Controller
             ->first();
 
         $transactionAttrbite = Transaction::query()
-            ->select("id")
+            ->select('id')
             ->addSelect([
-                "sum_expense_month" => Transaction::selectRaw("SUM(nominal)")
+                'sum_expense_month' => Transaction::selectRaw('SUM(nominal)')
                     ->filter($request)
                     ->byCurrentUser()
                     ->when(...$this->getThisMonth($request, $month))
-                    ->when($request->filled("date"), function ($query) use ($request) {
-                        $query->where("date", $request->date);
+                    ->when($request->filled('date'), function ($query) use ($request) {
+                        $query->where('date', $request->date);
                     })
-                    ->when($request->filled("start_date") && $request->filled("end_date"), function ($query) use ($request) {
-                        $query->whereBetween("date", [$request->start_date, $request->end_date]);
+                    ->when($request->filled('start_date') && $request->filled('end_date'), function ($query) use ($request) {
+                        $query->whereBetween('date', [$request->start_date, $request->end_date]);
                     })
                     ->where('type', 1)
                     ->whereHas('budget', function ($query) {
                         $query->where('type', BudgetType::Expense);
                     }),
-                "sum_income_month" => Transaction::query()
+                'sum_income_month' => Transaction::query()
                     ->filter($request)
-                    ->selectRaw("sum(nominal)")
+                    ->selectRaw('sum(nominal)')
                     ->byCurrentUser()
                     ->when(...$this->getThisMonth($request, $month))
-                    ->when($request->filled("date"), function ($query) use ($request) {
-                        $query->where("date", $request->date);
+                    ->when($request->filled('date'), function ($query) use ($request) {
+                        $query->where('date', $request->date);
                     })
-                    ->when($request->filled("start_date") && $request->filled("end_date"), function ($query) use ($request) {
-                        $query->whereBetween("date", [$request->start_date, $request->end_date]);
+                    ->when($request->filled('start_date') && $request->filled('end_date'), function ($query) use ($request) {
+                        $query->whereBetween('date', [$request->start_date, $request->end_date]);
                     })
                     ->where('type', 2),
             ])
@@ -70,55 +70,55 @@ class TransactionController extends Controller
 
         $total_transactions = Transaction::byCurrentUser()
             ->filter($request)
-            ->when($request->filled("date"), function ($query) use ($request) {
-                $query->where("date", $request->date);
+            ->when($request->filled('date'), function ($query) use ($request) {
+                $query->where('date', $request->date);
             })
-            ->when($request->filled("start_date") && $request->filled("end_date"), function ($query) use ($request) {
-                $query->whereBetween("date", [$request->start_date, $request->end_date]);
+            ->when($request->filled('start_date') && $request->filled('end_date'), function ($query) use ($request) {
+                $query->whereBetween('date', [$request->start_date, $request->end_date]);
             })
-            ->when($request->filled("month"), function ($query) use ($request) {
-                $query->whereMonth("date", $request->month);
+            ->when($request->filled('month'), function ($query) use ($request) {
+                $query->whereMonth('date', $request->month);
             })
-            ->select(DB::raw("count(id) as total"))
+            ->select(DB::raw('count(id) as total'))
             ->first();
 
         $transactions = Transaction::query()
-            ->selectRaw(DB::raw("IF(type = 1, nominal, 0) as expense"))
+            ->selectRaw(DB::raw('IF(type = 1, nominal, 0) as expense'))
             ->addSelect([
-                "transactions.*",
-                "budget_name" => Budget::select("plan")->whereColumn("budget_id", "budgets.id"),
-                "account_name" => Account::select("name")->whereColumn("account_id", "accounts.id"),
-                "account_target_name" => Account::select("name")->whereColumn("account_target", "accounts.id"),
-                "total_nominal" => Transaction::selectRaw("SUM(nominal)")->whereColumn("id", "transactions.id"),
+                'transactions.*',
+                'budget_name' => Budget::select('plan')->whereColumn('budget_id', 'budgets.id'),
+                'account_name' => Account::select('name')->whereColumn('account_id', 'accounts.id'),
+                'account_target_name' => Account::select('name')->whereColumn('account_target', 'accounts.id'),
+                'total_nominal' => Transaction::selectRaw('SUM(nominal)')->whereColumn('id', 'transactions.id'),
             ])
             ->filter($request)
             ->byCurrentUser()
-            ->when($request->filled("date"), function ($query) use ($request) {
-                $query->where("date", $request->date);
+            ->when($request->filled('date'), function ($query) use ($request) {
+                $query->where('date', $request->date);
             })
-            ->when($request->filled("start_date") && $request->filled("end_date"), function ($query) use ($request) {
-                $query->whereBetween("date", [$request->start_date, $request->end_date]);
+            ->when($request->filled('start_date') && $request->filled('end_date'), function ($query) use ($request) {
+                $query->whereBetween('date', [$request->start_date, $request->end_date]);
             })
-            ->orderBy("date", "desc")
-            ->orderBy("created_at", "desc")
+            ->orderBy('date', 'desc')
+            ->orderBy('created_at', 'desc')
             ->limit(20)
-            ->offset($request->input("offset") ?? 0)
+            ->offset($request->input('offset') ?? 0)
             ->get();
 
         $budgets = Budget::query()
-            ->selectRaw("SUM(nominal) as total_plan")
+            ->selectRaw('SUM(nominal) as total_plan')
             ->byCurrentUser()
-            ->where("month_id", $month?->id)
+            ->where('month_id', $month?->id)
             ->first();
 
         return response()->json([
             'data' => [
-                'data' => $transactions->load("debtPayment.debt"),
-                'transaction_sum_nominal_expense' => $transactionAttrbite->sum_expense_month,
-                'transaction_sum_nominal_income' => $transactionAttrbite->sum_income_month,
-                'total_transactions' => $total_transactions,
-                'total_plan' => $budgets->total_plan,
-                'total_saving' => $transactionAttrbite->sum_income_month - $transactionAttrbite->sum_expense_month,
+                'data' => $transactions->load('debtPayment.debt'),
+                'transaction_sum_nominal_expense' => $transactionAttrbite?->sum_expense_month ?? 0,
+                'transaction_sum_nominal_income' => $transactionAttrbite?->sum_income_month ?? 0,
+                'total_transactions' => $total_transactions ?? 0,
+                'total_plan' => $budgets?->total_plan,
+                'total_saving' => ($transactionAttrbite?->sum_income_month) - ($transactionAttrbite?->sum_expense_month ?? 0),
             ],
         ]);
     }
@@ -129,7 +129,7 @@ class TransactionController extends Controller
 
         return response()->json([
             'data' => [],
-            'message' => 'transaction has been created'
+            'message' => 'transaction has been created',
         ]);
     }
 
@@ -146,7 +146,7 @@ class TransactionController extends Controller
 
         return response()->json([
             'data' => [],
-            'message' => 'transaction has been updated'
+            'message' => 'transaction has been updated',
         ]);
     }
 
@@ -164,14 +164,14 @@ class TransactionController extends Controller
                 $this->transferAccount();
                 break;
             default:
-                throw new ValidationException("Invalid Type");
+                throw new ValidationException('Invalid Type');
                 break;
         }
         $transaction->delete();
 
         return response()->json([
             'data' => [],
-            'message' => 'transaction has been deleted'
+            'message' => 'transaction has been deleted',
         ]);
     }
 
@@ -181,12 +181,12 @@ class TransactionController extends Controller
         $previousTotal = $this->transaction->account->total + $this->transaction->nominal;
 
         $this->transaction->account->update([
-            'total' => $previousTotal
+            'total' => $previousTotal,
         ]);
         if ($this->transaction->budget->type == 2) {
             $previousTotal = $this->transaction->budget->account->total - $this->transaction->nominal;
             $this->transaction->budget->account->update([
-                'total' => $previousTotal
+                'total' => $previousTotal,
             ]);
         }
         DB::commit();
@@ -197,7 +197,7 @@ class TransactionController extends Controller
         $previousTotal = $this->transaction->account->total - $this->transaction->nominal;
 
         $this->transaction->account->update([
-            'total' => $previousTotal
+            'total' => $previousTotal,
         ]);
     }
 
