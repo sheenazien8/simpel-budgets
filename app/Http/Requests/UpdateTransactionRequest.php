@@ -26,87 +26,90 @@ class UpdateTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "account_id" => [
-                "required",
-                "numeric",
-                Rule::exists("accounts", "id")->where("user_id", auth()->id())
+            'account_id' => [
+                'required',
+                'numeric',
+                Rule::exists('accounts', 'id')->where('user_id', auth()->id()),
             ],
-            "account_target" => [
+            'account_target' => [
                 Rule::requiredIf(function () {
-                    return $this->request->get("type") == 3;
+                    return $this->request->get('type') == 3;
                 }),
-                function($attr, $value, $fail) {
-                    if ($value != "" && !Account::where("id", $value)->where("user_id", auth()->id())->first()) {
-                        $fail("Akun target tidak ada di database");
+                function ($attr, $value, $fail) {
+                    if ($value != '' && ! Account::where('id', $value)->where('user_id', auth()->id())->first()) {
+                        $fail('Akun target tidak ada di database');
+
                         return;
                     }
-                    return;
-                }
+
+                },
             ],
-            "budget_id" => [
-                Rule::requiredIf(function () {
-                    return $this->request->get("type") == 1;
-                }),
-                function($attr, $value, $fail) {
+            'budget_id' => [
+                function ($attr, $value, $fail) {
                     $budget = Budget::find($value);
                     if ($budget->type == 2) {
-                        $fail("Budget yang digunakan di transaksi ini adalah budget tabungan, silahkan hapus saja!");
+                        $fail('Budget yang digunakan di transaksi ini adalah budget tabungan, silahkan hapus saja!');
+
                         return;
                     }
-                    if (in_array($this->request->get("type"), [2, 3]) && $value) {
-                        $fail("Budget harus kosong");
+                    if (in_array($this->request->get('type'), [2, 3]) && $value) {
+                        $fail('Budget harus kosong');
+
                         return;
                     }
-                    if ($this->request->get("type") == 1 && !Budget::where("id", $value)->where("user_id", auth()->id())->first()) {
-                        $fail("Budget tidak ada di database");
+                    if ($this->request->get('type') == 1 && ! Budget::where('id', $value)->where('user_id', auth()->id())->first()) {
+                        $fail('Budget tidak ada di database');
                     }
+
                     return;
-                    if ($this->route("transaction")->budget_id != $value) {
+                    if ($this->route('transaction')->budget_id != $value) {
                         $budgetSaving = function (Budget $budget, float $nominal): void {
                             dd($budget);
                         };
 
-                        match ($this->route("transaction")->budget->type) {
-                            BudgetType::Saving->value => $budgetSaving($this->route("transaction")->budget, $this->request->get("nominal")),
+                        match ($this->route('transaction')->budget->type) {
+                            BudgetType::Saving->value => $budgetSaving($this->route('transaction')->budget, $this->request->get('nominal')),
                             BudgetType::Expense->value => null
                         };
                     }
-                }
-             ],
-            "nominal" => [ "required", "numeric", function ($attr, $value, $fail) {
+                },
+            ],
+            'nominal' => ['required', 'numeric', function ($attr, $value, $fail) {
                 $expenseValidation = function () use ($value, $fail) {
-                    $account = Account::find($this->request->get("account_id"));
+                    $account = Account::find($this->request->get('account_id'));
                     if ($account->total < $value) {
                         $fail("nominal harus kurang dari total saldo di account $account->name");
                     }
                 };
-                match ($this->request->get("type")) {
+                match ($this->request->get('type')) {
                     TransactionType::Expense->value => $expenseValidation(),
                     default => null
                 };
             }],
-            "type" => [
-                "required", "numeric", Rule::in([1, 2, 3]),
-                function($attr, $value, $fail) {
-                    if ($this->route("transaction")->type != $value) {
-                        $fail("Type tidak boleh di update, mending dihapus aja bos");
+            'type' => [
+                'required', 'numeric', Rule::in([1, 2, 3]),
+                function ($attr, $value, $fail) {
+                    if ($this->route('transaction')->type != $value) {
+                        $fail('Type tidak boleh di update, mending dihapus aja bos');
+
                         return;
                     }
-                    return;
-                }
+
+                },
             ],
-            "date" => [
-                function($attr, $value, $fail) {
+            'date' => [
+                function ($attr, $value, $fail) {
                     $todayDate = date('Y-m-d');
                     if ($this->type == 1) {
-                        if ($value != "" && $value >  $todayDate) {
-                            $fail("Tanggal tidak boleh melebihi hari ini");
+                        if ($value != '' && $value > $todayDate) {
+                            $fail('Tanggal tidak boleh melebihi hari ini');
+
                             return;
                         }
                     }
-                    return;
-                }
-            ]
+
+                },
+            ],
         ];
     }
 
@@ -114,17 +117,17 @@ class UpdateTransactionRequest extends FormRequest
     {
         DB::beginTransaction();
         $this->transaction = $transaction;
-        if (!$this->request->get("date")) {
+        if (! $this->request->get('date')) {
             $this->request->add([
-                "date" => now()->format("Y-m-d")
+                'date' => now()->format('Y-m-d'),
             ]);
         }
-        $this->account = Account::find($this->request->get("account_id"));
-        match ((int) $this->request->get("type")) {
+        $this->account = Account::find($this->request->get('account_id'));
+        match ((int) $this->request->get('type')) {
             TransactionType::Expense->value => $this->expenseAccount(),
             TransactionType::Income->value => $this->incomeAccount(),
             TransactionType::Transfer->value => $this->transferAccount(),
-            default => throw new ValidationException("Invalid Type")
+            default => throw new ValidationException('Invalid Type')
         };
         $this->transaction->update($this->request->all());
         DB::commit();
@@ -132,8 +135,8 @@ class UpdateTransactionRequest extends FormRequest
 
     private function expenseAccount(): void
     {
-        $nominal = $this->request->get("nominal");
-        if ($this->transaction->account_id != $this->request->get("account_id")) {
+        $nominal = $this->request->get('nominal');
+        if ($this->transaction->account_id != $this->request->get('account_id')) {
             $this->transaction->account->total += $this->transaction->nominal;
             $this->transaction->account->save();
 
@@ -141,11 +144,11 @@ class UpdateTransactionRequest extends FormRequest
             $this->account->save();
         }
 
-        if ($this->transaction->account_id == $this->request->get("account_id")) {
+        if ($this->transaction->account_id == $this->request->get('account_id')) {
             $previousTotal = $this->account->total + $this->transaction->nominal;
 
             $this->account->update([
-                'total' => $previousTotal - $nominal
+                'total' => $previousTotal - $nominal,
             ]);
         }
 
@@ -156,7 +159,7 @@ class UpdateTransactionRequest extends FormRequest
         $previousTotal = $this->account->total - $this->transaction->nominal;
 
         $this->account->update([
-            'total' => $previousTotal + $this->request->get("nominal")
+            'total' => $previousTotal + $this->request->get('nominal'),
         ]);
     }
 
@@ -170,15 +173,15 @@ class UpdateTransactionRequest extends FormRequest
         $account_target->total -= $this->transaction->nominal;
         $account_target->save();
 
-        $account_from = $this->request->get("account_id") == $this->transaction->account_id
+        $account_from = $this->request->get('account_id') == $this->transaction->account_id
             ? $account_from
             : $this->account;
 
-        $account_from->total -= $this->request->get("nominal");
+        $account_from->total -= $this->request->get('nominal');
         $account_from->save();
 
-        $account_target = Account::find($this->request->get("account_target"));
-        $account_target->total += $this->request->get("nominal");
+        $account_target = Account::find($this->request->get('account_target'));
+        $account_target->total += $this->request->get('nominal');
         $account_target->save();
     }
 }
