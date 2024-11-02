@@ -183,7 +183,7 @@ class TransactionController extends Controller
         $this->transaction->account->update([
             'total' => $previousTotal,
         ]);
-        if ($this->transaction->budget->type == 2) {
+        if ($this->transaction?->budget?->type == 2) {
             $previousTotal = $this->transaction->budget->account->total - $this->transaction->nominal;
             $this->transaction->budget->account->update([
                 'total' => $previousTotal,
