@@ -29,7 +29,7 @@ class TransactionController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $currentMonth = __('month.'.now()->format('F'));
+        $currentMonth = now()->format('M');
         $currentYear = now()->format('Y');
         $month = Month::whereIn('name', [$currentMonth])
             ->byCurrentUser()
@@ -50,7 +50,7 @@ class TransactionController extends Controller
                         $query->whereBetween('date', [$request->start_date, $request->end_date]);
                     })
                     ->where('type', 1)
-                    ->whereHas('budget', function ($query) {
+                    ->orWhereHas('budget', function ($query) {
                         $query->where('type', BudgetType::Expense);
                     }),
                 'sum_income_month' => Transaction::query()
